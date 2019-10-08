@@ -1,4 +1,5 @@
-*.bin
 music
-ahk2exe.exe
+unused
 *.bat
+*.bin
+ahk2exe.exe
