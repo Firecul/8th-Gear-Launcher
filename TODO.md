@@ -7,3 +7,4 @@
 > **Rules List:-** Awaiting list.  
 > **FAQ:-** As soon as something is asked frequently.  
 > **About tab blurb:-** As soon as I can be bothered  
+> **Parse log files:-** To make finding bugs easier.  
