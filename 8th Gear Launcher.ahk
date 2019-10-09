@@ -35,11 +35,21 @@ gui, add, link, xp+10 yp+15 w350, <a href="https://phomecoming.com/status">To se
 Gui, Tab, 2
 Gui, Add, GroupBox, w620 h700, 8thGear Specific Rules:
 Gui, font, bold
-Gui, Add, text, xp+10 yp+20 w550, 1) Be kind
-Bold("2) 9r must be awd")
-Bold("3) fun is mandatory")
-Bold("4) Don't be evil")
-Bold("5) Don't be a dick")
+Gui, Add, text, xp+10 yp+20 w550, 1) THE GOLDEN RULE: Don't be a Dick
+Normal("Personal attacks, harassment, hate speech, etc. will not be tolerated. Treat others with respect at all times.")
+Bold("2) Follow Discord TOS and Community Guidelines")
+Normal("https://discordapp.com/terms & https://discordapp.com/guidelines")
+Bold("3) No NSFW/NSFL Content")
+Bold("4) No Spamming or Trolling")
+Bold("5) No Cheating on the Server")
+Normal("Using 3rd-party menus to gain an unfair advantage will result in a ban.")
+Bold("6) No Drama")
+Normal("Arguments should be resolved in a respectful manner or kept out of the discord entirely.")
+Bold("7) No Advertising")
+Normal("Links to youtube channels, streams, other discords, etc. are prohibited unless approved by a staff member.")
+Bold("8) Listen to the Staff")
+Normal("Staff have the final say and are free to moderate at their own discretion.")
+Bold("By taking part in this community you acknowledge that you understand and accept these rules. Ignoring them or not knowing them does not excuse you from them.")
 
 Gui, Tab, 3
 Gui, font, s10 norm
