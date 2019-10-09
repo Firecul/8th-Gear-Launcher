@@ -38,7 +38,8 @@ Gui, font, bold
 Gui, Add, text, xp+10 yp+20 w550, 1) THE GOLDEN RULE: Don't be a Dick
 Normal("Personal attacks, harassment, hate speech, etc. will not be tolerated. Treat others with respect at all times.")
 Bold("2) Follow Discord TOS and Community Guidelines")
-Normal("https://discordapp.com/terms & https://discordapp.com/guidelines")
+Gui, font, Norm
+Gui, Add, Link,, <a href="https://discordapp.com/terms">https://discordapp.com/terms</a> && <a href="https://discordapp.com/guidelines">https://discordapp.com/guidelines</a>
 Bold("3) No NSFW/NSFL Content")
 Bold("4) No Spamming or Trolling")
 Bold("5) No Cheating on the Server")
