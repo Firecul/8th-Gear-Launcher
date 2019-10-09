@@ -28,9 +28,9 @@ Gui, Add, Picture, w620 h-1, 8thGearLauncher/8GLogo.png
 Gui, Add, GroupBox, w220 h115, 8thGear Servers:
 GUi, add, button, xp+10 yp+20 w200 +Default gRace, &Main Server
 Gui, add, Groupbox, xp+240 yp-20 w370 h45, Disclaimer
-Gui, add, link, xp+10 yp+20 w350, By joining our servers you agree to be bound to the <a href="https://discordapp.com/channels/388742985619079188/395687147732205578/">#rules</a> of our server.
+Gui, add, link, xp+10 yp+20 w350, By joining our servers you agree to be bound to the <a href="https://discordapp.com/channels/">#rules</a> of our server.
 gui, add, groupbox, xp-10 yp+30 w370 h40,
-gui, add, link, xp+10 yp+15 w350, <a href="https://phomecoming.com/status">To see server status, click here to go to the website</a>
+gui, add, link, xp+10 yp+15 w350, <a href="https://8thgear.com/status">To see server status, click here to go to the website</a>
 
 Gui, Tab, 2
 Gui, Add, GroupBox, w620 h700, 8thGear Specific Rules:
