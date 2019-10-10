@@ -110,93 +110,84 @@ lookforfivem:
 	return
 
 updatefiles:
-;dirvar = FiveM Application Data
-;MsgBox, %dirvar%
-StringTrimRight, seldir, selectedfile, 9
-seldir2 := seldir . "FiveM.app\"
-
-Loop, %seldir2%\CitizenFX.log*
-		LV_Add("", A_LoopFileName, A_LoopFileSizeKB, A_LoopFileTimeModified, A_LoopFileFullPath)
-
-LV_ModifyCol()	; Auto-size each column to fit its contents.
-LV_ModifyCol(2, "75 Integer")	; For sorting purposes, indicate that column 2 is an integer.
-LV_ModifyCol(3, "digit")
-
-; Display the window and return. The script will be notified whenever the user double clicks a row.
-Gui, Show
-return
+	StringTrimRight, seldir, selectedfile, 9
+	seldir2 := seldir . "FiveM.app\"
+	Loop, %seldir2%\CitizenFX.log*
+			LV_Add("", A_LoopFileName, A_LoopFileSizeKB, A_LoopFileTimeModified, A_LoopFileFullPath)s
+	LV_ModifyCol()	; Auto-size each column to fit its contents.
+	LV_ModifyCol(2, "75 Integer")	; For sorting purposes, indicate that column 2 is an integer.
+	LV_ModifyCol(3, "digit")
+	; Display the window and return. The script will be notified whenever the user double clicks a row.
+	Gui, Show
+	return
 
 MyListView:
-if (A_GuiEvent = "DoubleClick")
-{
-	LV_GetText(FileName, A_EventInfo, 1) ; Get the text of the first field.
-	;LV_GetText(FileDir, A_EventInfo, 4)	; Get the text of the second field.
-	Run %seldir2%%FileName%,, UseErrorLevel
-	if ErrorLevel
-		MsgBox Could not open %seldir2%%FileName%
-		;LV_GetText(RowText, A_EventInfo)	; Get the text from the row's first field.
-
-	;ToolTip You double-clicked row number %A_EventInfo%. Text: "%RowText%"
-}
-return
-
-opendefault:
-RowNumber := 0  ; This causes the first loop iteration to start the search at the top of the list.
-Loop
-{
-    RowNumber := LV_GetNext(RowNumber)  ; Resume the search at the row after that found by the previous iteration.
-    if not RowNumber  ; The above returned zero, so there are no more selected rows.
-        break
-    LV_GetText(Text, RowNumber)
-		seldirthree := seldir2 . Text
+	if (A_GuiEvent = "DoubleClick")
+	{
+		LV_GetText(FileName, A_EventInfo, 1) ; Get the text of the first field.
+		seldirthree := seldir2 . FileName
 		Run %seldirthree%,, UseErrorLevel
 		if ErrorLevel
 			MsgBox Could not open %seldirthree%
-}
-return
+	}
+	return
+
+opendefault:
+	RowNumber := 0  ; This causes the first loop iteration to start the search at the top of the list.
+	Loop
+	{
+	    RowNumber := LV_GetNext(RowNumber)  ; Resume the search at the row after that found by the previous iteration.
+	    if not RowNumber  ; The above returned zero, so there are no more selected rows.
+	        break
+	    LV_GetText(Text, RowNumber)
+			seldirthree := seldir2 . Text
+			Run %seldirthree%,, UseErrorLevel
+			if ErrorLevel
+				MsgBox Could not open %seldirthree%
+	}
+	return
 
 opennotepad:
-RowNumber := 0  ; This causes the first loop iteration to start the search at the top of the list.
-Loop
-{
-    RowNumber := LV_GetNext(RowNumber)  ; Resume the search at the row after that found by the previous iteration.
-    if not RowNumber  ; The above returned zero, so there are no more selected rows.
-        break
-    LV_GetText(Text, RowNumber)
-		seldirthree := seldir2 . Text
-		Run C:\Windows\Notepad.exe %seldirthree%,, UseErrorLevel
-		if ErrorLevel
-			MsgBox Could not open %seldirthree%
-}
-return
-
+	RowNumber := 0  ; This causes the first loop iteration to start the search at the top of the list.
+	Loop
+	{
+	    RowNumber := LV_GetNext(RowNumber)  ; Resume the search at the row after that found by the previous iteration.
+	    if not RowNumber  ; The above returned zero, so there are no more selected rows.
+	        break
+	    LV_GetText(Text, RowNumber)
+			seldirthree := seldir2 . Text
+			Run C:\Windows\Notepad.exe %seldirthree%,, UseErrorLevel
+			if ErrorLevel
+				MsgBox Could not open %seldirthree%
+	}
+	return
 
 Par:
 	lv_gettext(carName,LV_GetNext())
 	fileread,fileContents,%carsFolderPath%\%carName%\%carDataFileListbox%
 	guicontrol,text,filecontentsbox,%fileContents%
-return
+	return
 
 DParse:
-RowNumber := 0  ; This causes the first loop iteration to start the search at the top of the list.
-Loop
-{
-    RowNumber := LV_GetNext(RowNumber)  ; Resume the search at the row after that found by the previous iteration.
-    if not RowNumber  ; The above returned zero, so there are no more selected rows.
-        break
-    LV_GetText(Text, RowNumber)
-    MsgBox The next selected row is #%RowNumber%, whose first field is "%Text%".
-}
-return
+	RowNumber := 0  ; This causes the first loop iteration to start the search at the top of the list.
+	Loop
+	{
+	    RowNumber := LV_GetNext(RowNumber)  ; Resume the search at the row after that found by the previous iteration.
+	    if not RowNumber  ; The above returned zero, so there are no more selected rows.
+	        break
+	    LV_GetText(Text, RowNumber)
+	    MsgBox The next selected row is #%RowNumber%, whose first field is "%Text%".
+	}
+	return
 
 Parse:
-Gui, 2: Show,
-Guicontrol, , FileContent, %seldirthree%
-return
+	Gui, 2: Show,
+	Guicontrol, , FileContent, %seldirthree%
+	return
 
 8GDiscord:
  Run https://discord.gg/
-return
+	return
 
 ;Escape Stuff
 GuiEscape:
