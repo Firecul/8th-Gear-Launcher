@@ -91,7 +91,6 @@ EnvGet, LOCALAPPDATA, LOCALAPPDATA ;Searches Fivem default location
 	goto updatefiles
 	return
 
-;Tab1 Stuff
 race:
 	Run fivem://connect/149.56.15.167
 	return
@@ -192,7 +191,7 @@ Parse:
 Gui2Close:
 	Gui, 2: Destroy
 	return
-	
+
 ;Escape Stuff
 GuiEscape:
 GuiClose:
