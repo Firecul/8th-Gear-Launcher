@@ -82,7 +82,7 @@ Gui, Tab
 gui, 2: font, s10 norm
 	gui, 2: add, groupbox, w620 h50, Selected log file:
 	gui, 2: add, text, xp+10 yp+20 w300 vSelLog, (Error)
-	gui, 2: add, button, xp+470 yp-6 gGuiClose, Exit
+	gui, 2: add, button, xp+480 yp-6 gGui2Close, Exit
 
 EnvGet, LOCALAPPDATA, LOCALAPPDATA ;Searches Fivem default location
 	Loop, %LOCALAPPDATA%\FiveM\FiveM.exe, , 1
@@ -189,6 +189,10 @@ Parse:
  Run https://discord.gg/
 	return
 
+Gui2Close:
+	Gui, 2: Destroy
+	return
+	
 ;Escape Stuff
 GuiEscape:
 GuiClose:
