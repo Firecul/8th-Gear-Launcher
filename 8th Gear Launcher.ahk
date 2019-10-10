@@ -81,6 +81,11 @@ GUi, add, button, xp+545 w100 gGuiClose, Exit
 Gui, Show, AutoSize Center, 8thGear FiveM Launcher
 ;Gui, -SysMenu +Owner
 
+gui, 2: font, s10 norm
+gui, 2: add, groupbox, w620 h50, Selected log file:
+gui, 2: add, text, xp+10 yp+20 w300 vSelLog, (Error)
+gui, 2: add, button, xp+470 yp-6 gGuiClose, Exit
+
 EnvGet, LOCALAPPDATA, LOCALAPPDATA
 Loop, %LOCALAPPDATA%\FiveM\FiveM.exe, , 1
 SelectedFile := A_LoopFileFullPath
@@ -176,7 +181,7 @@ Par:
 	guicontrol,text,filecontentsbox,%fileContents%
 return
 
-Parse:
+DParse:
 RowNumber := 0  ; This causes the first loop iteration to start the search at the top of the list.
 Loop
 {
@@ -188,6 +193,9 @@ Loop
 }
 return
 
+Parse:
+Gui, 2: Show,
+return
 
 8GDiscord:
  Run https://discord.gg/
