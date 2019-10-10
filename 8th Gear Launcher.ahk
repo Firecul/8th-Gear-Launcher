@@ -62,12 +62,11 @@ Gui, font, s10 norm
 Gui, Add, groupbox, w620 h50, FiveM install location:
 Gui, add, text, xp+10 yp+20 w300 vselfile, (Not found)
 Gui, add, button, xp+470 yp-6 glookforfivem, Locate FiveM install
-Gui, Add, groupbox, xp-480 yp+40 w620 h690, Found Logs:
+Gui, Add, groupbox, xp-480 yp+40 w620 h295, Found Logs:
 Gui, Add, ListView, xp+10 yp+20 r10 w600 gMyListView, Name|Size (KB)|Modified
 gui, add, button, xp+213 yp+235 gOpenDefault, Open log in Default
 gui, add, button, xp+130 gOpenNotepad, Open Log in Notepad
 Gui, add, button, xp+144 gParse, Parse and Open
-Gui, add, text, xp-490 yp+50 w600 vFileContent, (No log open.)
 
 Gui, Tab, 5
 Gui, font, s10 norm
@@ -150,7 +149,6 @@ Loop
     if not RowNumber  ; The above returned zero, so there are no more selected rows.
         break
     LV_GetText(Text, RowNumber)
-		Guicontrol, , FileContent, %seldir2%%Text%
 		seldirthree := seldir2 . Text
 		Run %seldirthree%,, UseErrorLevel
 		if ErrorLevel
@@ -166,7 +164,6 @@ Loop
     if not RowNumber  ; The above returned zero, so there are no more selected rows.
         break
     LV_GetText(Text, RowNumber)
-		Guicontrol, , FileContent, %seldir2%%Text%
 		seldirthree := seldir2 . Text
 		Run C:\Windows\Notepad.exe %seldirthree%,, UseErrorLevel
 		if ErrorLevel
