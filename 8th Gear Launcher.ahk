@@ -62,9 +62,12 @@ Gui, font, s10 norm
 Gui, Add, groupbox, w620 h50, FiveM install location:
 Gui, add, text, xp+10 yp+20 w300 vselfile, (Not found)
 Gui, add, button, xp+470 yp-6 glookforfivem, Locate FiveM install
-
-Gui, Add, groupbox, xp-480 yp+40 w620 h260, Found Logs:
+Gui, Add, groupbox, xp-480 yp+40 w620 h690, Found Logs:
 Gui, Add, ListView, xp+10 yp+20 r10 w600 gMyListView, Name|Size (KB)|Modified
+gui, add, button, xp+213 yp+235 gOpenDefault, Open log in Default
+gui, add, button, xp+130 gOpenNotepad, Open Log in Notepad
+Gui, add, button, xp+144 gParse, Parse and Open
+Gui, add, text, xp-490 yp+50 w600 vFileContent, (No log open.)
 
 Gui, Tab, 5
 Gui, font, s10 norm
@@ -134,8 +137,57 @@ if (A_GuiEvent = "DoubleClick")
 }
 return
 
+opendefault:
+RowNumber := 0  ; This causes the first loop iteration to start the search at the top of the list.
+Loop
+{
+    RowNumber := LV_GetNext(RowNumber)  ; Resume the search at the row after that found by the previous iteration.
+    if not RowNumber  ; The above returned zero, so there are no more selected rows.
+        break
+    LV_GetText(Text, RowNumber)
+		Guicontrol, , FileContent, %seldir2%%Text%
+		seldirthree := seldir2 . Text
+		Run %seldirthree%,, UseErrorLevel
+		if ErrorLevel
+			MsgBox Could not open %seldirthree%
+}
+return
 
+opennotepad:
+RowNumber := 0  ; This causes the first loop iteration to start the search at the top of the list.
+Loop
+{
+    RowNumber := LV_GetNext(RowNumber)  ; Resume the search at the row after that found by the previous iteration.
+    if not RowNumber  ; The above returned zero, so there are no more selected rows.
+        break
+    LV_GetText(Text, RowNumber)
+		Guicontrol, , FileContent, %seldir2%%Text%
+		seldirthree := seldir2 . Text
+		Run C:\Windows\Notepad.exe %seldirthree%,, UseErrorLevel
+		if ErrorLevel
+			MsgBox Could not open %seldirthree%
+}
+return
 
+return
+
+Par:
+	lv_gettext(carName,LV_GetNext())
+	fileread,fileContents,%carsFolderPath%\%carName%\%carDataFileListbox%
+	guicontrol,text,filecontentsbox,%fileContents%
+return
+
+Parse:
+RowNumber := 0  ; This causes the first loop iteration to start the search at the top of the list.
+Loop
+{
+    RowNumber := LV_GetNext(RowNumber)  ; Resume the search at the row after that found by the previous iteration.
+    if not RowNumber  ; The above returned zero, so there are no more selected rows.
+        break
+    LV_GetText(Text, RowNumber)
+    MsgBox The next selected row is #%RowNumber%, whose first field is "%Text%".
+}
+return
 
 
 8GDiscord:
