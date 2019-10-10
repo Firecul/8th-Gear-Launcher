@@ -169,7 +169,6 @@ Loop
 }
 return
 
-return
 
 Par:
 	lv_gettext(carName,LV_GetNext())
