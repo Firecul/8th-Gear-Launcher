@@ -1,9 +1,9 @@
 #SingleInstance, Force
 
-FileCreateDir, 8thGearLauncher
-Fileinstall, pictures/8GLogo.png, 8thGearLauncher/8GLogo.png, 0
-Fileinstall, icons/8G.ico, 8thGearLauncher/8G.ico, 0
-Menu, Tray, Icon, 8thGearLauncher/8G.ico, 1, 1
+FileCreateDir, 8thGearLauncher ;Creation stuff
+	Fileinstall, pictures/8GLogo.png, 8thGearLauncher/8GLogo.png, 0
+	Fileinstall, icons/8G.ico, 8thGearLauncher/8G.ico, 0
+	Menu, Tray, Icon, 8thGearLauncher/8G.ico, 1, 1
 
 vFAQ =
 	(
@@ -71,15 +71,14 @@ Gui, Tab, 5 ;About
 	Gui, font, s10 norm
 	Gui, Add, link, w620, Hello and welcome to the 8thGear FiveM Launcher! `n`nThis Launcher serves as the hub for everything you need to play on the 8thGear servers and a few useful tools that will help you along the way. `n`n<Blurb goes here>
 
-
-Gui, Tab
+Gui, Tab ;All Tabs
 	Gui, font, norm
 	Gui, add, button, w100 g8GDiscord, Discord
 	GUi, add, button, xp+545 w100 gGuiClose, Exit
 	Gui, Show, AutoSize Center, 8thGear FiveM Launcher
 	;Gui, -SysMenu +Owner
 
-gui, 2: font, s10 norm
+gui, 2: font, s10 norm ;LogViewer Window
 	gui, 2: add, groupbox, w1000 h50, Selected log file:
 	gui, 2: add, text, xp+10 yp+20 w980 vSelLog, (Error)
 	gui, 2: font,, Lucida Console
