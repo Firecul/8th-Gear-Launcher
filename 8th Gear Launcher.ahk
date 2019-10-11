@@ -80,9 +80,9 @@ Gui, Tab
 	;Gui, -SysMenu +Owner
 
 gui, 2: font, s10 norm
-	gui, 2: add, groupbox, w620 h50, Selected log file:
-	gui, 2: add, text, xp+10 yp+20 w300 vSelLog, (Error)
-	gui, 2: add, button, xp+480 yp-6 gGui2Close, Exit
+	gui, 2: add, groupbox, w1000 h50, Selected log file:
+	gui, 2: add, text, xp+10 yp+20 w900 vSelLog, (Error)
+	gui, 2: add, button, xp+945 yp-6 gGui2Close, Exit
 
 EnvGet, LOCALAPPDATA, LOCALAPPDATA ;Searches Fivem default location
 	Loop, %LOCALAPPDATA%\FiveM\FiveM.exe, , 1
@@ -180,8 +180,20 @@ DParse:
 	return
 
 Parse:
+RowNumber := 0  ; This causes the first loop iteration to start the search at the top of the list.
+Loop
+{
+		RowNumber := LV_GetNext(RowNumber)  ; Resume the search at the row after that found by the previous iteration.
+		if not RowNumber  ; The above returned zero, so there are no more selected rows.
+				break
+		LV_GetText(Text, RowNumber)
+		seldirthree := seldir2 . Text
+		;Run %seldirthree%,, UseErrorLevel
+		;if ErrorLevel
+			;MsgBox Could not open %seldirthree%
+}
 	Gui, 2: Show,
-	Guicontrol, , FileContent, %seldirthree%
+	Guicontrol, 2: text, SelLog, %seldirthree%
 	return
 
 8GDiscord:
