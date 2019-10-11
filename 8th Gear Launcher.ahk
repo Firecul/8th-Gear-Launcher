@@ -83,6 +83,7 @@ gui, 2: font, s10 norm
 	gui, 2: add, groupbox, w1000 h50, Selected log file:
 	gui, 2: add, text, xp+10 yp+20 w900 vSelLog, (Error)
 	gui, 2: add, button, xp+945 yp-6 gGui2Close, Exit
+	gui, 2: font,, Lucida Console
 	gui, 2: add, edit, xp-955 yp+45 w1000 r30 vLogContents, (File Empty?)
 
 EnvGet, LOCALAPPDATA, LOCALAPPDATA ;Searches Fivem default location
@@ -190,7 +191,7 @@ Loop
 		LV_GetText(Text, RowNumber)
 		seldirthree := seldir2 . Text
 }
-	Gui, 2: Show,
+	gui, 2: show, AutoSize Center, 8thGear FiveM Launcher
 	Guicontrol, 2: text, SelLog, %seldirthree%
 	fileread, LogContents, %seldirthree%
 	Guicontrol, 2: text, LogContents, %LogContents%
