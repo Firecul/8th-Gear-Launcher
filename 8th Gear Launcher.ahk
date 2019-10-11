@@ -192,6 +192,8 @@ Loop
 }
 	Gui, 2: Show,
 	Guicontrol, 2: text, SelLog, %seldirthree%
+	fileread, LogContents, %seldirthree%
+	Guicontrol, 2: text, LogContents, %LogContents%
 	return
 
 8GDiscord:
