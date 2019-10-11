@@ -189,9 +189,6 @@ Loop
 				break
 		LV_GetText(Text, RowNumber)
 		seldirthree := seldir2 . Text
-		;Run %seldirthree%,, UseErrorLevel
-		;if ErrorLevel
-			;MsgBox Could not open %seldirthree%
 }
 	Gui, 2: Show,
 	Guicontrol, 2: text, SelLog, %seldirthree%
