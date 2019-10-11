@@ -134,33 +134,17 @@ MyListView:
 	return
 
 opendefault:
-	RowNumber := 0  ; This causes the first loop iteration to start the search at the top of the list.
-	Loop
-	{
-	    RowNumber := LV_GetNext(RowNumber)  ; Resume the search at the row after that found by the previous iteration.
-	    if not RowNumber  ; The above returned zero, so there are no more selected rows.
-	        break
-	    LV_GetText(Text, RowNumber)
-			seldirthree := seldir2 . Text
-			Run %seldirthree%,, UseErrorLevel
-			if ErrorLevel
-				MsgBox Could not open %seldirthree%
-	}
+	gosub, GetFileSelected
+	Run %seldirthree%,, UseErrorLevel
+	if ErrorLevel
+	MsgBox Could not open %seldirthree%
 	return
 
 opennotepad:
-	RowNumber := 0  ; This causes the first loop iteration to start the search at the top of the list.
-	Loop
-	{
-	    RowNumber := LV_GetNext(RowNumber)  ; Resume the search at the row after that found by the previous iteration.
-	    if not RowNumber  ; The above returned zero, so there are no more selected rows.
-	        break
-	    LV_GetText(Text, RowNumber)
-			seldirthree := seldir2 . Text
-			Run C:\Windows\Notepad.exe %seldirthree%,, UseErrorLevel
-			if ErrorLevel
-				MsgBox Could not open %seldirthree%
-	}
+	gosub, GetFileSelected
+	Run C:\Windows\Notepad.exe %seldirthree%,, UseErrorLevel
+	if ErrorLevel
+	MsgBox Could not open %seldirthree%
 	return
 
 Par:
@@ -169,32 +153,24 @@ Par:
 	guicontrol,text,filecontentsbox,%fileContents%
 	return
 
-DParse:
-	RowNumber := 0  ; This causes the first loop iteration to start the search at the top of the list.
-	Loop
-	{
-	    RowNumber := LV_GetNext(RowNumber)  ; Resume the search at the row after that found by the previous iteration.
-	    if not RowNumber  ; The above returned zero, so there are no more selected rows.
-	        break
-	    LV_GetText(Text, RowNumber)
-	    MsgBox The next selected row is #%RowNumber%, whose first field is "%Text%".
-	}
-	return
-
 Parse:
-RowNumber := 0  ; This causes the first loop iteration to start the search at the top of the list.
-Loop
-{
-		RowNumber := LV_GetNext(RowNumber)  ; Resume the search at the row after that found by the previous iteration.
-		if not RowNumber  ; The above returned zero, so there are no more selected rows.
-				break
-		LV_GetText(Text, RowNumber)
-		seldirthree := seldir2 . Text
-}
+	gosub, GetFileSelected
 	gui, 2: show, AutoSize Center, 8thGear FiveM Launcher
 	Guicontrol, 2: text, SelLog, %seldirthree%
 	fileread, LogContents, %seldirthree%
 	Guicontrol, 2: text, LogContents, %LogContents%
+	return
+
+GetFileSelected:
+	RowNumber := 0  ; This causes the first loop iteration to start the search at the top of the list.
+	Loop
+	{
+			RowNumber := LV_GetNext(RowNumber)  ; Resume the search at the row after that found by the previous iteration.
+			if not RowNumber  ; The above returned zero, so there are no more selected rows.
+					break
+			LV_GetText(Text, RowNumber)
+			seldirthree := seldir2 . Text
+	}
 	return
 
 8GDiscord:
@@ -205,9 +181,8 @@ Gui2Close:
 	Gui, 2: Destroy
 	return
 
-;Escape Stuff
-GuiEscape:
-GuiClose:
-ButtonCancel:
-FileRemoveDir, 8thGearLauncher, 1
+GuiEscape: ;Escape Stuff
+	GuiClose:
+	ButtonCancel:
+	FileRemoveDir, 8thGearLauncher, 1
 	ExitApp
