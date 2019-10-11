@@ -63,9 +63,9 @@ Gui, Tab, 4 ;Tools
 	Gui, add, button, xp+470 yp-6 glookforfivem, Locate FiveM install
 	Gui, Add, groupbox, xp-480 yp+40 w620 h295, Found Logs:
 	Gui, Add, ListView, xp+10 yp+20 r10 w600 gMyListView, Name|Size (KB)|Modified
-	gui, add, button, xp+213 yp+235 gOpenDefault, Open log in Default
+	gui, add, button, xp+224 yp+235 gOpenDefault, Open log in Default
 	gui, add, button, xp+130 gOpenNotepad, Open Log in Notepad
-	Gui, add, button, xp+144 gParse, Parse and Open
+	Gui, add, button, xp+144 gParse, Open Internally
 
 Gui, Tab, 5 ;About
 	Gui, font, s10 norm
