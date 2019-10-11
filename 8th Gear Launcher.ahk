@@ -65,7 +65,7 @@ Gui, Tab, 4 ;Tools
 	Gui, Add, ListView, xp+10 yp+20 r10 w600 gMyListView, Name|Size (KB)|Modified
 	gui, add, button, xp+224 yp+235 gOpenDefault, Open log in Default
 	gui, add, button, xp+130 gOpenNotepad, Open Log in Notepad
-	Gui, add, button, xp+144 gParse, Open Internally
+	Gui, add, button, xp+144 gOpenLogViewer, Open Internally
 
 Gui, Tab, 5 ;About
 	Gui, font, s10 norm
@@ -151,7 +151,7 @@ Par:
 	guicontrol,text,filecontentsbox,%fileContents%
 	return
 
-Parse:
+OpenLogViewer:
 	gosub, GetFileSelected
 	gui, 2: show, AutoSize Center, 8thGear FiveM Launcher
 	Guicontrol, 2: text, SelLog, %seldirthree%
