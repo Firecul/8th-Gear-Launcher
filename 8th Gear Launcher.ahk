@@ -78,11 +78,11 @@ Gui, New ;Main Window
 		Gui, Show, AutoSize Center, 8thGear FiveM Launcher
 		;Gui, -SysMenu +Owner
 
-gui, 2: font, s10 norm ;LogViewer Window
-	gui, 2: add, groupbox, w1000 h50, Selected log file:
-	gui, 2: add, text, xp+10 yp+20 w980 vSelLog, (Error)
-	gui, 2: font,, Lucida Console
-	gui, 2: add, edit, xp-10 yp+39 w1000 r30 vLogContents, (File Empty?)
+gui, LogViewerWindow: font, s10 norm ;LogViewer Window
+	gui, LogViewerWindow: add, groupbox, w1000 h50, Selected log file:
+	gui, LogViewerWindow: add, text, xp+10 yp+20 w980 vSelLog, (Error)
+	gui, LogViewerWindow: font,, Lucida Console
+	gui, LogViewerWindow: add, edit, xp-10 yp+39 w1000 r30 vLogContents, (File Empty?)
 
 EnvGet, LOCALAPPDATA, LOCALAPPDATA ;Searches Fivem default location
 	Loop, %LOCALAPPDATA%\FiveM\FiveM.exe, , 1
@@ -153,10 +153,10 @@ Par:
 
 OpenLogViewer:
 	gosub, GetFileSelected
-	gui, 2: show, AutoSize Center, 8thGear FiveM Launcher
-	Guicontrol, 2: text, SelLog, %seldirthree%
+	gui, LogViewerWindow: show, AutoSize Center, 8thGear FiveM Launcher
+	Guicontrol, LogViewerWindow: text, SelLog, %seldirthree%
 	fileread, LogContents, %seldirthree%
-	Guicontrol, 2: text, LogContents, %LogContents%
+	Guicontrol, LogViewerWindow: text, LogContents, %LogContents%
 	return
 
 GetFileSelected:
