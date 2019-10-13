@@ -61,11 +61,8 @@ Gui, New ;Main Window
 		Gui, Add, groupbox, w620 h50, FiveM install location:
 		Gui, add, text, xp+10 yp+20 w300 vselfile, (Not found)
 		Gui, add, button, xp+470 yp-6 glookforfivem, Locate FiveM install
-		Gui, Add, groupbox, xp-480 yp+40 w620 h295, Found Logs:
+		Gui, Add, groupbox, xp-480 yp+40 w620 h260, Found Logs:
 		Gui, Add, ListView, xp+10 yp+20 r10 w600 gMyListView, Name|Size (KB)|Modified
-		gui, add, button, xp+224 yp+235 gOpenDefault, Open log in Default
-		gui, add, button, xp+130 gOpenNotepad, Open Log in Notepad
-		Gui, add, button, xp+144 gOpenLogViewer, Open Internally
 
 	Gui, Tab, 5 ;About
 		Gui, font, s10 norm
@@ -83,6 +80,11 @@ gui, LogViewerWindow: font, s10 norm ;LogViewer Window
 	gui, LogViewerWindow: add, text, xp+10 yp+20 w980 vSelLog, (Error)
 	gui, LogViewerWindow: font,, Lucida Console
 	gui, LogViewerWindow: add, edit, xp-10 yp+39 w1000 r30 vLogContents, (File Empty?)
+
+menu, submenu, add, Log Viewer, OpenLogViewer ;Context Menu
+	menu, submenu, add, Default Editor, opendefault
+	menu, submenu, add, Notepad, opennotepad
+	Menu, ContextMenu, Add, Open In, :Submenu
 
 EnvGet, LOCALAPPDATA, LOCALAPPDATA ;Searches Fivem default location
 	Loop, %LOCALAPPDATA%\FiveM\FiveM.exe, , 1
@@ -105,7 +107,7 @@ lookforfivem:
 			;MsgBox, The user selected the following:`n%SelectedFile%
 
 	Guicontrol, , selfile, %SelectedFile%
-	goto updatefiles
+	gosub, updatefiles
 	return
 
 updatefiles:
@@ -125,10 +127,22 @@ MyListView:
 	{
 		LV_GetText(FileName, A_EventInfo, 1) ; Get the text of the first field.
 		seldirthree := seldir2 . FileName
-		Run %seldirthree%,, UseErrorLevel
-		if ErrorLevel
-			MsgBox Could not open %seldirthree%
-	}
+		gosub, OpenLogViewer
+		}
+	return
+
+GuiContextMenu:
+	if A_GuiControl <> List
+	gosub, GetFileSelected
+	Menu, ContextMenu, Show, %A_GuiX%, %A_GuiY%
+	return
+
+OpenLogViewer:
+	gosub, GetFileSelected
+	gui, LogViewerWindow: show, AutoSize Center, Log Viewer
+	Guicontrol, LogViewerWindow: text, SelLog, %seldirthree%
+	fileread, LogContents, %seldirthree%
+	Guicontrol, LogViewerWindow: text, LogContents, %LogContents%
 	return
 
 opendefault:
@@ -149,14 +163,6 @@ Par:
 	lv_gettext(carName,LV_GetNext())
 	fileread,fileContents,%carsFolderPath%\%carName%\%carDataFileListbox%
 	guicontrol,text,filecontentsbox,%fileContents%
-	return
-
-OpenLogViewer:
-	gosub, GetFileSelected
-	gui, LogViewerWindow: show, AutoSize Center, 8thGear FiveM Launcher
-	Guicontrol, LogViewerWindow: text, SelLog, %seldirthree%
-	fileread, LogContents, %seldirthree%
-	Guicontrol, LogViewerWindow: text, LogContents, %LogContents%
 	return
 
 GetFileSelected:
