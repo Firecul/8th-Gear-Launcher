@@ -73,7 +73,6 @@ Gui, New ;Main Window
 		Gui, add, button, w100 g8GDiscord, Discord
 		GUi, add, button, xp+545 w100 gGuiClose, Exit
 		Gui, Show, AutoSize Center, 8thGear FiveM Launcher
-		;Gui, -SysMenu +Owner
 
 gui, LogViewerWindow: font, s10 norm ;LogViewer Window
 	gui, LogViewerWindow: add, groupbox, w1000 h50, Selected log file:
@@ -103,9 +102,6 @@ lookforfivem:
 	if (SelectedFile = "")
 			MsgBox, The user didn't select anything.
 			LV_Delete()
-	;else
-			;MsgBox, The user selected the following:`n%SelectedFile%
-
 	Guicontrol, , selfile, %SelectedFile%
 	gosub, updatefiles
 	return
@@ -114,18 +110,29 @@ updatefiles:
 	StringTrimRight, seldir, selectedfile, 9
 	seldir2 := seldir . "FiveM.app\"
 	Loop, %seldir2%\CitizenFX.log*
-			LV_Add("", A_LoopFileName, A_LoopFileSizeKB, A_LoopFileTimeModified, A_LoopFileFullPath)s
-	LV_ModifyCol()	; Auto-size each column to fit its contents.
-	LV_ModifyCol(2, "75 Integer")	; For sorting purposes, indicate that column 2 is an integer.
+	LV_Add("", A_LoopFileName, A_LoopFileSizeKB, A_LoopFileTimeModified, A_LoopFileFullPath)
+	LV_ModifyCol() ;Auto-size each column
+	LV_ModifyCol(2, "75 Integer")
 	LV_ModifyCol(3, "digit")
-	; Display the window and return. The script will be notified whenever the user double clicks a row.
 	Gui, Show
+	return
+
+GetFileSelected:
+	RowNumber := 0 ;start at the top
+	Loop
+	{
+			RowNumber := LV_GetNext(RowNumber)
+			if not RowNumber ;if no more selected rows
+					break
+			LV_GetText(Text, RowNumber)
+			seldirthree := seldir2 . Text
+	}
 	return
 
 MyListView:
 	if (A_GuiEvent = "DoubleClick")
-	{
-		LV_GetText(FileName, A_EventInfo, 1) ; Get the text of the first field.
+		{
+		LV_GetText(FileName, A_EventInfo, 1)
 		seldirthree := seldir2 . FileName
 		gosub, OpenLogViewer
 		}
@@ -159,26 +166,14 @@ opennotepad:
 	MsgBox Could not open %seldirthree%
 	return
 
-Par:
+Par: ;Unused atm
 	lv_gettext(carName,LV_GetNext())
 	fileread,fileContents,%carsFolderPath%\%carName%\%carDataFileListbox%
 	guicontrol,text,filecontentsbox,%fileContents%
 	return
 
-GetFileSelected:
-	RowNumber := 0  ; This causes the first loop iteration to start the search at the top of the list.
-	Loop
-	{
-			RowNumber := LV_GetNext(RowNumber)  ; Resume the search at the row after that found by the previous iteration.
-			if not RowNumber  ; The above returned zero, so there are no more selected rows.
-					break
-			LV_GetText(Text, RowNumber)
-			seldirthree := seldir2 . Text
-	}
-	return
-
 8GDiscord:
- Run https://discord.gg/
+	Run https://discord.gg/
 	return
 
 GuiEscape: ;Escape Stuff
