@@ -27,7 +27,9 @@ Gui, New ;Main Window
 		Gui, Add, Picture, w620 h-1, 8thGearLauncher/8GLogo.png
 		Gui, Add, GroupBox, w220 h115, 8thGear Servers:
 		GUi, add, button, xp+10 yp+20 w200 +Default gRace, &Main Server
-		Gui, add, Groupbox, xp+240 yp-20 w370 h45, Disclaimer
+		gui, add, edit, w80 vCustomServerIP, 127.0.0.1
+		gui, add, button, xp+85 gCustomIP, Custom IP
+		Gui, add, Groupbox, xp+140 yp-49 w370 h45, Disclaimer
 		Gui, add, link, xp+10 yp+20 w350, By joining our servers you agree to be bound to the <a href="https://discordapp.com/channels/">#rules</a> of our server.
 		gui, add, groupbox, xp-10 yp+30 w370 h40,
 		gui, add, link, xp+10 yp+15 w350, <a href="https://8thgear.com/status">To see server status, click here to go to the website</a>
@@ -94,6 +96,11 @@ EnvGet, LOCALAPPDATA, LOCALAPPDATA ;Searches Fivem default location
 
 race:
 	Run fivem://connect/149.56.15.167
+	return
+
+CustomIP:
+	GuiControlGet, CustomServerIP
+	Run fivem://connect/%CustomServerIP%
 	return
 
 lookforfivem:
