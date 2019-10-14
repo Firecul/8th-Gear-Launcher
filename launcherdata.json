@@ -1,0 +1,14 @@
+{"Launcher Data": {
+	"Servers": {
+		"8th Gear Main": {
+			"IP": "127.0.0.1",
+			"Player Count": "5",
+			"Max Players": "30"
+		},
+		"Localhost": {
+			"IP": "127.0.0.1",
+			"Player Count": "0",
+			"Max Players": "10"
+		}
+	}
+}}
