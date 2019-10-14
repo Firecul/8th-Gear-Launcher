@@ -4,6 +4,7 @@
 			{
 				"DisplayName": "8th Gear Main",
 				"IP": "149.56.15.167",
+				"Port": "30120",
 				"PlayerCount": "5",
 				"MaxPlayers": "30",
 				"OneSync": "False"
@@ -11,6 +12,7 @@
 			{
 				"DisplayName": "Localhost",
 				"IP": "127.0.0.1",
+				"Port": "30120",
 				"PlayerCount": "0",
 				"MaxPlayers": "10",
 				"OneSync": "False"
