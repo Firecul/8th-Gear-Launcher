@@ -16,8 +16,9 @@ Gui, New ;Main Window
 	gui, add, text, xp-100 yp+30, OneSync Enabled
 	gui, add, checkbox, xp+100 w100 vOneSync,
 	gui, add, button, xp-101 yp+27 w80 gWrite, Write
+	gui, add, button, xp+122 w80 gDelete, Delete
 
-	gui, add, button, xp+122 w80 gGuiClose, Exit
+	gui, add, button, w80 gGuiClose, Exit
 	gui, show, AutoSize Center, INI Writer
 
 	goto UpdateList
@@ -37,6 +38,11 @@ Write:
 	IniWrite, %OneSync%, ServerList.ini, %ServerName%, OneSync
 	if ErrorLevel
 	MsgBox There has been an error writing to the file.`n`rPlease check output file.
+	goto UpdateList
+	return
+
+Delete:
+	inidelete, ServerList.ini, %ServerName%
 	goto UpdateList
 	return
 
