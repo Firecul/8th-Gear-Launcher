@@ -1,8 +1,12 @@
 #SingleInstance, Force
 
 Gui, New ;Main Window
-	Gui, font, norm
-	gui, add, text, yp+10, Server Name
+	Gui, font,
+	Gui +Delimiter|
+	gui, Add, Tab3,, Write|Read
+
+	Gui, Tab, 1 ;Write
+	gui, add, text, xp+10 yp+30, Server Name
 	gui, add, edit, xp+100 yp-3 w80 vServerName, Name
 	gui, add, text, xp-100 yp+30, IP Address
 	gui, add, edit, xp+100 yp-3 w80 vServerIP, 127.0.0.1
@@ -13,10 +17,18 @@ Gui, New ;Main Window
 	gui, add, UpDown, vMaxPlayers Range1-255, 30
 	gui, add, text, xp-100 yp+30, OneSync Enabled
 	gui, add, checkbox, xp+100 w80 vOneSync,
+	gui, add, button, xp-101 yp+27 w80 gSave, Save
 
-	gui, add, button, xp-101 yp+26 w80 gSave, Save
-	gui, add, button, xp+102 w80 gGuiClose, Exit
+	Gui, Tab, 2 ;Read
+	Gui, Add, DropDownList, vServerList,
+	gui, add, text, w80 h30 vStam, (empty)
+
+	Gui, Tab ;All Tabs
+	gui, add, button, xp+123 yp+203 w80 gGuiClose, Exit
 	gui, show, AutoSize Center, INI Writer
+
+	goto UpdateDetails
+
 	return
 
 Save:
@@ -32,6 +44,15 @@ Save:
 	IniWrite, %OneSync%, Launcherdata.ini, %ServerName%, OneSync
 	if ErrorLevel
 	MsgBox There has been an error writing to the file.`n`rPlease check output file.
+	return
+
+UpdateDetails:
+	Gui +Delimiter`n
+	IniRead, FetchedServerList, Launcherdata.ini,,
+	guicontrol, , ServerList, %FetchedServerList%
+	guicontrol, , Stam, %FetchedServerList%
+	;MsgBox %ServerList%
+	gui, show
 	return
 
 GuiEscape: ;Escape Stuff
