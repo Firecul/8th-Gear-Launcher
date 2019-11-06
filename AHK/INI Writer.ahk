@@ -38,17 +38,17 @@ Save:
 	GuiControlGet, MaxPlayers
 	GuiControlGet, OneSync
 
-	IniWrite, %ServerIP%, Launcherdata.ini, %ServerName%, IP
-	IniWrite, %ServerPort%, Launcherdata.ini, %ServerName%, Port
-	IniWrite, %MaxPlayers%, Launcherdata.ini, %ServerName%, MaxPlayers
-	IniWrite, %OneSync%, Launcherdata.ini, %ServerName%, OneSync
+	IniWrite, %ServerIP%, ServerList.ini, %ServerName%, IP
+	IniWrite, %ServerPort%, ServerList.ini, %ServerName%, Port
+	IniWrite, %MaxPlayers%, ServerList.ini, %ServerName%, MaxPlayers
+	IniWrite, %OneSync%, ServerList.ini, %ServerName%, OneSync
 	if ErrorLevel
 	MsgBox There has been an error writing to the file.`n`rPlease check output file.
 	return
 
 UpdateDetails:
 	Gui +Delimiter`n
-	IniRead, FetchedServerList, Launcherdata.ini,,
+	IniRead, FetchedServerList, ServerList.ini,,
 	guicontrol, , ServerList, %FetchedServerList%
 	guicontrol, , Stam, %FetchedServerList%
 	;MsgBox %ServerList%
