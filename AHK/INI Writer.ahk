@@ -21,7 +21,7 @@ Gui, New ;Main Window
 
 	Gui, Tab, 2 ;Read
 	Gui, Add, DropDownList, vServerList,
-	gui, add, text, w80 h30 vStam, (empty)
+	gui, add, text, w80 h135 vStam, (empty)
 
 	Gui, Tab ;All Tabs
 	gui, add, button, xp+123 yp+203 w80 gGuiClose, Exit
@@ -44,10 +44,12 @@ Save:
 	IniWrite, %OneSync%, ServerList.ini, %ServerName%, OneSync
 	if ErrorLevel
 	MsgBox There has been an error writing to the file.`n`rPlease check output file.
+	goto UpdateDetails
 	return
 
 UpdateDetails:
 	Gui +Delimiter`n
+	guicontrol,, ServerList, `n
 	IniRead, FetchedServerList, ServerList.ini,,
 	guicontrol, , ServerList, %FetchedServerList%
 	guicontrol, , Stam, %FetchedServerList%
