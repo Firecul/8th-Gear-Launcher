@@ -53,6 +53,20 @@ UpdateList:
 	gui, show
 	return
 
+UpdateDetails:
+	GuiControlGet, ServerList
+	iniread, ServerIP, ServerList.ini, %ServerList%, IP
+	iniread, ServerPort, ServerList.ini, %ServerList%, Port
+	iniread, MaxPlayers, ServerList.ini, %ServerList%, MaxPlayers
+	iniread, OneSync, ServerList.ini, %ServerList%, OneSync
+	guicontrol, , ServerName, %ServerList%
+	guicontrol, , ServerIP, %ServerIP%
+	guicontrol, , ServerPort, %ServerPort%
+	guicontrol, , MaxPlayers, %MaxPlayers%
+	guicontrol, , OneSync, %OneSync%
+
+ return
+
 GuiEscape: ;Escape Stuff
 	GuiClose:
 	ButtonCancel:
