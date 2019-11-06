@@ -2,25 +2,22 @@
 
 Gui, New ;Main Window
 	Gui, font,
-	Gui +Delimiter|
+	Gui +Delimiter`n
 
 	gui, add, text, yp+10, Current Servers
-	Gui, Add, DropDownList, xp+100 yp-3 w80 vServerList,
-	gui, add, text, xp-100 yp+30, Server Name
-	gui, add, edit, xp+100 yp-3 w80 vServerName, Name
+	Gui, Add, ComboBox, xp+100 yp-3 w100 vServerName gUpdateDetails,
 	gui, add, text, xp-100 yp+30, IP Address
-	gui, add, edit, xp+100 yp-3 w80 vServerIP, 127.0.0.1
+	gui, add, edit, xp+100 yp-3 w100 vServerIP,
 	gui, add, text, xp-100 yp+30, Port
-	gui, add, edit, xp+100 yp-3 w80 vServerPort, 30120
+	gui, add, edit, xp+100 yp-3 w100 vServerPort,
 	gui, add, text, xp-100 yp+30, Max Players
-	Gui, Add, Edit, xp+100 yp-3 w80
-	gui, add, UpDown, vMaxPlayers Range1-255, 30
+	Gui, Add, Edit, xp+100 yp-3 w100, 30
+	gui, add, UpDown, vMaxPlayers Range1-255,
 	gui, add, text, xp-100 yp+30, OneSync Enabled
-	gui, add, checkbox, xp+100 w80 vOneSync,
+	gui, add, checkbox, xp+100 w100 vOneSync,
 	gui, add, button, xp-101 yp+27 w80 gWrite, Write
-	gui, add, text, w80 h145 vStam, (empty)
 
-	gui, add, button, xp+102 yp+152 w80 gGuiClose, Exit
+	gui, add, button, xp+102 w80 gGuiClose, Exit
 	gui, show, AutoSize Center, INI Writer
 
 	goto UpdateList
@@ -44,26 +41,29 @@ Write:
 	return
 
 UpdateList:
-	Gui +Delimiter`n
-	guicontrol,, ServerList, `n
-	IniRead, FetchedServerList, ServerList.ini,,
-	guicontrol, , ServerList, %FetchedServerList%
-	guicontrol, , Stam, %FetchedServerList%
-	;MsgBox %ServerList%
+
+	guicontrol,, ServerName, `n
+	IniRead, ServerName, ServerList.ini,,
+	guicontrol, , ServerName, %ServerName%
+	guicontrol, text, ServerIP
+	guicontrol, text, ServerPort
+	guicontrol, text, MaxPlayers
+	guicontrol, text, OneSync
 	gui, show
 	return
 
 UpdateDetails:
-	GuiControlGet, ServerList
-	iniread, ServerIP, ServerList.ini, %ServerList%, IP
-	iniread, ServerPort, ServerList.ini, %ServerList%, Port
-	iniread, MaxPlayers, ServerList.ini, %ServerList%, MaxPlayers
-	iniread, OneSync, ServerList.ini, %ServerList%, OneSync
-	guicontrol, , ServerName, %ServerList%
+	GuiControlGet, ServerName
+	iniread, ServerIP, ServerList.ini, %ServerName%, IP
+	iniread, ServerPort, ServerList.ini, %ServerName%, Port
+	iniread, MaxPlayers, ServerList.ini, %ServerName%, MaxPlayers
+	iniread, OneSync, ServerList.ini, %ServerName%, OneSync
+	guicontrol, , ServerName, %ServerName%
 	guicontrol, , ServerIP, %ServerIP%
 	guicontrol, , ServerPort, %ServerPort%
 	guicontrol, , MaxPlayers, %MaxPlayers%
 	guicontrol, , OneSync, %OneSync%
+	guicontrol, text, OneSync
 
  return
 
