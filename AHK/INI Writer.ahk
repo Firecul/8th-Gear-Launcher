@@ -4,7 +4,7 @@ Gui, New ;Main Window
 	Gui, font,
 	Gui +Delimiter`n
 
-	gui, add, text, yp+10, Current Servers
+	gui, add, text, yp+10, Server Name
 	Gui, Add, ComboBox, xp+100 yp-3 w100 vServerName gUpdateDetails,
 	gui, add, text, xp-100 yp+30, IP Address
 	gui, add, edit, xp+100 yp-3 w100 vServerIP,
@@ -17,7 +17,7 @@ Gui, New ;Main Window
 	gui, add, checkbox, xp+100 w100 vOneSync,
 	gui, add, button, xp-101 yp+27 w80 gWrite, Write
 
-	gui, add, button, xp+102 w80 gGuiClose, Exit
+	gui, add, button, xp+122 w80 gGuiClose, Exit
 	gui, show, AutoSize Center, INI Writer
 
 	goto UpdateList
@@ -41,7 +41,6 @@ Write:
 	return
 
 UpdateList:
-
 	guicontrol,, ServerName, `n
 	IniRead, ServerName, ServerList.ini,,
 	guicontrol, , ServerName, %ServerName%
@@ -50,6 +49,7 @@ UpdateList:
 	guicontrol, text, MaxPlayers
 	guicontrol, text, OneSync
 	gui, show
+	goto UpdateDetails
 	return
 
 UpdateDetails:
@@ -58,14 +58,12 @@ UpdateDetails:
 	iniread, ServerPort, ServerList.ini, %ServerName%, Port
 	iniread, MaxPlayers, ServerList.ini, %ServerName%, MaxPlayers
 	iniread, OneSync, ServerList.ini, %ServerName%, OneSync
-	guicontrol, , ServerName, %ServerName%
 	guicontrol, , ServerIP, %ServerIP%
 	guicontrol, , ServerPort, %ServerPort%
 	guicontrol, , MaxPlayers, %MaxPlayers%
 	guicontrol, , OneSync, %OneSync%
 	guicontrol, text, OneSync
-
- return
+	return
 
 GuiEscape: ;Escape Stuff
 	GuiClose:
