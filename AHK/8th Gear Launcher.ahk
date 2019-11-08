@@ -3,6 +3,7 @@
 FileCreateDir, 8thGearLauncher ;Creation stuff
 	Fileinstall, pictures/8GLogo.png, 8thGearLauncher/8GLogo.png, 0
 	Fileinstall, icons/8G.ico, 8thGearLauncher/8G.ico, 0
+	Fileinstall, ServerList.ini, 8thGearLauncher/ServerList.ini, 0
 	Menu, Tray, Icon, 8thGearLauncher/8G.ico, 1, 1
 
 vFAQ =
@@ -25,17 +26,18 @@ Gui, New ;Main Window
 
 	Gui, Tab, 1 ;Connect
 		Gui, Add, Picture, w620 h-1, 8thGearLauncher/8GLogo.png
-		Gui, Add, GroupBox, w220 h115, 8thGear Servers:
-		GUi, add, button, xp+10 yp+20 w200 +Default gRace, &Main Server
-		gui, add, edit, w80 vCustomServerIP, 127.0.0.1
-		gui, add, button, xp+85 gCustomIP, Custom IP
-		Gui, add, Groupbox, xp+140 yp-49 w370 h45, Disclaimer
+		Gui, Add, GroupBox, w220 h81, 8th Gear Servers:
+		gui, add, ComboBox, xp+10 yp+20 w133 vServerName,
+		gui, add, button, xp+139 yp-1 w60 gConnect, Connect
+		;GUi, add, button, xp+10 yp+20 w200 +Default gRace, &Main Server
+		GUi, add, button, xp-140 yp+30 w200 gLocalhost, &Localhost
+		Gui, add, Groupbox, xp+220 yp-49 w370 h45, Disclaimer
 		Gui, add, link, xp+10 yp+20 w350, By joining our servers you agree to be bound to the <a href="https://discordapp.com/channels/">#rules</a> of our server.
-		gui, add, groupbox, xp-10 yp+30 w370 h40,
+		gui, add, groupbox, xp-10 yp+21 w370 h40,
 		gui, add, link, xp+10 yp+15 w350, <a href="https://8thgear.com/status">To see server status, click here to go to the website</a>
 
 	Gui, Tab, 2 ;Rules
-		Gui, Add, GroupBox, w620 h700, 8thGear Specific Rules:
+		Gui, Add, GroupBox, w620 h700, 8th Gear Specific Rules:
 		Gui, font, bold
 		Gui, Add, text, xp+10 yp+20 w550, 1) THE GOLDEN RULE: Don't be a Dick
 		Normal("Personal attacks, harassment, hate speech, etc. will not be tolerated. Treat others with respect at all times.")
@@ -68,13 +70,13 @@ Gui, New ;Main Window
 
 	Gui, Tab, 5 ;About
 		Gui, font, s10 norm
-		Gui, Add, link, w620, Hello and welcome to the 8thGear FiveM Launcher! `n`nThis Launcher serves as the hub for everything you need to play on the 8thGear servers and a few useful tools that will help you along the way. `n`n<Blurb goes here>
+		Gui, Add, link, w620, Hello and welcome to the 8th Gear FiveM Launcher! `n`nThis Launcher serves as the hub for everything you need to play on the 8th Gear servers and a few useful tools that will help you along the way. `n`n<Blurb goes here>
 
 	Gui, Tab ;All Tabs
 		Gui, font, norm
 		Gui, add, button, w100 g8GDiscord, Discord
 		GUi, add, button, xp+545 w100 gGuiClose, Exit
-		Gui, Show, AutoSize Center, 8thGear FiveM Launcher
+		Gui, Show, AutoSize Center, 8th Gear FiveM Launcher
 
 gui, LogViewerWindow: font, s10 norm ;LogViewer Window
 	gui, LogViewerWindow: add, groupbox, w1000 h50, Selected log file:
@@ -91,16 +93,28 @@ EnvGet, LOCALAPPDATA, LOCALAPPDATA ;Searches Fivem default location
 	Loop, %LOCALAPPDATA%\FiveM\FiveM.exe, , 1
 	SelectedFile := A_LoopFileFullPath
 	Guicontrol, , selfile, %SelectedFile%
-	goto updatefiles
+	gosub updatefiles
+	gosub UpdateList
 	return
 
-race:
-	Run fivem://connect/149.56.15.167
+Localhost:
+	Run fivem://connect/127.0.0.1
 	return
 
-CustomIP:
-	GuiControlGet, CustomServerIP
-	Run fivem://connect/%CustomServerIP%
+UpdateList:
+	Gui +Delimiter`n
+	guicontrol,, ServerName, `n
+	IniRead, ServerName, 8thGearLauncher/ServerList.ini,,
+	guicontrol, , ServerName, %ServerName%
+	GuiControl, ChooseString, ComboBox1, 8th
+	gui, show
+	return
+
+Connect:
+	GuiControlGet, ServerName
+	iniread, ServerIP, ServerList.ini, %ServerName%, IP
+	iniread, ServerPort, ServerList.ini, %ServerName%, Port
+	Run fivem://connect/%ServerIP%:%ServerPort%
 	return
 
 lookforfivem:
