@@ -84,6 +84,7 @@ gui, LogViewerWindow: font, s10 norm ;LogViewer Window
 	gui, LogViewerWindow: add, edit, xp-10 yp+39 w1000 r30 vLogContents, (File Empty?)
 
 menu, submenu, add, Log Viewer, OpenLogViewer ;Context Menu
+	menu, submenu, Default, Log Viewer
 	menu, submenu, add, Default Editor, opendefault
 	menu, submenu, add, Notepad, opennotepad
 	Menu, ContextMenu, Add, Open In, :Submenu
