@@ -134,6 +134,7 @@ updatefiles:
 	LV_ModifyCol() ;Auto-size each column
 	LV_ModifyCol(2, "75 Integer")
 	LV_ModifyCol(3, "digit")
+	LV_ModifyCol(3, "SortDesc")
 	Gui, Show
 	return
 
