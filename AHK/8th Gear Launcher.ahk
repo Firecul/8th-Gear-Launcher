@@ -27,7 +27,7 @@ Gui, New ;Main Window
 	Gui, Tab, 1 ;Connect
 		Gui, Add, Picture, w620 h-1, 8thGearLauncher/8GLogo.png
 		Gui, Add, GroupBox, w220 h81, 8th Gear Servers:
-		gui, add, ComboBox, xp+10 yp+20 w133 vServerName,
+		gui, add, DropDownList, xp+10 yp+20 w133 vServerName,
 		gui, add, button, xp+139 yp-1 w60 gConnect, Connect
 		GUi, add, button, xp-140 yp+30 w200 gLocalhost, &Localhost
 		Gui, add, Groupbox, xp+220 yp-49 w370 h45, Disclaimer
@@ -128,8 +128,8 @@ lookforfivem:
 
 updatefiles:
 	StringTrimRight, seldir, selectedfile, 9
-	seldir2 := seldir . "FiveM.app\"
-	Loop, %seldir2%\CitizenFX.log*
+	seldir2 := seldir . "FiveM.app\logs\"
+	Loop, %seldir2%\*.log
 	LV_Add("", A_LoopFileName, A_LoopFileSizeKB, A_LoopFileTimeModified, A_LoopFileFullPath)
 	LV_ModifyCol() ;Auto-size each column
 	LV_ModifyCol(2, "75 Integer")
