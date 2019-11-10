@@ -129,7 +129,7 @@ lookforfivem:
 updatefiles:
 	StringTrimRight, seldir, selectedfile, 9
 	seldir2 := seldir . "FiveM.app\logs\"
-	Loop, %seldir2%\*.log
+	Loop, %seldir2%\*.log*
 	LV_Add("", A_LoopFileName, A_LoopFileSizeKB, A_LoopFileTimeModified, A_LoopFileFullPath)
 	LV_ModifyCol() ;Auto-size each column
 	LV_ModifyCol(2, "75 Integer")
