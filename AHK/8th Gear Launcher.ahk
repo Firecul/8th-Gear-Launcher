@@ -65,7 +65,7 @@ Gui, New ;Main Window
 		Gui, add, text, xp+10 yp+20 w300 vselfile, (Not found)
 		Gui, add, button, xp+470 yp-6 glookforfivem, Locate FiveM install
 		Gui, Add, groupbox, xp-480 yp+40 w620 h260, Found Logs:
-		Gui, Add, ListView, xp+10 yp+20 r10 w600 gMyListView, Name|Size (KB)|Modified
+		Gui, Add, ListView, xp+10 yp+20 r10 w600 AltSubmit Grid -Multi gMyListView vMyListView, Name|Size (KB)|Modified
 
 	Gui, Tab, 5 ;About
 		Gui, font, s10 norm
@@ -161,7 +161,8 @@ MyListView:
 	return
 
 GuiContextMenu:
-	if A_GuiControl <> List
+	if (A_GuiControl != "MyListView")
+		return
 	gosub, GetFileSelected
 	Menu, ContextMenu, Show, %A_GuiX%, %A_GuiY%
 	return
