@@ -134,7 +134,7 @@ updatefiles:
 	LV_Add("", A_LoopFileName, A_LoopFileSizeKB, A_LoopFileTimeModified, A_LoopFileFullPath)
 	LV_ModifyCol() ;Auto-size each column
 	LV_ModifyCol(2, "AutoHdr Integer")
-	LV_ModifyCol(3, "Integer")
+	LV_ModifyCol(3, "Digit")
 	LV_ModifyCol(3, "SortDesc")
 	Gui, Show
 	return
