@@ -27,9 +27,8 @@ Gui, New ;Main Window
 	Gui, Tab, 1 ;Connect
 		Gui, Add, Picture, w620 h-1, 8thGearLauncher/8GLogo.png
 		Gui, Add, GroupBox, w220 h81, 8th Gear Servers:
-		gui, add, ComboBox, xp+10 yp+20 w133 vServerName,
+		gui, add, DropDownList, xp+10 yp+20 w133 vServerName,
 		gui, add, button, xp+139 yp-1 w60 gConnect, Connect
-		;GUi, add, button, xp+10 yp+20 w200 +Default gRace, &Main Server
 		GUi, add, button, xp-140 yp+30 w200 gLocalhost, &Localhost
 		Gui, add, Groupbox, xp+220 yp-49 w370 h45, Disclaimer
 		Gui, add, link, xp+10 yp+20 w350, By joining our servers you agree to be bound to the <a href="https://discordapp.com/channels/">#rules</a> of our server.
@@ -66,7 +65,7 @@ Gui, New ;Main Window
 		Gui, add, text, xp+10 yp+20 w300 vselfile, (Not found)
 		Gui, add, button, xp+470 yp-6 glookforfivem, Locate FiveM install
 		Gui, Add, groupbox, xp-480 yp+40 w620 h260, Found Logs:
-		Gui, Add, ListView, xp+10 yp+20 r10 w600 gMyListView, Name|Size (KB)|Modified
+		Gui, Add, ListView, xp+10 yp+20 r10 w600 AltSubmit Grid -Multi gMyListView vMyListView, Name|Size (KB)|Modified
 
 	Gui, Tab, 5 ;About
 		Gui, font, s10 norm
@@ -85,6 +84,7 @@ gui, LogViewerWindow: font, s10 norm ;LogViewer Window
 	gui, LogViewerWindow: add, edit, xp-10 yp+39 w1000 r30 vLogContents, (File Empty?)
 
 menu, submenu, add, Log Viewer, OpenLogViewer ;Context Menu
+	menu, submenu, Default, Log Viewer
 	menu, submenu, add, Default Editor, opendefault
 	menu, submenu, add, Notepad, opennotepad
 	Menu, ContextMenu, Add, Open In, :Submenu
@@ -129,12 +129,13 @@ lookforfivem:
 
 updatefiles:
 	StringTrimRight, seldir, selectedfile, 9
-	seldir2 := seldir . "FiveM.app\"
-	Loop, %seldir2%\CitizenFX.log*
+	seldir2 := seldir . "FiveM.app\logs\"
+	Loop, %seldir2%\*.log*
 	LV_Add("", A_LoopFileName, A_LoopFileSizeKB, A_LoopFileTimeModified, A_LoopFileFullPath)
 	LV_ModifyCol() ;Auto-size each column
-	LV_ModifyCol(2, "75 Integer")
-	LV_ModifyCol(3, "digit")
+	LV_ModifyCol(2, "AutoHdr Integer")
+	LV_ModifyCol(3, "Digit")
+	LV_ModifyCol(3, "SortDesc")
 	Gui, Show
 	return
 
@@ -160,7 +161,8 @@ MyListView:
 	return
 
 GuiContextMenu:
-	if A_GuiControl <> List
+	if (A_GuiControl != "MyListView")
+		return
 	gosub, GetFileSelected
 	Menu, ContextMenu, Show, %A_GuiX%, %A_GuiY%
 	return
