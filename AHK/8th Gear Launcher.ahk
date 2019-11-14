@@ -1,5 +1,5 @@
 #SingleInstance, Force
-
+StringCaseSense, On
 FileCreateDir, 8thGearLauncher ;Creation stuff
 	Fileinstall, pictures/8GLogo.png, 8thGearLauncher/8GLogo.png, 0
 	Fileinstall, icons/8G.ico, 8thGearLauncher/8G.ico, 0
@@ -82,6 +82,9 @@ gui, LogViewerWindow: font, s10 norm ;LogViewer Window
 	gui, LogViewerWindow: add, text, xp+10 yp+20 w980 vSelLog, (Error)
 	gui, LogViewerWindow: font,, Lucida Console
 	gui, LogViewerWindow: add, edit, xp-10 yp+39 w1000 r30 vLogContents, (File Empty?)
+	gui, LogViewerWindow: font,
+	gui, LogViewerWindow: font, s10
+	gui, LogViewerWindow: add, button, gParse, Parse
 
 menu, submenu, add, Log Viewer, OpenLogViewer ;Context Menu
 	menu, submenu, Default, Log Viewer
@@ -173,6 +176,15 @@ OpenLogViewer:
 	Guicontrol, LogViewerWindow: text, SelLog, %seldirthree%
 	fileread, LogContents, %seldirthree%
 	Guicontrol, LogViewerWindow: text, LogContents, %LogContents%
+	return
+
+Parse:
+	chat :=
+	file := seldirthree
+	Loop, read, %file%
+	if A_LoopReadLine contains Cannot,Error,ERROR,Failed,can't,overriding,warning,Exception,^1SCRIPT,couldn't,unexpected,"Could not parse",GlobalError
+		chat = %chat%%A_LoopReadLine%`n
+		Guicontrol, LogViewerWindow: text, LogContents, %chat%
 	return
 
 opendefault:
