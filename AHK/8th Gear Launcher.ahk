@@ -1,4 +1,5 @@
 #SingleInstance, Force
+#Include Anchor.ahk
 StringCaseSense, On
 FileCreateDir, 8thGearLauncher ;Creation stuff
 	Fileinstall, pictures/8GLogo.png, 8thGearLauncher/8GLogo.png, 0
@@ -77,8 +78,9 @@ Gui, New ;Main Window
 		GUi, add, button, xp+545 w100 gGuiClose, Exit
 		Gui, Show, AutoSize Center, 8th Gear FiveM Launcher
 
-gui, LogViewerWindow: font, s10 norm ;LogViewer Window
-	gui, LogViewerWindow: add, groupbox, w1000 h50, Selected log file:
+Gui, LogViewerWindow: +Resize
+	gui, LogViewerWindow: font, s10 norm ;LogViewer Window
+	gui, LogViewerWindow: add, groupbox, w1000 h50 vGB, Selected log file:
 	gui, LogViewerWindow: add, text, xp+10 yp+20 w980 vSelLog, (Error)
 	gui, LogViewerWindow: font,, Lucida Console
 	gui, LogViewerWindow: add, edit, xp-10 yp+39 w1000 r30 vLogContents, (File Empty?)
@@ -168,6 +170,13 @@ GuiContextMenu:
 		return
 	gosub, GetFileSelected
 	Menu, ContextMenu, Show, %A_GuiX%, %A_GuiY%
+	return
+
+LogViewerWindowGuiSize:
+	Anchor("GB","w")
+	Anchor("SelLog","w")
+	Anchor("LogContents","wh")
+	Anchor("Parse","y")
 	return
 
 OpenLogViewer:
