@@ -210,12 +210,6 @@ opennotepad:
 	MsgBox Could not open %seldirthree%
 	return
 
-Par: ;Unused atm
-	lv_gettext(carName,LV_GetNext())
-	fileread,fileContents,%carsFolderPath%\%carName%\%carDataFileListbox%
-	guicontrol,text,filecontentsbox,%fileContents%
-	return
-
 8GDiscord:
 	Run https://discord.gg/
 	return
