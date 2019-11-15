@@ -191,9 +191,10 @@ Parse:
 	chat :=
 	file := seldirthree
 	Loop, read, %file%
-	if A_LoopReadLine contains Cannot,Error,ERROR,Failed,can't,overriding,warning,Exception,^1SCRIPT,couldn't,unexpected,"Could not parse",GlobalError
-		chat = %chat%%A_LoopReadLine%`n
-		Guicontrol, LogViewerWindow: text, LogContents, %chat%
+		if A_LoopReadLine contains can't,Cannot,couldn't,Could not parse,error,Error,ERROR,Exception,failed,Failed,GlobalError,nui://racescript/,#overriding,unexpected,warning,^1SCRIPT,
+		 	if A_LoopReadLine not contains ignore-certificate-errors,terrorbyte,is not a platform image,f7c13cb204bc9aecf40b
+				chat = %chat%%A_LoopReadLine%`n
+			Guicontrol, LogViewerWindow: text, LogContents, %chat%
 	return
 
 opendefault:
