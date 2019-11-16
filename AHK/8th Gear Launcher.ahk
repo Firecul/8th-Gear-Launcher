@@ -193,7 +193,7 @@ Parse:
 	Loop, read, %file%
 		if A_LoopReadLine contains can't,Cannot,couldn't,Could not parse,error,Error,ERROR,Exception,failed,Failed,GlobalError,nui://racescript/,#overriding,unexpected,warning,^1SCRIPT,
 		 	if A_LoopReadLine not contains ignore-certificate-errors,terrorbyte,is not a platform image,f7c13cb204bc9aecf40b
-				chat = %chat%%A_LoopReadLine%`n
+				chat = %chat%Line #%A_Index%: %A_LoopReadLine%`n
 			Guicontrol, LogViewerWindow: text, LogContents, %chat%
 	return
 
