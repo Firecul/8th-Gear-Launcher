@@ -188,7 +188,7 @@ OpenLogViewer:
 	return
 
 Parse:
-StringSplit, LogLines, LogContents, `n, `r
+StringSplit, LogLines, LogContents, `r, `n
 Loop, %LogLines0%
 	{
 		logline := LogLines%a_index%
