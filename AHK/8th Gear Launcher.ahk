@@ -83,7 +83,7 @@ Gui, LogViewerWindow: +Resize
 	gui, LogViewerWindow: add, groupbox, w1000 h50 vGB, Selected log file:
 	gui, LogViewerWindow: add, text, xp+10 yp+20 w980 vSelLog, (Error)
 	gui, LogViewerWindow: font,, Lucida Console
-	gui, LogViewerWindow: add, edit, xp-10 yp+39 w1000 r30 ReadOnly vLogContents, (File Empty?)
+	gui, LogViewerWindow: add, edit, xp-10 yp+39 w1000 r30 ReadOnly t10 vLogContents, (File Empty?)
 	gui, LogViewerWindow: font,
 	gui, LogViewerWindow: font, s10
 	gui, LogViewerWindow: add, button, gParse, Parse
@@ -195,7 +195,7 @@ Parse:
 			stringtrimleft, TrimmedLine, logline, 52
 			if TrimmedLine contains can't,Cannot,couldn't,Could not parse,error,Error,ERROR,Exception,failed,Failed,GlobalError,nui://racescript/,#overriding,unexpected,warning,^1SCRIPT,
 				if TrimmedLine not contains f7c13cb204bc9aecf40b,ignore-certificate-errors,is not a platform image,terrorbyte
-					TrimmedLinea = %TrimmedLinea%Line #%A_Index%: %TrimmedLine%`n
+					TrimmedLinea = %TrimmedLinea%Line #%A_Index%:%A_Tab%%TrimmedLine%`n
 		}
 	Guicontrol, LogViewerWindow: text, LogContents, %TrimmedLinea%
 	return
