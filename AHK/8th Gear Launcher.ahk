@@ -83,7 +83,7 @@ Gui, LogViewerWindow: +Resize
 	gui, LogViewerWindow: add, groupbox, w1000 h50 vGB, Selected log file:
 	gui, LogViewerWindow: add, text, xp+10 yp+20 w980 vSelLog, (Error)
 	gui, LogViewerWindow: font,, Lucida Console
-	gui, LogViewerWindow: add, edit, xp-10 yp+39 w1000 r30 vLogContents, (File Empty?)
+	gui, LogViewerWindow: add, edit, xp-10 yp+39 w1000 r30 ReadOnly vLogContents, (File Empty?)
 	gui, LogViewerWindow: font,
 	gui, LogViewerWindow: font, s10
 	gui, LogViewerWindow: add, button, gParse, Parse
