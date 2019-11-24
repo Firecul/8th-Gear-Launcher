@@ -188,13 +188,17 @@ OpenLogViewer:
 	return
 
 Parse:
-	chat :=
-	file := seldirthree
-	Loop, read, %file%
-		if A_LoopReadLine contains can't,Cannot,couldn't,Could not parse,error,Error,ERROR,Exception,failed,Failed,GlobalError,nui://racescript/,#overriding,unexpected,warning,^1SCRIPT,
-		 	if A_LoopReadLine not contains ignore-certificate-errors,terrorbyte,is not a platform image,f7c13cb204bc9aecf40b
-				chat = %chat%Line #%A_Index%: %A_LoopReadLine%`n
-			Guicontrol, LogViewerWindow: text, LogContents, %chat%
+StringSplit, LogLines, LogContents, `n, `r
+Loop, %LogLines0%
+	{
+		logline := LogLines%a_index%
+		stringtrimleft, TrimmedLine, logline, 52
+		if TrimmedLine contains can't,Cannot,couldn't,Could not parse,error,Error,ERROR,Exception,failed,Failed,GlobalError,nui://racescript/,#overriding,unexpected,warning,^1SCRIPT,
+			if TrimmedLine not contains ignore-certificate-errors,terrorbyte,is not a platform image,f7c13cb204bc9aecf40b
+
+		TrimmedLinea = %TrimmedLinea%Line #%A_Index%: %TrimmedLine%`n
+	}
+	Guicontrol, LogViewerWindow: text, LogContents, %TrimmedLinea%
 	return
 
 opendefault:
