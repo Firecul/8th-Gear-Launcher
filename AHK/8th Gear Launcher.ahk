@@ -188,16 +188,15 @@ OpenLogViewer:
 	return
 
 Parse:
-StringSplit, LogLines, LogContents, `r, `n
-Loop, %LogLines0%
-	{
-		logline := LogLines%a_index%
-		stringtrimleft, TrimmedLine, logline, 52
-		if TrimmedLine contains can't,Cannot,couldn't,Could not parse,error,Error,ERROR,Exception,failed,Failed,GlobalError,nui://racescript/,#overriding,unexpected,warning,^1SCRIPT,
-			if TrimmedLine not contains ignore-certificate-errors,terrorbyte,is not a platform image,f7c13cb204bc9aecf40b
-
-		TrimmedLinea = %TrimmedLinea%Line #%A_Index%: %TrimmedLine%`n
-	}
+	StringSplit, LogLines, LogContents, `r, `n
+	Loop, %LogLines0%
+		{
+			logline := LogLines%a_index%
+			stringtrimleft, TrimmedLine, logline, 52
+			if TrimmedLine contains can't,Cannot,couldn't,Could not parse,error,Error,ERROR,Exception,failed,Failed,GlobalError,nui://racescript/,#overriding,unexpected,warning,^1SCRIPT,
+				if TrimmedLine not contains f7c13cb204bc9aecf40b,ignore-certificate-errors,is not a platform image,terrorbyte
+					TrimmedLinea = %TrimmedLinea%Line #%A_Index%: %TrimmedLine%`n
+		}
 	Guicontrol, LogViewerWindow: text, LogContents, %TrimmedLinea%
 	return
 
