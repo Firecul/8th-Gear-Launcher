@@ -189,11 +189,13 @@ OpenLogViewer:
 
 Parse:
 	StringSplit, LogLines, LogContents, `r, `n
+	logline :=
+	TrimmedLinea :=
 	Loop, %LogLines0%
 		{
 			logline := LogLines%a_index%
 			stringtrimleft, TrimmedLine, logline, 52
-			if TrimmedLine contains can't,Cannot,couldn't,Could not parse,error,Error,ERROR,Exception,failed,Failed,GlobalError,nui://racescript/,#overriding,unexpected,warning,^1SCRIPT,
+			if TrimmedLine contains can't,Cannot,couldn't,Could not parse,error,Error,ERROR,Exception,failed,Failed,GlobalError,nui://racescript/,#overriding,unexpected,warning,^1SCRIPT
 				if TrimmedLine not contains f7c13cb204bc9aecf40b,ignore-certificate-errors,is not a platform image,terrorbyte
 					TrimmedLinea = %TrimmedLinea%Line #%A_Index%:%A_Tab%%TrimmedLine%`n
 		}
