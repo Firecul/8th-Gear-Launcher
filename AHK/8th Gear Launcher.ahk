@@ -83,10 +83,11 @@ Gui, LogViewerWindow: +Resize
 	gui, LogViewerWindow: add, groupbox, w1000 h50 vGB, Selected log file:
 	gui, LogViewerWindow: add, text, xp+10 yp+20 w980 vSelLog, (Error)
 	gui, LogViewerWindow: font,, Lucida Console
-	gui, LogViewerWindow: add, edit, xp-10 yp+39 w1000 r30 ReadOnly t10 vLogContents, (File Empty?)
+	gui, LogViewerWindow: add, edit, xp-10 yp+39 w1000 r30 ReadOnly t10 vLogContents, (Loading)
 	gui, LogViewerWindow: font,
 	gui, LogViewerWindow: font, s10
 	gui, LogViewerWindow: add, button, gParse, Parse
+	gui, LogViewerWindow: add, button, gSlowOpen, Thorough Open (Slow)
 
 menu, submenu, add, Log Viewer, OpenLogViewer ;Context Menu
 	menu, submenu, Default, Log Viewer
@@ -177,6 +178,7 @@ LogViewerWindowGuiSize:
 	Anchor("SelLog","w")
 	Anchor("LogContents","wh")
 	Anchor("Parse","y")
+	Anchor("SlowOpen","y")
 	return
 
 OpenLogViewer:
@@ -201,6 +203,21 @@ Parse:
 		}
 	Guicontrol, LogViewerWindow: text, LogContents, %TrimmedLinea%
 	return
+
+SlowOpen:
+	;MsgBox, % Nonulls(seldirthree)
+	Guicontrol, LogViewerWindow: text, LogContents, % Nonulls(seldirthree)
+	return
+
+NoNulls(Filename) {
+	f := FileOpen(Filename, "r")
+	While Not f.AtEOF {
+		If Byte := f.ReadUChar()
+		Result .= Chr(Byte)
+		}
+	f.Close
+	Return, Result
+	}
 
 opendefault:
 	gosub, GetFileSelected
