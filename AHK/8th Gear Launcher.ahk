@@ -65,8 +65,12 @@ Gui, New ;Main Window
 		Gui, Add, groupbox, w620 h50, FiveM install location:
 		Gui, add, text, xp+10 yp+20 w300 vselfile, (Not found)
 		Gui, add, button, xp+470 yp-6 glookforfivem, Locate FiveM install
-		Gui, Add, groupbox, xp-480 yp+40 w620 h260, Found Logs:
+		Gui, Add, groupbox, xp-480 yp+40 w620 h290, Current Logs:
 		Gui, Add, ListView, xp+10 yp+20 r10 w600 AltSubmit Grid -Multi gMyListView vMyListView, Name|Size (KB)|Modified
+		Gui, add, button, gBackupLogs vBackupLogs, Backup Current Logs
+		Gui, Add, groupbox, xp-10 yp+40 w620 h260, Backed-up Logs:
+		Gui, Add, ListView, xp+10 yp+20 r10 w600 AltSubmit Grid -Multi vMyNewListView, Name|Size (KB)|Modified
+		Gui, ListView, SysListView321
 
 	Gui, Tab, 5 ;About
 		Gui, font, s10 norm
@@ -136,13 +140,23 @@ lookforfivem:
 updatefiles:
 	StringTrimRight, seldir, selectedfile, 9
 	seldir2 := seldir . "FiveM.app\logs\"
+	seldir5 := seldir . "FiveM.app\Backed-up logs\"
 	Loop, %seldir2%\*.log*
 	LV_Add("", A_LoopFileName, A_LoopFileSizeKB, A_LoopFileTimeModified, A_LoopFileFullPath)
 	LV_ModifyCol() ;Auto-size each column
 	LV_ModifyCol(2, "AutoHdr Integer")
 	LV_ModifyCol(3, "Digit")
 	LV_ModifyCol(3, "SortDesc")
-	Gui, Show
+	IfExist, %seldir5%
+		Gui, ListView, SysListView322
+		Loop, %seldir5%\*.log
+		LV_Add("", A_LoopFileName, A_LoopFileSizeKB, A_LoopFileTimeModified, A_LoopFileFullPath)
+		LV_ModifyCol() ;Auto-size each column
+		LV_ModifyCol(2, "AutoHdr Integer")
+		LV_ModifyCol(3, "Digit")
+		LV_ModifyCol(3, "SortDesc")
+		Gui, Show
+		Gui, ListView, SysListView321
 	return
 
 GetFileSelected:
@@ -218,6 +232,31 @@ NoNulls(Filename) {
 	f.Close
 	Return, Result
 	}
+
+BackupLogs:
+	;seldir2 := seldir . "FiveM.app\logs\"
+	;seldir5 := seldir . "FiveM.app\Backed-up logs\"
+	;msgbox %seldir2%
+	;msgbox %seldir5%
+	IfNotExist, %seldir5%
+		MsgBox, The target folder does not exist. Creating it.
+		FileCreateDir, %seldir5%
+	IfExist, %seldir5%
+		MsgBox, The target folder exists. Copying files.
+	FileCopy, %seldir2%\*.log, %seldir5%\*.*
+	msgbox, Done
+	Gui, ListView, SysListView322
+	LV_Delete()
+	Loop, %seldir5%\*.log
+		LV_Add("", A_LoopFileName, A_LoopFileSizeKB, A_LoopFileTimeModified, A_LoopFileFullPath)
+		LV_ModifyCol() ;Auto-size each column
+		LV_ModifyCol(2, "AutoHdr Integer")
+		LV_ModifyCol(3, "Digit")
+		LV_ModifyCol(3, "SortDesc")
+	GuiControl,	Disable, BackupLogs
+	Gui, Show
+	Gui, ListView, SysListView321
+	return
 
 opendefault:
 	gosub, GetFileSelected
