@@ -68,7 +68,8 @@ Gui, New ;Main Window
 		Gui, Add, groupbox, xp-480 yp+40 w620 h290, Current Logs:
 		Gui, Add, ListView, xp+10 yp+20 r10 w600 AltSubmit Grid -Multi gMyListView vMyListView, Name|Size (KB)|Modified
 		Gui, add, button, gBackupLogs vBackupLogs, Backup Current Logs
-		Gui, Add, groupbox, xp-10 yp+40 w620 h260, Backed-up Logs:
+		Gui, add, button, xp+494 gupdatefiles, Refresh Log list
+		Gui, Add, groupbox, xp-504 yp+40 w620 h260, Backed-up Logs:
 		Gui, Add, ListView, xp+10 yp+20 r10 w600 AltSubmit Grid -Multi vMyNewListView, Name|Size (KB)|Modified
 		Gui, ListView, SysListView321
 
@@ -141,6 +142,10 @@ updatefiles:
 	StringTrimRight, seldir, selectedfile, 9
 	seldir2 := seldir . "FiveM.app\logs\"
 	seldir5 := seldir . "FiveM.app\Backed-up logs\"
+	Gui, ListView, SysListView322
+	LV_Delete()
+	Gui, ListView, SysListView321
+	LV_Delete()
 	Loop, %seldir2%\*.log*
 	LV_Add("", A_LoopFileName, A_LoopFileSizeKB, A_LoopFileTimeModified, A_LoopFileFullPath)
 	LV_ModifyCol() ;Auto-size each column
