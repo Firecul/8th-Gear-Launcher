@@ -67,8 +67,9 @@ Gui, New ;Main Window
 		Gui, add, button, xp+470 yp-6 glookforfivem, Locate FiveM install
 		Gui, Add, groupbox, xp-480 yp+40 w620 h290, Current Logs:
 		Gui, Add, ListView, xp+10 yp+20 r10 w600 AltSubmit Grid -Multi gMyListView vMyListView, Name|Size (KB)|Modified
-		Gui, add, button, gBackupLogs vBackupLogs, Backup Current Logs
-		Gui, add, button, xp+494 gupdatefiles, Refresh Log list
+		Gui, add, button, gOpenLogFolder, Open Log Folder
+		Gui, add, button, xp+120 gBackupLogs vBackupLogs, Backup Current Logs
+		Gui, add, button, xp+374 gupdatefiles, Refresh Log list
 		Gui, Add, groupbox, xp-504 yp+40 w620 h260, Backed-up Logs:
 		Gui, Add, ListView, xp+10 yp+20 r10 w600 AltSubmit Grid -Multi vMyNewListView, Name|Size (KB)|Modified
 		Gui, ListView, SysListView321
@@ -237,6 +238,10 @@ NoNulls(Filename) {
 	f.Close
 	Return, Result
 	}
+
+OpenLogFolder:
+	run %seldir2%
+	return
 
 BackupLogs:
 	;seldir2 := seldir . "FiveM.app\logs\"
