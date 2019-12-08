@@ -92,8 +92,9 @@ Gui, LogViewerWindow: +Resize
 	gui, LogViewerWindow: add, edit, xp-10 yp+39 w1000 r30 ReadOnly t10 vLogContents, (Loading)
 	gui, LogViewerWindow: font,
 	gui, LogViewerWindow: font, s10
-	gui, LogViewerWindow: add, button, gParse, Parse
-	gui, LogViewerWindow: add, button, gSlowOpen, Thorough Open (Slow)
+	gui, LogViewerWindow: add, button, vParse gParse, Parse
+	gui, LogViewerWindow: add, button, vSlowOpen gSlowOpen, Thorough Open (Slow)
+
 
 menu, submenu, add, Log Viewer, OpenLogViewer ;Context Menu
 	menu, submenu, Default, Log Viewer
