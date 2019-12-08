@@ -98,7 +98,7 @@ Gui, LogViewerWindow: +Resize
 Gui, BackupWindow: +Resize
 	gui, BackupWindow: font, s10 Norm
 	Gui, BackupWindow: Add, groupbox, w620 h260 vGB2, Backed-up Logs:
-	Gui, BackupWindow: Add, ListView, xp+10 yp+20 r10 w600 AltSubmit Grid -Multi vMyNewerListView, Name|Size (KB)|Modified
+	Gui, BackupWindow: Add, ListView, xp+10 yp+20 r10 w600 AltSubmit Grid -Multi gMyNewerListView vMyNewerListView, Name|Size (KB)|Modified
 
 menu, submenu, add, Log Viewer, OpenLogViewer ;Context Menu
 	menu, submenu, Default, Log Viewer
@@ -148,9 +148,6 @@ updatefiles:
 	StringTrimRight, seldir, selectedfile, 9
 	seldir2 := seldir . "FiveM.app\logs\"
 	seldir5 := seldir . "FiveM.app\Backed-up logs\"
-	Gui, ListView, SysListView322
-	LV_Delete()
-	Gui, ListView, SysListView321
 	LV_Delete()
 	Loop, %seldir2%\*.log*
 	LV_Add("", A_LoopFileName, A_LoopFileSizeKB, A_LoopFileTimeModified, A_LoopFileFullPath)
@@ -158,16 +155,7 @@ updatefiles:
 	LV_ModifyCol(2, "AutoHdr Integer")
 	LV_ModifyCol(3, "Digit")
 	LV_ModifyCol(3, "SortDesc")
-	IfExist, %seldir5%
-		Gui, ListView, SysListView322
-		Loop, %seldir5%\*.log
-		LV_Add("", A_LoopFileName, A_LoopFileSizeKB, A_LoopFileTimeModified, A_LoopFileFullPath)
-		LV_ModifyCol() ;Auto-size each column
-		LV_ModifyCol(2, "AutoHdr Integer")
-		LV_ModifyCol(3, "Digit")
-		LV_ModifyCol(3, "SortDesc")
 		Gui, Show
-		Gui, ListView, SysListView321
 	return
 
 GetFileSelected:
@@ -234,7 +222,7 @@ BackupWindowGuiSize:
 	Anchor("MyNewerListView","wh")
 	Anchor("LogContents","wh")
 	return
-	
+
 Parse:
 	StringSplit, LogLines, LogContents, `r, `n
 	logline :=
