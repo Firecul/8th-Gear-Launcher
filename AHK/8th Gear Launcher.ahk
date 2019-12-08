@@ -67,12 +67,12 @@ Gui, New ;Main Window
 		Gui, add, button, xp+470 yp-6 glookforfivem, Locate FiveM install
 		Gui, Add, groupbox, xp-480 yp+40 w620 h290, Current Logs:
 		Gui, Add, ListView, xp+10 yp+20 r10 w600 AltSubmit Grid -Multi gMyListView vMyListView, Name|Size (KB)|Modified
-		Gui, add, button, gOpenLogFolder, Open Log Folder
-		Gui, add, button, xp+120 gBackupLogs vBackupLogs, Backup Current Logs
-		Gui, add, button, xp+374 gupdatefiles, Refresh Log list
-		Gui, Add, groupbox, xp-504 yp+40 w620 h260, Backed-up Logs:
-		Gui, Add, ListView, xp+10 yp+20 r10 w600 AltSubmit Grid -Multi vMyNewListView, Name|Size (KB)|Modified
+		Gui, add, button, xp-1 yp+234 gOpenLogFolder, Open Log Folder
+		Gui, add, button, xp+495 gupdatefiles, Refresh Log list
 		Gui, ListView, SysListView321
+		Gui, Add, groupbox, xp-504 yp+40 w620 h56, Log Backups:
+		Gui, add, button, xp+9 yp+20 gBackupLogs vBackupLogs, Backup Current Logs
+		gui, add, button, xp+145 gOpenBackupWindow, Manage Saved Logs
 
 	Gui, Tab, 5 ;About
 		Gui, font, s10 norm
@@ -95,6 +95,10 @@ Gui, LogViewerWindow: +Resize
 	gui, LogViewerWindow: add, button, vParse gParse, Parse
 	gui, LogViewerWindow: add, button, vSlowOpen gSlowOpen, Thorough Open (Slow)
 
+Gui, BackupWindow: +Resize
+	gui, BackupWindow: font, s10 Norm
+	Gui, BackupWindow: Add, groupbox, w620 h260 vGB2, Backed-up Logs:
+	Gui, BackupWindow: Add, ListView, xp+10 yp+20 r10 w600 AltSubmit Grid -Multi vMyNewerListView, Name|Size (KB)|Modified
 
 menu, submenu, add, Log Viewer, OpenLogViewer ;Context Menu
 	menu, submenu, Default, Log Viewer
@@ -210,6 +214,27 @@ OpenLogViewer:
 	Guicontrol, LogViewerWindow: text, LogContents, %LogContents%
 	return
 
+OpenBackupWindow:
+	gosub, updatefiles
+	gui, BackupWindow: show, AutoSize Center, Log Backups
+	IfExist, %seldir5%
+		Gui, BackupWindow:Default
+		Loop, %seldir5%\*.log
+		LV_Add("", A_LoopFileName, A_LoopFileSizeKB, A_LoopFileTimeModified, A_LoopFileFullPath)
+		LV_ModifyCol() ;Auto-size each column
+		LV_ModifyCol(2, "AutoHdr Integer")
+		LV_ModifyCol(3, "Digit")
+		LV_ModifyCol(3, "SortDesc")
+	IfNotExist, %seldir5%
+		MsgBox, No logs are currently backed up.
+	return
+
+BackupWindowGuiSize:
+	Anchor("GB2","wh")
+	Anchor("MyNewerListView","wh")
+	Anchor("LogContents","wh")
+	return
+	
 Parse:
 	StringSplit, LogLines, LogContents, `r, `n
 	logline :=
