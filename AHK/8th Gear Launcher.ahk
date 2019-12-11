@@ -69,7 +69,6 @@ Gui, New ;Main Window
 		Gui, Add, ListView, xp+10 yp+20 r10 w600 AltSubmit Grid -Multi gMyListView vMyListView, Name|Size (KB)|Modified
 		Gui, add, button, xp-1 yp+234 gOpenLogFolder, Open Log Folder
 		Gui, add, button, xp+495 gupdatefiles, Refresh Log list
-		Gui, ListView, SysListView321
 		Gui, Add, groupbox, xp-504 yp+40 w620 h56, Log Backups:
 		Gui, add, button, xp+9 yp+20 gBackupLogs vBackupLogs, Backup Current Logs
 		gui, add, button, xp+145 gOpenBackupWindow, Manage Saved Logs
@@ -89,8 +88,8 @@ Gui, New ;Main Window
 		GUi, add, button, xp+545 w100 gGuiClose, Exit
 		Gui, Show, AutoSize Center, 8th Gear FiveM Launcher
 
-Gui, LogViewerWindow: +Resize
-	gui, LogViewerWindow: font, s10 norm ;LogViewer Window
+Gui, LogViewerWindow: +Resize ;LogViewer Window
+	gui, LogViewerWindow: font, s10 norm
 	gui, LogViewerWindow: add, groupbox, w1000 h50 vGB, Selected log file:
 	gui, LogViewerWindow: add, text, xp+10 yp+20 w980 vSelLog, (Error)
 	gui, LogViewerWindow: font,, Lucida Console
@@ -218,10 +217,6 @@ GuiContextMenu:
 		gosub, GetFileSelected
 		Menu, ContextMenu, Show, %A_GuiX%, %A_GuiY%
 	}
-	;if (A_GuiControl = "MyNewerListView") {
-	;	gosub, BackupWindowGetFileSelected
-	;	Menu, ContextMenu2, Show, %A_GuiX%, %A_GuiY%
-	;}
 	return
 
 BackupWindowGuiContextMenu:
@@ -317,7 +312,6 @@ Parse:
 	return
 
 SlowOpen:
-	;MsgBox, % Nonulls(seldirthree)
 	Guicontrol, LogViewerWindow: text, LogContents, % Nonulls(seldirthree)
 	return
 
@@ -336,10 +330,6 @@ OpenLogFolder:
 	return
 
 BackupLogs:
-	;seldir2 := seldir . "FiveM.app\logs\"
-	;seldir5 := seldir . "FiveM.app\Backed-up logs\"
-	;msgbox %seldir2%
-	;msgbox %seldir5%
 	IfNotExist, %seldir5%
 		MsgBox, The target folder does not exist. Creating it.
 		FileCreateDir, %seldir5%
@@ -351,7 +341,7 @@ BackupLogs:
 	LV_Delete()
 	Loop, %seldir5%\*.log
 		LV_Add("", A_LoopFileName, A_LoopFileSizeKB, A_LoopFileTimeModified, A_LoopFileFullPath)
-		LV_ModifyCol() ;Auto-size each column
+		LV_ModifyCol()
 		LV_ModifyCol(2, "AutoHdr Integer")
 		LV_ModifyCol(3, "Digit")
 		LV_ModifyCol(3, "SortDesc")
