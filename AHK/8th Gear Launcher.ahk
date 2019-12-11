@@ -73,6 +73,11 @@ Gui, New ;Main Window
 		Gui, Add, groupbox, xp-504 yp+40 w620 h56, Log Backups:
 		Gui, add, button, xp+9 yp+20 gBackupLogs vBackupLogs, Backup Current Logs
 		gui, add, button, xp+145 gOpenBackupWindow, Manage Saved Logs
+		gui, add, groupbox, xp-154 yp+40 w620 h56, Cache Backups:
+		gui, add, button, xp+9 yp+20 gOpenCacheFolder vOpenCacheFolder, Open Cache Folder
+		gui, add, button, xp+138 gBackupCache, Backup Cache Files
+		gui, add, button, xp+141 gOpenBackupCacheFolder, Open Backup Folder
+		gui, add, button, xp+145 gRestoreCache, Restore Backups
 
 	Gui, Tab, 5 ;About
 		Gui, font, s10 norm
@@ -154,6 +159,8 @@ updatefiles:
 	StringTrimRight, seldir, selectedfile, 9
 	seldir2 := seldir . "FiveM.app\logs\"
 	seldir5 := seldir . "FiveM.app\Backed-up logs\"
+	cachedir := seldir . "FiveM.app\cache\priv\"
+	CacheBackupLocation := seldir . "FiveM.app\CacheBackup\"
 	LV_Delete()
 	Loop, %seldir2%\*.log*
 	LV_Add("", A_LoopFileName, A_LoopFileSizeKB, A_LoopFileTimeModified, A_LoopFileFullPath)
@@ -261,6 +268,31 @@ OpenBackupWindow:
 		LV_ModifyCol(3, "SortDesc")
 	IfNotExist, %seldir5%
 		MsgBox, No logs are currently backed up.
+	return
+
+OpenCacheFolder:
+	run %cachedir%
+	return
+
+BackupCache:
+	IfNotExist, %CacheBackupLocation%
+		MsgBox, The target folder does not exist. Creating it.
+		FileCreateDir, %CacheBackupLocation%
+	IfExist, %CacheBackupLocation%
+		MsgBox, The target folder exists. Copying files.
+	FileCopyDir, %cachedir%\db\, %CacheBackupLocation%\db\, 1
+	FileCopyDir, %cachedir%\unconfirmed\, %CacheBackupLocation%\unconfirmed\ , 1
+	msgbox, Done
+
+OpenBackupCacheFolder:
+	run %CacheBackupLocation%
+	return
+
+RestoreCache:
+	FileCopy, %CacheBackupLocation%\*.*, %cachedir%\*.*
+	FileCopyDir, %CacheBackupLocation%\db\, %cachedir%\db\, 1
+	FileCopyDir, %CacheBackupLocation%\unconfirmed\, %cachedir%\unconfirmed\ , 1
+	msgbox, Done
 	return
 
 BackupWindowGuiSize:
