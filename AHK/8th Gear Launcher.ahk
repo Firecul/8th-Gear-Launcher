@@ -1,5 +1,6 @@
 #SingleInstance, Force
-
+#Include Anchor.ahk
+StringCaseSense, On
 FileCreateDir, 8thGearLauncher ;Creation stuff
 	Fileinstall, pictures/8GLogo.png, 8thGearLauncher/8GLogo.png, 0
 	Fileinstall, icons/8G.ico, 8thGearLauncher/8G.ico, 0
@@ -64,8 +65,18 @@ Gui, New ;Main Window
 		Gui, Add, groupbox, w620 h50, FiveM install location:
 		Gui, add, text, xp+10 yp+20 w300 vselfile, (Not found)
 		Gui, add, button, xp+470 yp-6 glookforfivem, Locate FiveM install
-		Gui, Add, groupbox, xp-480 yp+40 w620 h260, Found Logs:
+		Gui, Add, groupbox, xp-480 yp+40 w620 h290, Current Logs:
 		Gui, Add, ListView, xp+10 yp+20 r10 w600 AltSubmit Grid -Multi gMyListView vMyListView, Name|Size (KB)|Modified
+		Gui, add, button, xp-1 yp+234 gOpenLogFolder, Open Log Folder
+		Gui, add, button, xp+495 gupdatefiles, Refresh Log list
+		Gui, Add, groupbox, xp-504 yp+40 w620 h56, Log Backups:
+		Gui, add, button, xp+9 yp+20 gBackupLogs vBackupLogs, Backup Current Logs
+		gui, add, button, xp+145 gOpenBackupWindow, Manage Saved Logs
+		gui, add, groupbox, xp-154 yp+40 w620 h56, Cache Backups:
+		gui, add, button, xp+9 yp+20 gOpenCacheFolder vOpenCacheFolder, Open Cache Folder
+		gui, add, button, xp+138 gBackupCache, Backup Cache Files
+		gui, add, button, xp+141 gOpenBackupCacheFolder, Open Backup Folder
+		gui, add, button, xp+145 gRestoreCache, Restore Backups
 
 	Gui, Tab, 5 ;About
 		Gui, font, s10 norm
@@ -77,11 +88,21 @@ Gui, New ;Main Window
 		GUi, add, button, xp+545 w100 gGuiClose, Exit
 		Gui, Show, AutoSize Center, 8th Gear FiveM Launcher
 
-gui, LogViewerWindow: font, s10 norm ;LogViewer Window
-	gui, LogViewerWindow: add, groupbox, w1000 h50, Selected log file:
+Gui, LogViewerWindow: +Resize ;LogViewer Window
+	gui, LogViewerWindow: font, s10 norm
+	gui, LogViewerWindow: add, groupbox, w1000 h50 vGB, Selected log file:
 	gui, LogViewerWindow: add, text, xp+10 yp+20 w980 vSelLog, (Error)
 	gui, LogViewerWindow: font,, Lucida Console
-	gui, LogViewerWindow: add, edit, xp-10 yp+39 w1000 r30 vLogContents, (File Empty?)
+	gui, LogViewerWindow: add, edit, xp-10 yp+39 w1000 r30 ReadOnly t10 vLogContents, (Loading)
+	gui, LogViewerWindow: font,
+	gui, LogViewerWindow: font, s10
+	gui, LogViewerWindow: add, button, vParse gParse, Parse
+	gui, LogViewerWindow: add, button, vSlowOpen gSlowOpen, Thorough Open (Slow)
+
+Gui, BackupWindow: +Resize
+	gui, BackupWindow: font, s10 Norm
+	Gui, BackupWindow: Add, groupbox, w620 h260 vGB2, Backed-up Logs:
+	Gui, BackupWindow: Add, ListView, xp+10 yp+20 r10 w600 AltSubmit Grid -Multi gMyNewerListView vMyNewerListView, Name|Size (KB)|Modified
 
 menu, submenu, add, Log Viewer, OpenLogViewer ;Context Menu
 	menu, submenu, Default, Log Viewer
@@ -130,13 +151,17 @@ lookforfivem:
 updatefiles:
 	StringTrimRight, seldir, selectedfile, 9
 	seldir2 := seldir . "FiveM.app\logs\"
+	seldir5 := seldir . "FiveM.app\Backed-up logs\"
+	cachedir := seldir . "FiveM.app\cache\priv\"
+	CacheBackupLocation := seldir . "FiveM.app\CacheBackup\"
+	LV_Delete()
 	Loop, %seldir2%\*.log*
 	LV_Add("", A_LoopFileName, A_LoopFileSizeKB, A_LoopFileTimeModified, A_LoopFileFullPath)
 	LV_ModifyCol() ;Auto-size each column
 	LV_ModifyCol(2, "AutoHdr Integer")
 	LV_ModifyCol(3, "Digit")
 	LV_ModifyCol(3, "SortDesc")
-	Gui, Show
+		Gui, Show
 	return
 
 GetFileSelected:
@@ -147,52 +172,184 @@ GetFileSelected:
 			if not RowNumber ;if no more selected rows
 					break
 			LV_GetText(Text, RowNumber)
-			seldirthree := seldir2 . Text
+			SelectedLog := seldir2 . Text
+	}
+	return
+
+BackupWindowGetFileSelected:
+	RowNumber := 0 ;start at the top
+	Loop
+	{
+			RowNumber := LV_GetNext(RowNumber)
+			if not RowNumber ;if no more selected rows
+					break
+			LV_GetText(Text, RowNumber)
+			SelectedLog := seldir5 . Text
 	}
 	return
 
 MyListView:
 	if (A_GuiEvent = "DoubleClick")
 		{
+		SelectedLog :=
 		LV_GetText(FileName, A_EventInfo, 1)
-		seldirthree := seldir2 . FileName
+		SelectedLog := seldir2 . FileName
+		gosub, OpenLogViewer
+		}
+	return
+
+MyNewerListView:
+	if (A_GuiEvent = "DoubleClick")
+		{
+		SelectedLog :=
+		LV_GetText(FileName, A_EventInfo, 1)
+		SelectedLog := seldir5 . FileName
 		gosub, OpenLogViewer
 		}
 	return
 
 GuiContextMenu:
-	if (A_GuiControl != "MyListView")
+	if (A_GuiControl = "MyListView") {
+		gosub, GetFileSelected
+		Menu, ContextMenu, Show, %A_GuiX%, %A_GuiY%
+	}
+	return
+
+BackupWindowGuiContextMenu:
+	if (A_GuiControl != "MyNewerListView")
 		return
-	gosub, GetFileSelected
+	gosub, BackupWindowGetFileSelected
 	Menu, ContextMenu, Show, %A_GuiX%, %A_GuiY%
+	return
+
+LogViewerWindowGuiSize:
+	Anchor("GB","w")
+	Anchor("SelLog","w")
+	Anchor("LogContents","wh")
+	Anchor("Parse","y")
+	Anchor("SlowOpen","y")
 	return
 
 OpenLogViewer:
 	gosub, GetFileSelected
 	gui, LogViewerWindow: show, AutoSize Center, Log Viewer
-	Guicontrol, LogViewerWindow: text, SelLog, %seldirthree%
-	fileread, LogContents, %seldirthree%
+	Guicontrol, LogViewerWindow: text, SelLog, %SelectedLog%
+	fileread, LogContents, %SelectedLog%
 	Guicontrol, LogViewerWindow: text, LogContents, %LogContents%
+	return
+
+OpenBackupWindow:
+	gosub, updatefiles
+	gui, BackupWindow: show, AutoSize Center, Log Backups
+	IfExist, %seldir5%
+		Gui, BackupWindow:Default
+		Loop, %seldir5%\*.log
+		LV_Add("", A_LoopFileName, A_LoopFileSizeKB, A_LoopFileTimeModified, A_LoopFileFullPath)
+		LV_ModifyCol() ;Auto-size each column
+		LV_ModifyCol(2, "AutoHdr Integer")
+		LV_ModifyCol(3, "Digit")
+		LV_ModifyCol(3, "SortDesc")
+	IfNotExist, %seldir5%
+		MsgBox, No logs are currently backed up.
+	return
+
+OpenCacheFolder:
+	run %cachedir%
+	return
+
+BackupCache:
+	IfNotExist, %CacheBackupLocation%
+		MsgBox, The target folder does not exist. Creating it.
+		FileCreateDir, %CacheBackupLocation%
+	IfExist, %CacheBackupLocation%
+		MsgBox, The target folder exists. Copying files.
+	FileCopyDir, %cachedir%\db\, %CacheBackupLocation%\db\, 1
+	FileCopyDir, %cachedir%\unconfirmed\, %CacheBackupLocation%\unconfirmed\ , 1
+	msgbox, Done
+
+OpenBackupCacheFolder:
+	run %CacheBackupLocation%
+	return
+
+RestoreCache:
+	FileCopy, %CacheBackupLocation%\*.*, %cachedir%\*.*
+	FileCopyDir, %CacheBackupLocation%\db\, %cachedir%\db\, 1
+	FileCopyDir, %CacheBackupLocation%\unconfirmed\, %cachedir%\unconfirmed\ , 1
+	msgbox, Done
+	return
+
+BackupWindowGuiSize:
+	Anchor("GB2","wh")
+	Anchor("MyNewerListView","wh")
+	Anchor("LogContents","wh")
+	return
+
+Parse:
+	StringSplit, LogLines, LogContents, `r, `n
+	logline :=
+	TrimmedLinea :=
+	Loop, %LogLines0%
+		{
+			logline := LogLines%a_index%
+			stringtrimleft, TrimmedLine, logline, 52
+			if TrimmedLine contains can't,Cannot,couldn't,Could not parse,error,Error,ERROR,Exception,failed,Failed,GlobalError,nui://racescript/,#overriding,unexpected,warning,^1SCRIPT
+				if TrimmedLine not contains f7c13cb204bc9aecf40b,ignore-certificate-errors,is not a platform image,terrorbyte
+					TrimmedLinea = %TrimmedLinea%Line #%A_Index%:%A_Tab%%TrimmedLine%`n
+		}
+	Guicontrol, LogViewerWindow: text, LogContents, %TrimmedLinea%
+	return
+
+SlowOpen:
+	Guicontrol, LogViewerWindow: text, LogContents, % Nonulls(seldirthree)
+	return
+
+NoNulls(Filename) {
+	f := FileOpen(Filename, "r")
+	While Not f.AtEOF {
+		If Byte := f.ReadUChar()
+		Result .= Chr(Byte)
+		}
+	f.Close
+	Return, Result
+	}
+
+OpenLogFolder:
+	run %seldir2%
+	return
+
+BackupLogs:
+	IfNotExist, %seldir5%
+		MsgBox, The target folder does not exist. Creating it.
+		FileCreateDir, %seldir5%
+	IfExist, %seldir5%
+		MsgBox, The target folder exists. Copying files.
+	FileCopy, %seldir2%\*.log, %seldir5%\*.*
+	msgbox, Done
+	Gui, ListView, SysListView322
+	LV_Delete()
+	Loop, %seldir5%\*.log
+		LV_Add("", A_LoopFileName, A_LoopFileSizeKB, A_LoopFileTimeModified, A_LoopFileFullPath)
+		LV_ModifyCol()
+		LV_ModifyCol(2, "AutoHdr Integer")
+		LV_ModifyCol(3, "Digit")
+		LV_ModifyCol(3, "SortDesc")
+	GuiControl,	Disable, BackupLogs
+	Gui, Show
+	Gui, ListView, SysListView321
 	return
 
 opendefault:
 	gosub, GetFileSelected
-	Run %seldirthree%,, UseErrorLevel
+	Run %SelectedLog%,, UseErrorLevel
 	if ErrorLevel
-	MsgBox Could not open %seldirthree%
+	MsgBox Could not open %SelectedLog%
 	return
 
 opennotepad:
 	gosub, GetFileSelected
-	Run C:\Windows\Notepad.exe %seldirthree%,, UseErrorLevel
+	Run C:\Windows\Notepad.exe %SelectedLog%,, UseErrorLevel
 	if ErrorLevel
-	MsgBox Could not open %seldirthree%
-	return
-
-Par: ;Unused atm
-	lv_gettext(carName,LV_GetNext())
-	fileread,fileContents,%carsFolderPath%\%carName%\%carDataFileListbox%
-	guicontrol,text,filecontentsbox,%fileContents%
+	MsgBox Could not open %SelectedLog%
 	return
 
 8GDiscord:
