@@ -243,6 +243,7 @@ OpenBackupWindow: ;Opens the Log backup management window
 	gui, BackupWindow: show, AutoSize Center, Log Backups
 	IfExist, %seldir5%
 		Gui, BackupWindow:Default
+		LV_Delete()
 		Loop, %seldir5%\*.log
 		LV_Add("", A_LoopFileName, A_LoopFileSizeKB, A_LoopFileTimeModified, A_LoopFileFullPath)
 		LV_ModifyCol() ;Auto-size each column
