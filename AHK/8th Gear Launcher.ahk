@@ -70,7 +70,7 @@ Gui, New ;Main Window
 		Gui, add, button, xp-1 yp+234 gOpenLogFolder, Open Log Folder
 		Gui, add, button, xp+495 gupdatefiles, Refresh Log list
 		Gui, Add, groupbox, xp-504 yp+40 w620 h56, Log Backups:
-		Gui, add, button, xp+9 yp+20 gBackupLogs vBackupLogs, Backup Current Logs
+		Gui, add, button, xp+9 yp+20 gBackupLogs, Backup Current Logs
 		gui, add, button, xp+145 gOpenBackupWindow, Manage Saved Logs
 		gui, add, groupbox, xp-154 yp+40 w620 h56, Cache Backups:
 		gui, add, button, xp+9 yp+20 gOpenCacheFolder vOpenCacheFolder, Open Cache Folder
@@ -325,7 +325,6 @@ BackupLogs: ;Backs up logs to the backup folder for safe keeping
 		MsgBox, The target folder exists. Copying files.
 	FileCopy, %seldir2%\*.log, %seldir5%\*.*
 	msgbox, Done
-	Gui, ListView, SysListView322
 	LV_Delete()
 	Loop, %seldir5%\*.log
 		LV_Add("", A_LoopFileName, A_LoopFileSizeKB, A_LoopFileTimeModified, A_LoopFileFullPath)
@@ -333,9 +332,7 @@ BackupLogs: ;Backs up logs to the backup folder for safe keeping
 		LV_ModifyCol(2, "AutoHdr Integer")
 		LV_ModifyCol(3, "Digit")
 		LV_ModifyCol(3, "SortDesc")
-	GuiControl,	Disable, BackupLogs
 	Gui, Show
-	Gui, ListView, SysListView321
 	return
 
 opendefault: ;Opens the selected log with the users default editor for .log files
