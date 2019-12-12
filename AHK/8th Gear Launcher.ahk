@@ -324,7 +324,7 @@ BackupLogs: ;Backs up logs to the backup folder for safe keeping
 		FileCreateDir, %seldir5%
 	IfExist, %seldir5%
 		MsgBox, The target folder exists. Copying files.
-	FileCopy, %seldir2%\*.log, %seldir5%\*.*
+	FileCopy, %seldir2%\*.log, %seldir5%\*.*, 1
 	msgbox, Done
 	LV_Delete()
 	Loop, %seldir5%\*.log
