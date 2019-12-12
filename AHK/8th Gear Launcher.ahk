@@ -231,7 +231,6 @@ LogViewerWindowGuiSize: ;Makes LogViewer resize correctly
 	return
 
 OpenLogViewer: ;Opens the selected log with the Log Viewer
-	gosub, GetFileSelected
 	gui, LogViewerWindow: show, AutoSize Center, Log Viewer
 	Guicontrol, LogViewerWindow: text, SelLog, %SelectedLog%
 	fileread, LogContents, %SelectedLog%
