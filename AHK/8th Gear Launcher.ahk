@@ -110,12 +110,6 @@ menu, submenu, add, Log Viewer, OpenLogViewer ;Context Menu
 	menu, submenu, add, Notepad, opennotepad
 	Menu, ContextMenu, Add, Open In, :Submenu
 
-menu, submenu2, add, Log Viewer, OpenLogViewer2 ;Context Menu
-	menu, submenu2, Default, Log Viewer
-	menu, submenu2, add, Default Editor, opendefault2
-	menu, submenu2, add, Notepad, opennotepad2
-	Menu, ContextMenu2, Add, Open In, :Submenu2
-
 EnvGet, LOCALAPPDATA, LOCALAPPDATA ;Searches Fivem default location
 	Loop, %LOCALAPPDATA%\FiveM\FiveM.exe, , 1
 	SelectedFile := A_LoopFileFullPath
@@ -178,7 +172,7 @@ GetFileSelected:
 			if not RowNumber ;if no more selected rows
 					break
 			LV_GetText(Text, RowNumber)
-			seldirthree := seldir2 . Text
+			SelectedLog := seldir2 . Text
 	}
 	return
 
@@ -190,15 +184,16 @@ BackupWindowGetFileSelected:
 			if not RowNumber ;if no more selected rows
 					break
 			LV_GetText(Text, RowNumber)
-			seldirfive := seldir5 . Text
+			SelectedLog := seldir5 . Text
 	}
 	return
 
 MyListView:
 	if (A_GuiEvent = "DoubleClick")
 		{
+		SelectedLog :=
 		LV_GetText(FileName, A_EventInfo, 1)
-		seldirthree := seldir2 . FileName
+		SelectedLog := seldir2 . FileName
 		gosub, OpenLogViewer
 		}
 	return
@@ -206,9 +201,10 @@ MyListView:
 MyNewerListView:
 	if (A_GuiEvent = "DoubleClick")
 		{
+		SelectedLog :=
 		LV_GetText(FileName, A_EventInfo, 1)
-		seldirfive := seldir5 . FileName
-		gosub, OpenLogViewer2
+		SelectedLog := seldir5 . FileName
+		gosub, OpenLogViewer
 		}
 	return
 
@@ -223,7 +219,7 @@ BackupWindowGuiContextMenu:
 	if (A_GuiControl != "MyNewerListView")
 		return
 	gosub, BackupWindowGetFileSelected
-	Menu, ContextMenu2, Show, %A_GuiX%, %A_GuiY%
+	Menu, ContextMenu, Show, %A_GuiX%, %A_GuiY%
 	return
 
 LogViewerWindowGuiSize:
@@ -237,16 +233,8 @@ LogViewerWindowGuiSize:
 OpenLogViewer:
 	gosub, GetFileSelected
 	gui, LogViewerWindow: show, AutoSize Center, Log Viewer
-	Guicontrol, LogViewerWindow: text, SelLog, %seldirthree%
-	fileread, LogContents, %seldirthree%
-	Guicontrol, LogViewerWindow: text, LogContents, %LogContents%
-	return
-
-OpenLogViewer2:
-	gosub, BackupWindowGetFileSelected
-	gui, LogViewerWindow: show, AutoSize Center, Log Viewer
-	Guicontrol, LogViewerWindow: text, SelLog, %seldirfive%
-	fileread, LogContents, %seldirfive%
+	Guicontrol, LogViewerWindow: text, SelLog, %SelectedLog%
+	fileread, LogContents, %SelectedLog%
 	Guicontrol, LogViewerWindow: text, LogContents, %LogContents%
 	return
 
@@ -352,30 +340,16 @@ BackupLogs:
 
 opendefault:
 	gosub, GetFileSelected
-	Run %seldirthree%,, UseErrorLevel
+	Run %SelectedLog%,, UseErrorLevel
 	if ErrorLevel
-	MsgBox Could not open %seldirthree%
-	return
-
-opendefault2:
-	gosub, GetFileSelected
-	Run %seldirfive%,, UseErrorLevel
-	if ErrorLevel
-	MsgBox Could not open %seldirfive%
+	MsgBox Could not open %SelectedLog%
 	return
 
 opennotepad:
 	gosub, GetFileSelected
-	Run C:\Windows\Notepad.exe %seldirthree%,, UseErrorLevel
+	Run C:\Windows\Notepad.exe %SelectedLog%,, UseErrorLevel
 	if ErrorLevel
-	MsgBox Could not open %seldirthree%
-	return
-
-opennotepad2:
-	gosub, GetFileSelected
-	Run C:\Windows\Notepad.exe %seldirfive%,, UseErrorLevel
-	if ErrorLevel
-	MsgBox Could not open %seldirfive%
+	MsgBox Could not open %SelectedLog%
 	return
 
 8GDiscord:
