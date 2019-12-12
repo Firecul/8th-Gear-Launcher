@@ -70,7 +70,7 @@ Gui, New ;Main Window
 		Gui, add, button, xp-1 yp+234 gOpenLogFolder, Open Log Folder
 		Gui, add, button, xp+495 gupdatefiles, Refresh Log list
 		Gui, Add, groupbox, xp-504 yp+40 w620 h56, Log Backups:
-		Gui, add, button, xp+9 yp+20 gBackupLogs vBackupLogs, Backup Current Logs
+		Gui, add, button, xp+9 yp+20 gBackupLogs, Backup Current Logs
 		gui, add, button, xp+145 gOpenBackupWindow, Manage Saved Logs
 		gui, add, groupbox, xp-154 yp+40 w620 h56, Cache Backups:
 		gui, add, button, xp+9 yp+20 gOpenCacheFolder vOpenCacheFolder, Open Cache Folder
@@ -99,7 +99,7 @@ Gui, LogViewerWindow: +Resize ;LogViewer Window
 	gui, LogViewerWindow: add, button, vParse gParse, Parse
 	gui, LogViewerWindow: add, button, vSlowOpen gSlowOpen, Thorough Open (Slow)
 
-Gui, BackupWindow: +Resize
+Gui, BackupWindow: +Resize ;LogBackupManager Window
 	gui, BackupWindow: font, s10 Norm
 	Gui, BackupWindow: Add, groupbox, w620 h260 vGB2, Backed-up Logs:
 	Gui, BackupWindow: Add, ListView, xp+10 yp+20 r10 w600 AltSubmit Grid -Multi gMyNewerListView vMyNewerListView, Name|Size (KB)|Modified
@@ -118,11 +118,11 @@ EnvGet, LOCALAPPDATA, LOCALAPPDATA ;Searches Fivem default location
 	gosub UpdateList
 	return
 
-Localhost:
+Localhost: ;Launches FiveM and connects to Localhost
 	Run fivem://connect/127.0.0.1
 	return
 
-UpdateList:
+UpdateList: ;Updates the list of servers from the ini file
 	Gui +Delimiter`n
 	guicontrol,, ServerName, `n
 	IniRead, ServerName, 8thGearLauncher/ServerList.ini,,
@@ -131,14 +131,14 @@ UpdateList:
 	gui, show
 	return
 
-Connect:
+Connect: ;Connects to the selected server in the list
 	GuiControlGet, ServerName
 	iniread, ServerIP, ServerList.ini, %ServerName%, IP
 	iniread, ServerPort, ServerList.ini, %ServerName%, Port
 	Run fivem://connect/%ServerIP%:%ServerPort%
 	return
 
-lookforfivem:
+lookforfivem: ;Opens dialogue box to allow selecting FiveM.exe location
 	Gui +OwnDialogs
 	FileSelectFile, SelectedFile, 3, , Locate FiveM.exe, FiveM (FiveM.exe)
 	if (SelectedFile = "")
@@ -148,7 +148,7 @@ lookforfivem:
 	gosub, updatefiles
 	return
 
-updatefiles:
+updatefiles: ;Updates the log list for the tools tab and populates related variables
 	StringTrimRight, seldir, selectedfile, 9
 	seldir2 := seldir . "FiveM.app\logs\"
 	seldir5 := seldir . "FiveM.app\Backed-up logs\"
@@ -164,7 +164,7 @@ updatefiles:
 		Gui, Show
 	return
 
-GetFileSelected:
+GetFileSelected: ;Gets right-clicked file from main gui log listview
 	RowNumber := 0 ;start at the top
 	Loop
 	{
@@ -176,7 +176,7 @@ GetFileSelected:
 	}
 	return
 
-BackupWindowGetFileSelected:
+BackupWindowGetFileSelected: ;Gets right-clicked file from backedup log listview
 	RowNumber := 0 ;start at the top
 	Loop
 	{
@@ -188,7 +188,7 @@ BackupWindowGetFileSelected:
 	}
 	return
 
-MyListView:
+MyListView: ;Gets double-clicked file from main gui log listview
 	if (A_GuiEvent = "DoubleClick")
 		{
 		SelectedLog :=
@@ -198,7 +198,7 @@ MyListView:
 		}
 	return
 
-MyNewerListView:
+MyNewerListView: ;Gets double-clicked file from backedup log listview
 	if (A_GuiEvent = "DoubleClick")
 		{
 		SelectedLog :=
@@ -208,21 +208,21 @@ MyNewerListView:
 		}
 	return
 
-GuiContextMenu:
+GuiContextMenu: ;MainUI context menu control
 	if (A_GuiControl = "MyListView") {
 		gosub, GetFileSelected
 		Menu, ContextMenu, Show, %A_GuiX%, %A_GuiY%
 	}
 	return
 
-BackupWindowGuiContextMenu:
+BackupWindowGuiContextMenu: ;BackedupLogUI context menu control
 	if (A_GuiControl != "MyNewerListView")
 		return
 	gosub, BackupWindowGetFileSelected
 	Menu, ContextMenu, Show, %A_GuiX%, %A_GuiY%
 	return
 
-LogViewerWindowGuiSize:
+LogViewerWindowGuiSize: ;Makes LogViewer resize correctly
 	Anchor("GB","w")
 	Anchor("SelLog","w")
 	Anchor("LogContents","wh")
@@ -230,19 +230,19 @@ LogViewerWindowGuiSize:
 	Anchor("SlowOpen","y")
 	return
 
-OpenLogViewer:
-	gosub, GetFileSelected
+OpenLogViewer: ;Opens the selected log with the Log Viewer
 	gui, LogViewerWindow: show, AutoSize Center, Log Viewer
 	Guicontrol, LogViewerWindow: text, SelLog, %SelectedLog%
 	fileread, LogContents, %SelectedLog%
 	Guicontrol, LogViewerWindow: text, LogContents, %LogContents%
 	return
 
-OpenBackupWindow:
+OpenBackupWindow: ;Opens the Log backup management window
 	gosub, updatefiles
 	gui, BackupWindow: show, AutoSize Center, Log Backups
 	IfExist, %seldir5%
 		Gui, BackupWindow:Default
+		LV_Delete()
 		Loop, %seldir5%\*.log
 		LV_Add("", A_LoopFileName, A_LoopFileSizeKB, A_LoopFileTimeModified, A_LoopFileFullPath)
 		LV_ModifyCol() ;Auto-size each column
@@ -253,11 +253,11 @@ OpenBackupWindow:
 		MsgBox, No logs are currently backed up.
 	return
 
-OpenCacheFolder:
+OpenCacheFolder: ;Opens normal cache folder
 	run %cachedir%
 	return
 
-BackupCache:
+BackupCache: ;Backs up cache priv folder
 	IfNotExist, %CacheBackupLocation%
 		MsgBox, The target folder does not exist. Creating it.
 		FileCreateDir, %CacheBackupLocation%
@@ -267,24 +267,24 @@ BackupCache:
 	FileCopyDir, %cachedir%\unconfirmed\, %CacheBackupLocation%\unconfirmed\ , 1
 	msgbox, Done
 
-OpenBackupCacheFolder:
+OpenBackupCacheFolder: ;Opens the backup Cache folder
 	run %CacheBackupLocation%
 	return
 
-RestoreCache:
+RestoreCache: ;Restores cache from backups
 	FileCopy, %CacheBackupLocation%\*.*, %cachedir%\*.*
 	FileCopyDir, %CacheBackupLocation%\db\, %cachedir%\db\, 1
 	FileCopyDir, %CacheBackupLocation%\unconfirmed\, %cachedir%\unconfirmed\ , 1
 	msgbox, Done
 	return
 
-BackupWindowGuiSize:
+BackupWindowGuiSize: ;Makes BackupWindow resize correctly
 	Anchor("GB2","wh")
 	Anchor("MyNewerListView","wh")
 	Anchor("LogContents","wh")
 	return
 
-Parse:
+Parse: ;Parses logs looking for meaningfull errors
 	StringSplit, LogLines, LogContents, `r, `n
 	logline :=
 	TrimmedLinea :=
@@ -293,17 +293,17 @@ Parse:
 			logline := LogLines%a_index%
 			stringtrimleft, TrimmedLine, logline, 52
 			if TrimmedLine contains can't,Cannot,couldn't,Could not parse,error,Error,ERROR,Exception,failed,Failed,GlobalError,nui://racescript/,#overriding,unexpected,warning,^1SCRIPT
-				if TrimmedLine not contains f7c13cb204bc9aecf40b,ignore-certificate-errors,is not a platform image,terrorbyte
+				if TrimmedLine not contains f7c13cb204bc9aecf40b,ignore-certificate-errors,is not a platform image,terrorbyte,NurburgringNordschleife/_manifest.ymf
 					TrimmedLinea = %TrimmedLinea%Line #%A_Index%:%A_Tab%%TrimmedLine%`n
 		}
 	Guicontrol, LogViewerWindow: text, LogContents, %TrimmedLinea%
 	return
 
-SlowOpen:
+SlowOpen: ;Opens the log ignoring any found null characters that normally cause issues
 	Guicontrol, LogViewerWindow: text, LogContents, % Nonulls(seldirthree)
 	return
 
-NoNulls(Filename) {
+NoNulls(Filename) { ;Reads the given file character by charcter
 	f := FileOpen(Filename, "r")
 	While Not f.AtEOF {
 		If Byte := f.ReadUChar()
@@ -313,19 +313,18 @@ NoNulls(Filename) {
 	Return, Result
 	}
 
-OpenLogFolder:
+OpenLogFolder: ;Opens the log folder
 	run %seldir2%
 	return
 
-BackupLogs:
+BackupLogs: ;Backs up logs to the backup folder for safe keeping
 	IfNotExist, %seldir5%
 		MsgBox, The target folder does not exist. Creating it.
 		FileCreateDir, %seldir5%
 	IfExist, %seldir5%
 		MsgBox, The target folder exists. Copying files.
-	FileCopy, %seldir2%\*.log, %seldir5%\*.*
+	FileCopy, %seldir2%\*.log, %seldir5%\*.*, 1
 	msgbox, Done
-	Gui, ListView, SysListView322
 	LV_Delete()
 	Loop, %seldir5%\*.log
 		LV_Add("", A_LoopFileName, A_LoopFileSizeKB, A_LoopFileTimeModified, A_LoopFileFullPath)
@@ -333,26 +332,24 @@ BackupLogs:
 		LV_ModifyCol(2, "AutoHdr Integer")
 		LV_ModifyCol(3, "Digit")
 		LV_ModifyCol(3, "SortDesc")
-	GuiControl,	Disable, BackupLogs
 	Gui, Show
-	Gui, ListView, SysListView321
 	return
 
-opendefault:
+opendefault: ;Opens the selected log with the users default editor for .log files
 	gosub, GetFileSelected
 	Run %SelectedLog%,, UseErrorLevel
 	if ErrorLevel
 	MsgBox Could not open %SelectedLog%
 	return
 
-opennotepad:
+opennotepad: ;Opens the selected log with Notepad
 	gosub, GetFileSelected
 	Run C:\Windows\Notepad.exe %SelectedLog%,, UseErrorLevel
 	if ErrorLevel
 	MsgBox Could not open %SelectedLog%
 	return
 
-8GDiscord:
+8GDiscord: ;Opens 8G Main discord channel
 	Run https://discord.gg/
 	return
 
