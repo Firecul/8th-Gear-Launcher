@@ -88,6 +88,17 @@ Gui, New ;Main Window
 		GUi, add, button, xp+545 w100 gGuiClose, Exit
 		Gui, Show, AutoSize Center, 8th Gear FiveM Launcher
 
+Menu, FileMenu, Add, Exit, MenuOptionExit  ;Top Menu
+	Menu, ToolsMenu, Add, Back-up Logs, BackupLogs
+	;Menu, AboutMenu, Add, About, MenuOptionAbout
+
+	Menu, MenuBar, Add, File, :FileMenu
+	Menu, MenuBar, Add, Tools, :ToolsMenu
+	Menu, MenuBar, Add, About, MenuOptionAbout
+
+	Gui, Menu, MenuBar
+
+
 Gui, LogViewerWindow: +Resize ;LogViewer Window
 	gui, LogViewerWindow: font, s10 norm
 	gui, LogViewerWindow: add, groupbox, w1000 h50 vGB, Selected log file:
@@ -353,8 +364,12 @@ opennotepad: ;Opens the selected log with Notepad
 	Run https://discord.gg/
 	return
 
+MenuOptionAbout:
+	Return
+
 GuiEscape: ;Escape Stuff
 	GuiClose:
 	ButtonCancel:
+	MenuOptionExit:
 	FileRemoveDir, 8thGearLauncher, 1
 	ExitApp
