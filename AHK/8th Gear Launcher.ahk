@@ -23,7 +23,7 @@ Normal(text)
 	}
 
 Gui, New ;Main Window
-	Gui, Add, Tab3,, Connect|Rules|FAQ|Tools|About
+	Gui, Add, Tab3,, Connect|Rules|FAQ|Tools
 
 	Gui, Tab, 1 ;Connect
 		Gui, Add, Picture, w620 h-1, 8thGearLauncher/8GLogo.png
@@ -78,10 +78,6 @@ Gui, New ;Main Window
 		gui, add, button, xp+141 gOpenBackupCacheFolder, Open Backup Folder
 		gui, add, button, xp+145 gRestoreCache, Restore Backups
 
-	Gui, Tab, 5 ;About
-		Gui, font, s10 norm
-		Gui, Add, link, w620, Hello and welcome to the 8th Gear FiveM Launcher! `n`nThis Launcher serves as the hub for everything you need to play on the 8th Gear servers and a few useful tools that will help you along the way. `n`n<Blurb goes here>
-
 	Gui, Tab ;All Tabs
 		Gui, font, norm
 		Gui, add, button, w100 g8GDiscord, Discord
@@ -90,7 +86,6 @@ Gui, New ;Main Window
 
 Menu, FileMenu, Add, Exit, MenuOptionExit  ;Top Menu
 	Menu, ToolsMenu, Add, Back-up Logs, BackupLogs
-	;Menu, AboutMenu, Add, About, MenuOptionAbout
 
 	Menu, MenuBar, Add, File, :FileMenu
 	Menu, MenuBar, Add, Tools, :ToolsMenu
@@ -114,6 +109,11 @@ Gui, BackupWindow: +Resize ;LogBackupManager Window
 	gui, BackupWindow: font, s10 Norm
 	Gui, BackupWindow: Add, groupbox, w620 h260 vGB2, Backed-up Logs:
 	Gui, BackupWindow: Add, ListView, xp+10 yp+20 r10 w600 AltSubmit Grid -Multi gMyNewerListView vMyNewerListView, Name|Size (KB)|Modified
+
+gui, AboutWindow: +Resize ;About Window
+	Gui, AboutWindow: font, s10 norm
+	Gui, AboutWindow: Add, link, w620, Hello and welcome to the 8th Gear FiveM Launcher! `n`nThis Launcher serves as the hub for everything you need to play on the 8th Gear servers and a few useful tools that will help you along the way. `n`n<Blurb goes here>
+	gui, AboutWindow:+Owner
 
 menu, submenu, add, Log Viewer, OpenLogViewer ;Context Menu
 	menu, submenu, Default, Log Viewer
@@ -365,6 +365,8 @@ opennotepad: ;Opens the selected log with Notepad
 	return
 
 MenuOptionAbout:
+	Gui AboutWindow:+ToolWindow +AlwaysOnTop
+	gui, AboutWindow: show, AutoSize Center, About
 	Return
 
 GuiEscape: ;Escape Stuff
