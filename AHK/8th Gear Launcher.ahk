@@ -69,14 +69,6 @@ Gui, New ;Main Window
 		Gui, Add, ListView, xp+10 yp+20 r10 w600 AltSubmit Grid -Multi gMyListView vMyListView, Name|Size (KB)|Modified
 		Gui, add, button, xp-1 yp+234 gOpenLogFolder, Open Log Folder
 		Gui, add, button, xp+495 gupdatefiles, Refresh Log list
-		Gui, Add, groupbox, xp-504 yp+40 w620 h56, Log Backups:
-		Gui, add, button, xp+9 yp+20 gBackupLogs, Backup Current Logs
-		gui, add, button, xp+145 gOpenBackupWindow, Manage Saved Logs
-		gui, add, groupbox, xp-154 yp+40 w620 h56, Cache Backups:
-		gui, add, button, xp+9 yp+20 gOpenCacheFolder vOpenCacheFolder, Open Cache Folder
-		gui, add, button, xp+138 gBackupCache, Backup Cache Files
-		gui, add, button, xp+141 gOpenBackupCacheFolder, Open Backup Folder
-		gui, add, button, xp+145 gRestoreCache, Restore Backups
 
 	Gui, Tab ;All Tabs
 		Gui, font, norm
