@@ -375,6 +375,12 @@ MenuOptionAbout:
 	gui, AboutWindow: show, AutoSize Center, About
 	Return
 
+AboutWindowGuiEscape:
+	AboutWindowGuiClose:
+	Gui AboutWindow:Cancel
+	WinActivate, 8th Gear FiveM Launcher
+	return
+
 GuiEscape: ;Escape Stuff
 	GuiClose:
 	ButtonCancel:
