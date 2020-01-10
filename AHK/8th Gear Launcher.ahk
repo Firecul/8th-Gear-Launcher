@@ -83,9 +83,9 @@ Menu, FileMenu, Add, Exit, MenuOptionExit  ;Top Menu
 	Menu, CacheMenu, Add, Restore Cache from Back-ups, RestoreCache
 
 	Menu, LogMenu, Add, Open Log Folder, OpenLogFolder
-	Menu, LogMenu, Add, Open Back-up Folder, OpenLogBackupFolder
-	Menu, LogMenu, Add, Manage Backed-up Logs, OpenBackupWindow
 	Menu, LogMenu, Add, Back-up Logs, BackupLogs
+	Menu, LogMenu, Add, Manage Backed-up Logs, OpenBackupWindow
+	Menu, LogMenu, Add, Open Back-up Folder, OpenLogBackupFolder
 
 	Menu, ToolsMenu, Add, Cache, :CacheMenu
 	Menu, ToolsMenu, Add, Logs, :LogMenu
