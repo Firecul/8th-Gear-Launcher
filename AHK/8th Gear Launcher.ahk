@@ -86,13 +86,16 @@ Gui, New ;Main Window
 
 Menu, FileMenu, Add, Exit, MenuOptionExit  ;Top Menu
 
+	Menu, CacheMenu, Add, Open Cache Folder, OpenCacheFolder
+	Menu, CacheMenu, Add, Back-up Cache, BackupCache
+	Menu, CacheMenu, Add, Open Back-up Folder, OpenBackupCacheFolder
+	Menu, CacheMenu, Add, Restore Cache from Back-ups, RestoreCache
 
 	Menu, LogMenu, Add, Open Log Folder, OpenLogFolder
 	Menu, LogMenu, Add, Manage Backed-up Logs, OpenBackupWindow
 	Menu, LogMenu, Add, Back-up Logs, BackupLogs
 
-	Menu, LogMenu, Add, Back-up Logs, BackupLogs
-
+	Menu, ToolsMenu, Add, Cache, :CacheMenu
 	Menu, ToolsMenu, Add, Logs, :LogMenu
 
 	Menu, MenuBar, Add, File, :FileMenu
