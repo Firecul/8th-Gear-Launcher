@@ -249,6 +249,7 @@ OpenLogViewer: ;Opens the selected log with the Log Viewer
 	return
 
 OpenBackupWindow: ;Opens the Log backup management window
+	Gui +OwnDialogs
 	gosub, updatefiles
 	gui, BackupWindow: show, AutoSize Center, Log Backups
 	IfExist, %seldir5%
@@ -269,6 +270,7 @@ OpenCacheFolder: ;Opens normal cache folder
 	return
 
 BackupCache: ;Backs up cache priv folder
+	Gui +OwnDialogs
 	IfNotExist, %CacheBackupLocation%
 		MsgBox, The target folder does not exist. Creating it.
 		FileCreateDir, %CacheBackupLocation%
@@ -283,6 +285,7 @@ OpenBackupCacheFolder: ;Opens the backup Cache folder
 	return
 
 RestoreCache: ;Restores cache from backups
+	Gui +OwnDialogs
 	FileCopy, %CacheBackupLocation%\*.*, %cachedir%\*.*
 	FileCopyDir, %CacheBackupLocation%\db\, %cachedir%\db\, 1
 	FileCopyDir, %CacheBackupLocation%\unconfirmed\, %cachedir%\unconfirmed\ , 1
@@ -329,6 +332,7 @@ OpenLogFolder: ;Opens the log folder
 	return
 
 BackupLogs: ;Backs up logs to the backup folder for safe keeping
+	Gui +OwnDialogs
 	IfNotExist, %seldir5%
 		MsgBox, The target folder does not exist. Creating it.
 		FileCreateDir, %seldir5%
@@ -347,6 +351,7 @@ BackupLogs: ;Backs up logs to the backup folder for safe keeping
 	return
 
 opendefault: ;Opens the selected log with the users default editor for .log files
+	Gui +OwnDialogs
 	gosub, GetFileSelected
 	Run %SelectedLog%,, UseErrorLevel
 	if ErrorLevel
@@ -354,6 +359,7 @@ opendefault: ;Opens the selected log with the users default editor for .log file
 	return
 
 opennotepad: ;Opens the selected log with Notepad
+	Gui +OwnDialogs
 	gosub, GetFileSelected
 	Run C:\Windows\Notepad.exe %SelectedLog%,, UseErrorLevel
 	if ErrorLevel
