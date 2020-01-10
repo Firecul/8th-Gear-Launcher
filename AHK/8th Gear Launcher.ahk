@@ -82,10 +82,18 @@ Gui, New ;Main Window
 		Gui, font, norm
 		Gui, add, button, w100 g8GDiscord, Discord
 		GUi, add, button, xp+545 w100 gGuiClose, Exit
-		Gui, Show, AutoSize Center, 8th Gear FiveM Launcher
+		Gui, Show, Center h812, 8th Gear FiveM Launcher
 
 Menu, FileMenu, Add, Exit, MenuOptionExit  ;Top Menu
-	Menu, ToolsMenu, Add, Back-up Logs, BackupLogs
+
+
+	Menu, LogMenu, Add, Open Log Folder, OpenLogFolder
+	Menu, LogMenu, Add, Manage Backed-up Logs, OpenBackupWindow
+	Menu, LogMenu, Add, Back-up Logs, BackupLogs
+
+	Menu, LogMenu, Add, Back-up Logs, BackupLogs
+
+	Menu, ToolsMenu, Add, Logs, :LogMenu
 
 	Menu, MenuBar, Add, File, :FileMenu
 	Menu, MenuBar, Add, Tools, :ToolsMenu
