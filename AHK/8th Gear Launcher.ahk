@@ -67,8 +67,7 @@ Gui, New ;Main Window
 		Gui, add, button, xp+470 yp-6 glookforfivem, Locate FiveM install
 		Gui, Add, groupbox, xp-480 yp+40 w620 h290, Current Logs:
 		Gui, Add, ListView, xp+10 yp+20 r10 w600 AltSubmit Grid -Multi gMyListView vMyListView, Name|Size (KB)|Modified
-		Gui, add, button, xp-1 yp+234 gOpenLogFolder, Open Log Folder
-		Gui, add, button, xp+495 gupdatefiles, Refresh Log list
+		Gui, add, button, xp+494 yp+234 gupdatefiles, Refresh Log list
 
 	Gui, Tab ;All Tabs
 		Gui, font, norm
