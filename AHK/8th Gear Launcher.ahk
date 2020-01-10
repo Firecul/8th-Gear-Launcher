@@ -84,6 +84,7 @@ Menu, FileMenu, Add, Exit, MenuOptionExit  ;Top Menu
 	Menu, CacheMenu, Add, Restore Cache from Back-ups, RestoreCache
 
 	Menu, LogMenu, Add, Open Log Folder, OpenLogFolder
+	Menu, LogMenu, Add, Open Back-up Folder, OpenLogBackupFolder
 	Menu, LogMenu, Add, Manage Backed-up Logs, OpenBackupWindow
 	Menu, LogMenu, Add, Back-up Logs, BackupLogs
 
@@ -332,6 +333,10 @@ NoNulls(Filename) { ;Reads the given file character by charcter
 
 OpenLogFolder: ;Opens the log folder
 	run %seldir2%
+	return
+
+OpenLogBackupFolder:
+	run %seldir5%
 	return
 
 BackupLogs: ;Backs up logs to the backup folder for safe keeping
