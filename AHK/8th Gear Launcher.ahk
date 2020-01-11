@@ -12,12 +12,12 @@ vFAQ =
 	READ THE WHOLE THING.
 	)
 
-Bold(text)
+RulesBold(text)
 	{	Gui, RulesWindow: font, bold
 		Gui, RulesWindow: Add, text, w600, %text%
 	}
 
-Normal(text)
+RulesNormal(text)
 	{	Gui, RulesWindow: font, Norm
 		Gui, RulesWindow: Add, text, w600, %text%
 	}
@@ -75,7 +75,6 @@ Menu, FileMenu, Add, Locate FiveM.exe, lookforfivem  ;Top Menu
 
 	Gui, Menu, MenuBar
 
-
 Gui, LogViewerWindow: +Resize ;LogViewer Window
 	gui, LogViewerWindow: font, s10 norm
 	gui, LogViewerWindow: add, groupbox, w1000 h50 vGB, Selected log file:
@@ -97,21 +96,21 @@ Gui, RulesWindow: ;Rules Window
 	Gui, RulesWindow: Add, GroupBox, w620 h700, 8th Gear Specific Rules:
 	Gui, RulesWindow: font, bold
 	Gui, RulesWindow: Add, text, xp+10 yp+20 w550, 1) THE GOLDEN RULE: Don't be a Dick
-	Normal("Personal attacks, harassment, hate speech, etc. will not be tolerated. Treat others with respect at all times.")
-	Bold("2) Follow Discord TOS and Community Guidelines")
+	RulesNormal("Personal attacks, harassment, hate speech, etc. will not be tolerated. Treat others with respect at all times.")
+	RulesBold("2) Follow Discord TOS and Community Guidelines")
 	Gui, RulesWindow: font, Norm
 	Gui, RulesWindow: Add, Link,, <a href="https://discordapp.com/terms">https://discordapp.com/terms</a> && <a href="https://discordapp.com/guidelines">https://discordapp.com/guidelines</a>
-	Bold("3) No NSFW/NSFL Content")
-	Bold("4) No Spamming or Trolling")
-	Bold("5) No Cheating on the Server")
-	Normal("Using 3rd-party menus to gain an unfair advantage will result in a ban.")
-	Bold("6) No Drama")
-	Normal("Arguments should be resolved in a respectful manner or kept out of the discord entirely.")
-	Bold("7) No Advertising")
-	Normal("Links to youtube channels, streams, other discords, etc. are prohibited unless approved by a staff member.")
-	Bold("8) Listen to the Staff")
-	Normal("Staff have the final say and are free to moderate at their own discretion.")
-	Bold("By taking part in this community you acknowledge that you understand and accept these rules. Ignoring them or not knowing them does not excuse you from them.")
+	RulesBold("3) No NSFW/NSFL Content")
+	RulesBold("4) No Spamming or Trolling")
+	RulesBold("5) No Cheating on the Server")
+	RulesNormal("Using 3rd-party menus to gain an unfair advantage will result in a ban.")
+	RulesBold("6) No Drama")
+	RulesNormal("Arguments should be resolved in a respectful manner or kept out of the discord entirely.")
+	RulesBold("7) No Advertising")
+	RulesNormal("Links to youtube channels, streams, other discords, etc. are prohibited unless approved by a staff member.")
+	RulesBold("8) Listen to the Staff")
+	RulesNormal("Staff have the final say and are free to moderate at their own discretion.")
+	RulesBold("By taking part in this community you acknowledge that you understand and accept these rules. Ignoring them or not knowing them does not excuse you from them.")
 
 gui, AboutWindow: ;About Window
 	Gui, AboutWindow: font, s10 norm
@@ -347,7 +346,7 @@ OpenLogFolder: ;Opens the log folder
 	run %seldir2%
 	return
 
-OpenLogBackupFolder:
+OpenLogBackupFolder: ;Opens the log backup folder
 	run %seldir5%
 	return
 
@@ -390,29 +389,29 @@ opennotepad: ;Opens the selected log with Notepad
 	Run https://discord.gg/
 	return
 
-MenuOptionAbout:
+MenuOptionAbout: ;Opens about window
 	Gui AboutWindow:+ToolWindow +AlwaysOnTop
 	gui, AboutWindow: show, AutoSize Center, About
 	Return
 
-MenuOptionRules:
+MenuOptionRules: ;Opens rules window
 	Gui RulesWindow:+ToolWindow +AlwaysOnTop
 	gui, RulesWindow: show, AutoSize Center, Rules
 	Return
 
-AboutWindowGuiEscape:
+AboutWindowGuiEscape: ;About window escape stuff
 	AboutWindowGuiClose:
 	Gui AboutWindow:Cancel
 	WinActivate, 8th Gear FiveM Launcher
 	return
 
-RulesWindowGuiEscape:
+RulesWindowGuiEscape: ;Rules window escape stuff
 	RulesWindowGuiClose:
 	Gui RulesWindow:Cancel
 	WinActivate, 8th Gear FiveM Launcher
 	return
 
-GuiEscape: ;Escape Stuff
+GuiEscape: ;Main window escape Stuff
 	GuiClose:
 	ButtonCancel:
 	MenuOptionExit:
