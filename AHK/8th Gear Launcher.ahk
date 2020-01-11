@@ -26,27 +26,27 @@ Gui, New ;Main Window
 	Gui, Add, Tab3,, Connect|Tools
 
 	Gui, Tab, 1 ;Connect
-		Gui, Add, Picture, w620 h-1, 8thGearLauncher/8GLogo.png
+		Gui, Add, Picture, w465 h-1, 8thGearLauncher/8GLogo.png
 		Gui, Add, GroupBox, w220 h81, 8th Gear Servers:
 		gui, add, DropDownList, xp+10 yp+20 w133 vServerName,
 		gui, add, button, xp+139 yp-1 w60 gConnect, Connect
-		GUi, add, button, xp-140 yp+30 w200 gLocalhost, &Localhost
-		Gui, add, Groupbox, xp+220 yp-49 w370 h45, Disclaimer
-		Gui, add, link, xp+10 yp+20 w350, By joining our servers you agree to be bound to the <a href="https://discord.gg/Ts2kEEH">#rules</a> of our server.
-		gui, add, groupbox, xp-10 yp+21 w370 h40,
-		gui, add, link, xp+10 yp+15 w350, <a href="https://8thgear.com/status">To see server status, click here to go to the website</a>
+		Gui, add, button, xp-140 yp+30 w200 gLocalhost, &Localhost
+		Gui, add, Groupbox, xp+220 yp-49 w236 h81, Disclaimer
+		Gui, add, link, xp+10 yp+20 w215, By joining our servers you agree to be bound to the <a href="https://discord.gg/Ts2kEEH">#rules</a> of our server.
+		;gui, add, groupbox, xp-10 yp+21 w370 h40,
+		;gui, add, link, xp+10 yp+15 w350, <a href="https://8thgear.com/status">To see server status, click here to go to the website</a>
 
 	Gui, Tab, 2 ;Tools
 		Gui, font, s10 norm
-		Gui, Add, groupbox, xp-239 yp-685 w620 h290, Current Logs:
-		Gui, Add, ListView, xp+10 yp+20 r10 w600 AltSubmit Grid -Multi gMyListView vMyListView, Name|Size (KB)|Modified
-		Gui, add, button, xp+494 yp+234 gupdatefiles, Refresh Log list
+		Gui, Add, groupbox, xp-239 yp-496 w465 h290, Current Logs:
+		Gui, Add, ListView, xp+10 yp+20 r10 w445 AltSubmit Grid -Multi gMyListView vMyListView, Name|Size (KB)|Modified
+		Gui, add, button, xp+339 yp+234 gupdatefiles, Refresh Log list
 
 	Gui, Tab ;All Tabs
 		Gui, font, norm
-		Gui, add, button, w100 g8GDiscord, Discord
-		GUi, add, button, xp+545 w100 gGuiClose, Exit
-		Gui, Show, Center h812, 8th Gear FiveM Launcher
+		Gui, add, button, xp-1 yp+596 w100 g8GDiscord, Discord
+		GUi, add, button, xp+391 w100 gGuiClose, Exit
+		Gui, Show, Center h657, 8th Gear FiveM Launcher
 
 Menu, FileMenu, Add, Locate FiveM.exe, lookforfivem  ;Top Menu
 	Menu, FileMenu, Add, Exit, MenuOptionExit
