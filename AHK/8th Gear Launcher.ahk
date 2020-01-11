@@ -23,7 +23,7 @@ RulesNormal(text)
 	}
 
 Gui, New ;Main Window
-	Gui, Add, Tab3,, Connect|FAQ|Tools
+	Gui, Add, Tab3,, Connect|Tools
 
 	Gui, Tab, 1 ;Connect
 		Gui, Add, Picture, w620 h-1, 8thGearLauncher/8GLogo.png
@@ -36,13 +36,9 @@ Gui, New ;Main Window
 		gui, add, groupbox, xp-10 yp+21 w370 h40,
 		gui, add, link, xp+10 yp+15 w350, <a href="https://8thgear.com/status">To see server status, click here to go to the website</a>
 
-	Gui, Tab, 2 ;FAQ
+	Gui, Tab, 2 ;Tools
 		Gui, font, s10 norm
-		Gui, Add, edit, w620 h700 Multi ReadOnly, %vFAQ%
-
-	Gui, Tab, 3 ;Tools
-		Gui, font, s10 norm
-		Gui, Add, groupbox, xp-0 yp+0 w620 h290, Current Logs:
+		Gui, Add, groupbox, xp-239 yp-685 w620 h290, Current Logs:
 		Gui, Add, ListView, xp+10 yp+20 r10 w600 AltSubmit Grid -Multi gMyListView vMyListView, Name|Size (KB)|Modified
 		Gui, add, button, xp+494 yp+234 gupdatefiles, Refresh Log list
 
@@ -71,6 +67,7 @@ Menu, FileMenu, Add, Locate FiveM.exe, lookforfivem  ;Top Menu
 	Menu, MenuBar, Add, File, :FileMenu
 	Menu, MenuBar, Add, Tools, :ToolsMenu
 	Menu, MenuBar, Add, Rules, MenuOptionRules
+	Menu, MenuBar, Add, FAQ, MenuOptionFAQ
 	Menu, MenuBar, Add, About, MenuOptionAbout
 
 	Gui, Menu, MenuBar
@@ -117,6 +114,10 @@ Gui, RulesWindow: ;Rules Window
 	RulesBold("8) Listen to the Staff")
 	RulesNormal("Staff have the final say and are free to moderate at their own discretion.")
 	RulesBold("By taking part in this community you acknowledge that you understand and accept these rules. Ignoring them or not knowing them does not excuse you from them.")
+
+Gui, FAQWindow: ;FAQ Window
+	Gui, FAQWindow: font, s10 norm
+	Gui, FAQWindow: Add, edit, w620 h700 Multi ReadOnly, %vFAQ%
 
 gui, AboutWindow: ;About Window
 	Gui, AboutWindow: font, s10 norm
@@ -398,6 +399,11 @@ opennotepad: ;Opens the selected log with Notepad
 MenuOptionAbout: ;Opens about window
 	Gui AboutWindow:+ToolWindow +AlwaysOnTop
 	gui, AboutWindow: show, AutoSize Center, About
+	Return
+
+MenuOptionFAQ: ;Opens FAQ Window
+	Gui FAQWindow:+ToolWindow +AlwaysOnTop
+	Gui, FAQWindow: show, AutoSize Center, FAQWindow
 	Return
 
 MenuOptionRules: ;Opens rules window
