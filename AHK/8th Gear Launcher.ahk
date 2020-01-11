@@ -371,7 +371,7 @@ ParseOldLog: ;Old-Style log parsing
 	return
 
 SlowOpen: ;Opens the log ignoring any found null characters that normally cause issues
-	Guicontrol, LogViewerWindow: text, LogContents, % Nonulls(seldirthree)
+	Guicontrol, LogViewerWindow: text, LogContents, % Nonulls(SelectedLog)
 	return
 
 NoNulls(Filename) { ;Reads the given file character by charcter
