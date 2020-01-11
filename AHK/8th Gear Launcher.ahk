@@ -32,7 +32,7 @@ Gui, New ;Main Window
 		gui, add, button, xp+139 yp-1 w60 gConnect, Connect
 		GUi, add, button, xp-140 yp+30 w200 gLocalhost, &Localhost
 		Gui, add, Groupbox, xp+220 yp-49 w370 h45, Disclaimer
-		Gui, add, link, xp+10 yp+20 w350, By joining our servers you agree to be bound to the <a href="https://discordapp.com/channels/">#rules</a> of our server.
+		Gui, add, link, xp+10 yp+20 w350, By joining our servers you agree to be bound to the <a href="https://discord.gg/Ts2kEEH">#rules</a> of our server.
 		gui, add, groupbox, xp-10 yp+21 w370 h40,
 		gui, add, link, xp+10 yp+15 w350, <a href="https://8thgear.com/status">To see server status, click here to go to the website</a>
 
