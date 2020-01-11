@@ -464,6 +464,24 @@ AboutWindowGuiEscape: ;About window escape stuff
 	WinActivate, 8th Gear FiveM Launcher
 	return
 
+BackupWindowGuiEscape: ;Rules window escape stuff
+	BackupWindowGuiClose:
+	Gui BackupWindow:Cancel
+	WinActivate, 8th Gear FiveM Launcher
+	return
+
+FAQWindowGuiEscape: ;Rules window escape stuff
+	FAQWindowGuiClose:
+	Gui FAQWindow:Cancel
+	WinActivate, 8th Gear FiveM Launcher
+	return
+
+LogViewerWindowGuiEscape: ;Rules window escape stuff
+	LogViewerWindowGuiClose:
+	Gui LogViewerWindow:Cancel
+	WinActivate, 8th Gear FiveM Launcher
+	return
+
 RulesWindowGuiEscape: ;Rules window escape stuff
 	RulesWindowGuiClose:
 	Gui RulesWindow:Cancel
