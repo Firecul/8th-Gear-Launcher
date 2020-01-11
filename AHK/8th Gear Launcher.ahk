@@ -121,7 +121,7 @@ Gui, FAQWindow: ;FAQ Window
 
 gui, AboutWindow: ;About Window
 	Gui, AboutWindow: font, s10 norm
-	Gui, AboutWindow: Add, link, w620, Hello and welcome to the 8th Gear FiveM Launcher! `n`nThis Launcher serves as the hub for everything you need to play on the 8th Gear servers and a few useful tools that will help you along the way. `n`n<Blurb goes here>
+	Gui, AboutWindow: Add, link, w620, Hello and welcome to the 8th Gear FiveM Launcher! `n`nThis Launcher serves as the hub for everything you need to play on the 8th Gear servers and a few useful tools that will help you along the way. `n`nThis launcher is built using AHK by Firecul and is open-source and can be found on <a href="https://github.com/Firecul/8th-Gear-Launcher">GitHub</a>.`n`nIf you would like to contribute to this program, you are welcome to contact me there or submit a <a href="https://github.com/Firecul/8th-Gear-Launcher/pulls">pull request</a>.`n`nIf you find any problems please <a href="https://github.com/Firecul/8th-Gear-Launcher/issues/new">let me know</a>.
 	gui, AboutWindow:+Owner
 
 menu, submenu, add, Log Viewer, OpenLogViewer ;Context Menu
