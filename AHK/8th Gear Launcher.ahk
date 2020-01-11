@@ -60,6 +60,7 @@ Menu, FileMenu, Add, &Locate FiveM.exe, lookforfivem  ;Top Menu
 	Menu, LogMenu, Add, &Back-up Logs, BackupLogs
 	Menu, LogMenu, Add, &Manage Backed-up Logs, OpenBackupWindow
 	Menu, LogMenu, Add, Open Back-up Folder, OpenLogBackupFolder
+	Menu, LogMenu, Add, Open &Arbitrary log..., MenuOptionArbitraryLog
 
 	Menu, ToolsMenu, Add, &Cache, :CacheMenu
 	Menu, ToolsMenu, Add, &Logs, :LogMenu
@@ -435,6 +436,17 @@ MenuOptionAbout: ;Opens about window
 	Gui AboutWindow:+ToolWindow +AlwaysOnTop
 	gui, AboutWindow: show, AutoSize Center, About
 	Return
+
+MenuOptionArbitraryLog:
+	Gui +OwnDialogs
+	FileSelectFile, SelectedLog, 3, , Open a FiveM Log, Log (*.log*)
+	if (SelectedLog = ""){
+			MsgBox, The user didn't select anything.
+	}
+	else{
+		GoSub, OpenLogViewer
+	}
+	return
 
 MenuOptionFAQ: ;Opens FAQ Window
 	Gui FAQWindow:+ToolWindow +AlwaysOnTop
