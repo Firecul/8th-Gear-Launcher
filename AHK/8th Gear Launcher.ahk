@@ -13,17 +13,17 @@ vFAQ =
 	)
 
 Bold(text)
-	{	Gui, font, bold
-		Gui, Add, text, w600, %text%
+	{	Gui, RulesWindow: font, bold
+		Gui, RulesWindow: Add, text, w600, %text%
 	}
 
 Normal(text)
-	{	Gui, font, Norm
-		Gui, Add, text, w600, %text%
+	{	Gui, RulesWindow: font, Norm
+		Gui, RulesWindow: Add, text, w600, %text%
 	}
 
 Gui, New ;Main Window
-	Gui, Add, Tab3,, Connect|Rules|FAQ|Tools
+	Gui, Add, Tab3,, Connect|FAQ|Tools
 
 	Gui, Tab, 1 ;Connect
 		Gui, Add, Picture, w620 h-1, 8thGearLauncher/8GLogo.png
@@ -36,31 +36,11 @@ Gui, New ;Main Window
 		gui, add, groupbox, xp-10 yp+21 w370 h40,
 		gui, add, link, xp+10 yp+15 w350, <a href="https://8thgear.com/status">To see server status, click here to go to the website</a>
 
-	Gui, Tab, 2 ;Rules
-		Gui, Add, GroupBox, w620 h700, 8th Gear Specific Rules:
-		Gui, font, bold
-		Gui, Add, text, xp+10 yp+20 w550, 1) THE GOLDEN RULE: Don't be a Dick
-		Normal("Personal attacks, harassment, hate speech, etc. will not be tolerated. Treat others with respect at all times.")
-		Bold("2) Follow Discord TOS and Community Guidelines")
-		Gui, font, Norm
-		Gui, Add, Link,, <a href="https://discordapp.com/terms">https://discordapp.com/terms</a> && <a href="https://discordapp.com/guidelines">https://discordapp.com/guidelines</a>
-		Bold("3) No NSFW/NSFL Content")
-		Bold("4) No Spamming or Trolling")
-		Bold("5) No Cheating on the Server")
-		Normal("Using 3rd-party menus to gain an unfair advantage will result in a ban.")
-		Bold("6) No Drama")
-		Normal("Arguments should be resolved in a respectful manner or kept out of the discord entirely.")
-		Bold("7) No Advertising")
-		Normal("Links to youtube channels, streams, other discords, etc. are prohibited unless approved by a staff member.")
-		Bold("8) Listen to the Staff")
-		Normal("Staff have the final say and are free to moderate at their own discretion.")
-		Bold("By taking part in this community you acknowledge that you understand and accept these rules. Ignoring them or not knowing them does not excuse you from them.")
-
-	Gui, Tab, 3 ;FAQ
+	Gui, Tab, 2 ;FAQ
 		Gui, font, s10 norm
 		Gui, Add, edit, w620 h700 Multi ReadOnly, %vFAQ%
 
-	Gui, Tab, 4 ;Tools
+	Gui, Tab, 3 ;Tools
 		Gui, font, s10 norm
 		Gui, Add, groupbox, xp-0 yp+0 w620 h290, Current Logs:
 		Gui, Add, ListView, xp+10 yp+20 r10 w600 AltSubmit Grid -Multi gMyListView vMyListView, Name|Size (KB)|Modified
@@ -90,6 +70,7 @@ Menu, FileMenu, Add, Locate FiveM.exe, lookforfivem  ;Top Menu
 
 	Menu, MenuBar, Add, File, :FileMenu
 	Menu, MenuBar, Add, Tools, :ToolsMenu
+	Menu, MenuBar, Add, Rules, MenuOptionRules
 	Menu, MenuBar, Add, About, MenuOptionAbout
 
 	Gui, Menu, MenuBar
@@ -111,7 +92,28 @@ Gui, BackupWindow: +Resize ;LogBackupManager Window
 	Gui, BackupWindow: Add, groupbox, w620 h260 vGB2, Backed-up Logs:
 	Gui, BackupWindow: Add, ListView, xp+10 yp+20 r10 w600 AltSubmit Grid -Multi gMyNewerListView vMyNewerListView, Name|Size (KB)|Modified
 
-gui, AboutWindow: +Resize ;About Window
+Gui, RulesWindow: ;Rules Window
+	Gui, RulesWindow: font, s10 Norm
+	Gui, RulesWindow: Add, GroupBox, w620 h700, 8th Gear Specific Rules:
+	Gui, RulesWindow: font, bold
+	Gui, RulesWindow: Add, text, xp+10 yp+20 w550, 1) THE GOLDEN RULE: Don't be a Dick
+	Normal("Personal attacks, harassment, hate speech, etc. will not be tolerated. Treat others with respect at all times.")
+	Bold("2) Follow Discord TOS and Community Guidelines")
+	Gui, RulesWindow: font, Norm
+	Gui, RulesWindow: Add, Link,, <a href="https://discordapp.com/terms">https://discordapp.com/terms</a> && <a href="https://discordapp.com/guidelines">https://discordapp.com/guidelines</a>
+	Bold("3) No NSFW/NSFL Content")
+	Bold("4) No Spamming or Trolling")
+	Bold("5) No Cheating on the Server")
+	Normal("Using 3rd-party menus to gain an unfair advantage will result in a ban.")
+	Bold("6) No Drama")
+	Normal("Arguments should be resolved in a respectful manner or kept out of the discord entirely.")
+	Bold("7) No Advertising")
+	Normal("Links to youtube channels, streams, other discords, etc. are prohibited unless approved by a staff member.")
+	Bold("8) Listen to the Staff")
+	Normal("Staff have the final say and are free to moderate at their own discretion.")
+	Bold("By taking part in this community you acknowledge that you understand and accept these rules. Ignoring them or not knowing them does not excuse you from them.")
+
+gui, AboutWindow: ;About Window
 	Gui, AboutWindow: font, s10 norm
 	Gui, AboutWindow: Add, link, w620, Hello and welcome to the 8th Gear FiveM Launcher! `n`nThis Launcher serves as the hub for everything you need to play on the 8th Gear servers and a few useful tools that will help you along the way. `n`n<Blurb goes here>
 	gui, AboutWindow:+Owner
@@ -393,9 +395,20 @@ MenuOptionAbout:
 	gui, AboutWindow: show, AutoSize Center, About
 	Return
 
+MenuOptionRules:
+	Gui RulesWindow:+ToolWindow +AlwaysOnTop
+	gui, RulesWindow: show, AutoSize Center, Rules
+	Return
+
 AboutWindowGuiEscape:
 	AboutWindowGuiClose:
 	Gui AboutWindow:Cancel
+	WinActivate, 8th Gear FiveM Launcher
+	return
+
+RulesWindowGuiEscape:
+	RulesWindowGuiClose:
+	Gui RulesWindow:Cancel
 	WinActivate, 8th Gear FiveM Launcher
 	return
 
