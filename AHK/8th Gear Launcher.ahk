@@ -323,8 +323,11 @@ BackupWindowGuiSize: ;Makes BackupWindow resize correctly
 	return
 
 ParseLog: ;Determines the type of log(old-style vs new-style)
+	LogContains := "can't,Cannot,couldn't,Couldn't,Could not,crash,error,Error,ERROR,Exception,failed,Failed,Fatal,GlobalError,nui://racescript/,#overriding,parse,#recieved,#Recieving,Uncaught,unexpected,Unexpected,warning,^1SCRIPT"
+	LogDoesNotContain := "charlie,f7c13cb204bc9aecf40b,ignore-certificate-errors,is not a platform image,NurburgringNordschleife/_manifest.ymf,script.js:214,script.js:458,terrorbyte,warmenu"
+
 	Needle := "CitizenFX_log_"
-	;MsgBox, %SelectedLog%`n`n%Needle%
+
 	IfInString, SelectedLog, %Needle%
 	{
 		gosub, ParseNewLog ;New-Style log
@@ -335,24 +338,23 @@ ParseLog: ;Determines the type of log(old-style vs new-style)
 	return
 	}
 
-
 ParseNewLog: ;New-Style log parsing
 	StringSplit, LogLines, LogContents, `r, `n
 	logline :=
 	TrimmedLinea :=
+
 	Loop, %LogLines0%
 		{
 			logline := LogLines%a_index%
 			stringtrimleft, TrimmedLine, logline, 52
-			if TrimmedLine contains can't,Cannot,couldn't,Couldn't,Could not,crash,error,Error,ERROR,Exception,failed,Failed,Fatal,GlobalError,nui://racescript/,#overriding,parse,#recieved,#Recieving,Uncaught,unexpected,Unexpected,warning,^1SCRIPT
-				if TrimmedLine not contains charlie,f7c13cb204bc9aecf40b,ignore-certificate-errors,is not a platform image,NurburgringNordschleife/_manifest.ymf,script.js:214,script.js:458,terrorbyte,warmenu
+			if TrimmedLine contains %LogContains%
+				if TrimmedLine not contains %LogDoesNotContain%
 					TrimmedLinea = %TrimmedLinea%Line #%A_Index%:%A_Tab%%TrimmedLine%`n
 		}
 	Guicontrol, LogViewerWindow: text, LogContents, %TrimmedLinea%
 	return
 
 ParseOldLog: ;Old-Style log parsing
-	MsgBox, Old-Style log suspected.
 	StringSplit, LogLines, LogContents, `r, `n
 	logline :=
 	TrimmedLinea :=
@@ -360,11 +362,12 @@ ParseOldLog: ;Old-Style log parsing
 		{
 			logline := LogLines%a_index%
 			stringtrimleft, TrimmedLine, logline, 13
-			if TrimmedLine contains can't,Cannot,couldn't,Couldn't,Could not,crash,error,Error,ERROR,Exception,failed,Failed,Fatal,GlobalError,nui://racescript/,#overriding,parse,#recieved,#Recieving,Uncaught,unexpected,Unexpected,warning,^1SCRIPT
-				if TrimmedLine not contains charlie,f7c13cb204bc9aecf40b,ignore-certificate-errors,is not a platform image,NurburgringNordschleife/_manifest.ymf,script.js:214,script.js:458,terrorbyte,warmenu
+			if TrimmedLine contains %LogContains%
+				if TrimmedLine not contains %LogDoesNotContain%
 					TrimmedLinea = %TrimmedLinea%Line #%A_Index%:%A_Tab%%TrimmedLine%`n
 		}
 	Guicontrol, LogViewerWindow: text, LogContents, %TrimmedLinea%
+	MsgBox, Old-Style log suspected.
 	return
 
 SlowOpen: ;Opens the log ignoring any found null characters that normally cause issues
