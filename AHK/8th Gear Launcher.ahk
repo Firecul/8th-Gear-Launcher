@@ -62,10 +62,7 @@ Gui, New ;Main Window
 
 	Gui, Tab, 4 ;Tools
 		Gui, font, s10 norm
-		Gui, Add, groupbox, w620 h50, FiveM install location:
-		Gui, add, text, xp+10 yp+20 w300 vselfile, (Not found)
-		Gui, add, button, xp+470 yp-6 glookforfivem, Locate FiveM install
-		Gui, Add, groupbox, xp-480 yp+40 w620 h290, Current Logs:
+		Gui, Add, groupbox, xp-0 yp+0 w620 h290, Current Logs:
 		Gui, Add, ListView, xp+10 yp+20 r10 w600 AltSubmit Grid -Multi gMyListView vMyListView, Name|Size (KB)|Modified
 		Gui, add, button, xp+494 yp+234 gupdatefiles, Refresh Log list
 
@@ -75,7 +72,8 @@ Gui, New ;Main Window
 		GUi, add, button, xp+545 w100 gGuiClose, Exit
 		Gui, Show, Center h812, 8th Gear FiveM Launcher
 
-Menu, FileMenu, Add, Exit, MenuOptionExit  ;Top Menu
+Menu, FileMenu, Add, Locate FiveM.exe, lookforfivem  ;Top Menu
+	Menu, FileMenu, Add, Exit, MenuOptionExit
 
 	Menu, CacheMenu, Add, Open Cache Folder, OpenCacheFolder
 	Menu, CacheMenu, Add, Back-up Cache, BackupCache
@@ -127,7 +125,16 @@ menu, submenu, add, Log Viewer, OpenLogViewer ;Context Menu
 EnvGet, LOCALAPPDATA, LOCALAPPDATA ;Searches Fivem default location
 	Loop, %LOCALAPPDATA%\FiveM\FiveM.exe, , 1
 	SelectedFile := A_LoopFileFullPath
-	Guicontrol, , selfile, %SelectedFile%
+	Menu, FileMenu, Disable, Locate FiveM.exe
+	if (SelectedFile = ""){
+			MsgBox, FiveM.exe cannot be found.`nPlease locate it using the option in the File menu
+			LV_Delete()
+			gosub lookforfivem
+			Menu, FileMenu, Enable, Locate FiveM.exe
+		}
+		else{
+			Menu, FileMenu, Disable, Locate FiveM.exe
+		}
 	gosub updatefiles
 	gosub UpdateList
 	return
@@ -155,10 +162,14 @@ Connect: ;Connects to the selected server in the list
 lookforfivem: ;Opens dialogue box to allow selecting FiveM.exe location
 	Gui +OwnDialogs
 	FileSelectFile, SelectedFile, 3, , Locate FiveM.exe, FiveM (FiveM.exe)
-	if (SelectedFile = "")
+	if (SelectedFile = ""){
 			MsgBox, The user didn't select anything.
 			LV_Delete()
-	Guicontrol, , selfile, %SelectedFile%
+			Menu, FileMenu, Enable, Locate FiveM.exe
+	}
+	else{
+		Menu, FileMenu, Disable, Locate FiveM.exe
+	}
 	gosub, updatefiles
 	return
 
