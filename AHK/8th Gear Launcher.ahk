@@ -335,8 +335,8 @@ ParseLog: ;Determines the type of log(old-style vs new-style)
 		return
 	}
 	else{
-	gosub, ParseOldLog ;Old-Style log
-	return
+		gosub, ParseOldLog ;Old-Style log
+		return
 	}
 
 ParseNewLog: ;New-Style log parsing
