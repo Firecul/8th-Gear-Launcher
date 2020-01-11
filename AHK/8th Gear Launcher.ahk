@@ -133,7 +133,7 @@ menu, submenu, add, Log Viewer, OpenLogViewer ;Context Menu
 EnvGet, LOCALAPPDATA, LOCALAPPDATA ;Searches Fivem default location
 	Loop, %LOCALAPPDATA%\FiveM\FiveM.exe, , 1
 	SelectedFile := A_LoopFileFullPath
-	Menu, FileMenu, Disable, Locate FiveM.exe
+	Menu, MenuBar, Disable, FAQ
 	if (SelectedFile = ""){
 			MsgBox, FiveM.exe cannot be found.`nPlease locate it using the option in the File menu
 			LV_Delete()
