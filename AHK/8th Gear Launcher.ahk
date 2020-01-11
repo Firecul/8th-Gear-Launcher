@@ -114,6 +114,8 @@ Gui, RulesWindow: ;Rules Window
 	RulesBold("8) Listen to the Staff")
 	RulesNormal("Staff have the final say and are free to moderate at their own discretion.")
 	RulesBold("By taking part in this community you acknowledge that you understand and accept these rules. Ignoring them or not knowing them does not excuse you from them.")
+	Gui, RulesWindow: font, norm
+	Gui, RulesWindow: Add, link, w600, The rules found on the official discord channel superceed the ones found on this launcher, please refer to the <a href="https://discord.gg/Ts2kEEH">discord #rules channel</a> for the most up to date list.
 
 Gui, FAQWindow: ;FAQ Window
 	Gui, FAQWindow: font, s10 norm
@@ -393,7 +395,7 @@ opennotepad: ;Opens the selected log with Notepad
 	return
 
 8GDiscord: ;Opens 8G Main discord channel
-	Run https://discord.gg/
+	Run https://discord.gg/4Xd2uwy
 	return
 
 MenuOptionAbout: ;Opens about window
