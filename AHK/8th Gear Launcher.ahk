@@ -93,7 +93,7 @@ Gui, BackupWindow: +Resize ;LogBackupManager Window
 
 Gui, RulesWindow: ;Rules Window
 	Gui, RulesWindow: font, s10 Norm
-	Gui, RulesWindow: Add, GroupBox, w620 h700, 8th Gear Specific Rules:
+	Gui, RulesWindow: Add, GroupBox, w620 h790, 8th Gear Specific Rules:
 	Gui, RulesWindow: font, bold
 	Gui, RulesWindow: Add, text, xp+10 yp+20 w550, 1) THE GOLDEN RULE: Don't be a Dick
 	RulesNormal("Personal attacks, harassment, hate speech, etc. will not be tolerated. Treat others with respect at all times.")
@@ -102,11 +102,17 @@ Gui, RulesWindow: ;Rules Window
 	Gui, RulesWindow: Add, Link,, <a href="https://discordapp.com/terms">https://discordapp.com/terms</a> && <a href="https://discordapp.com/guidelines">https://discordapp.com/guidelines</a>
 	RulesBold("3) No NSFW/NSFL Content")
 	RulesBold("4) No Spamming or Trolling")
-	RulesBold("5) No Cheating on the Server")
+	RulesBold("5) English Only")
+	RulesNormal("Please speak English at all times while on the server. This helps everyone to understand each other.")
+	RulesBold("6) No Cheating on the Server")
 	RulesNormal("Using 3rd-party menus to gain an unfair advantage will result in a ban.")
-	RulesBold("6) No Drama")
+	RulesBold("7) No Drama")
 	RulesNormal("Arguments should be resolved in a respectful manner or kept out of the discord entirely.")
-	RulesBold("7) No Advertising")
+	RulesBold("8) Keep channels on-topic")
+	RulesNormal("Try to keep conversations in their appropriate channels. A little spillover is fine, but don't let it get out of hand.")
+	RulesBold("9) No Politics")
+	RulesNormal("This server is for people to have fun playing games together. Other servers exist for political discussion and this is not one of them.")
+	RulesBold("10) No Advertising")
 	RulesNormal("Links to youtube channels, streams, other discords, etc. are prohibited unless approved by a staff member.")
 	RulesBold("8) Listen to the Staff")
 	RulesNormal("Staff have the final say and are free to moderate at their own discretion.")
