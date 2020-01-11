@@ -23,8 +23,7 @@ RulesNormal(text)
 	}
 
 Gui, New ;Main Window
-	Gui, Add, Tab3,, Connect|Tools
-
+	Gui, Add, Tab3,, Connect|Misc
 	Gui, Tab, 1 ;Connect
 		Gui, Add, Picture, w465 h-1, 8thGearLauncher/8GLogo.png
 		Gui, Add, GroupBox, w220 h81, 8th Gear Servers:
@@ -36,7 +35,7 @@ Gui, New ;Main Window
 		;gui, add, groupbox, xp-10 yp+21 w370 h40,
 		;gui, add, link, xp+10 yp+15 w350, <a href="https://8thgear.com/status">To see server status, click here to go to the website</a>
 
-	Gui, Tab, 2 ;Tools
+	Gui, Tab, 2 ;Misc
 		Gui, font, s10 norm
 		Gui, Add, groupbox, xp-239 yp-496 w465 h290, Current Logs:
 		Gui, Add, ListView, xp+10 yp+20 r10 w445 AltSubmit Grid -Multi gMyListView vMyListView, Name|Size (KB)|Modified
