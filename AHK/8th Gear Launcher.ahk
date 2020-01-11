@@ -24,6 +24,7 @@ RulesNormal(text)
 
 Gui, New ;Main Window
 	Gui, Add, Tab3,, Connect|Misc
+
 	Gui, Tab, 1 ;Connect
 		Gui, Add, Picture, w465 h-1, 8thGearLauncher/8GLogo.png
 		Gui, Add, GroupBox, w220 h81, 8th Gear Servers:
@@ -47,27 +48,27 @@ Gui, New ;Main Window
 		GUi, add, button, xp+391 w100 gGuiClose, Exit
 		Gui, Show, Center h657, 8th Gear FiveM Launcher
 
-Menu, FileMenu, Add, Locate FiveM.exe, lookforfivem  ;Top Menu
-	Menu, FileMenu, Add, Exit, MenuOptionExit
+Menu, FileMenu, Add, &Locate FiveM.exe, lookforfivem  ;Top Menu
+	Menu, FileMenu, Add, E&xit, MenuOptionExit
 
-	Menu, CacheMenu, Add, Open Cache Folder, OpenCacheFolder
-	Menu, CacheMenu, Add, Back-up Cache, BackupCache
+	Menu, CacheMenu, Add, &Open Cache Folder, OpenCacheFolder
+	Menu, CacheMenu, Add, &Back-up Cache, BackupCache
 	Menu, CacheMenu, Add, Open Back-up Folder, OpenBackupCacheFolder
-	Menu, CacheMenu, Add, Restore Cache from Back-ups, RestoreCache
+	Menu, CacheMenu, Add, &Restore Cache from Back-ups, RestoreCache
 
-	Menu, LogMenu, Add, Open Log Folder, OpenLogFolder
-	Menu, LogMenu, Add, Back-up Logs, BackupLogs
-	Menu, LogMenu, Add, Manage Backed-up Logs, OpenBackupWindow
+	Menu, LogMenu, Add, &Open Log Folder, OpenLogFolder
+	Menu, LogMenu, Add, &Back-up Logs, BackupLogs
+	Menu, LogMenu, Add, &Manage Backed-up Logs, OpenBackupWindow
 	Menu, LogMenu, Add, Open Back-up Folder, OpenLogBackupFolder
 
-	Menu, ToolsMenu, Add, Cache, :CacheMenu
-	Menu, ToolsMenu, Add, Logs, :LogMenu
+	Menu, ToolsMenu, Add, &Cache, :CacheMenu
+	Menu, ToolsMenu, Add, &Logs, :LogMenu
 
-	Menu, MenuBar, Add, File, :FileMenu
-	Menu, MenuBar, Add, Tools, :ToolsMenu
-	Menu, MenuBar, Add, Rules, MenuOptionRules
+	Menu, MenuBar, Add, &File, :FileMenu
+	Menu, MenuBar, Add, &Tools, :ToolsMenu
+	Menu, MenuBar, Add, &Rules, MenuOptionRules
 	Menu, MenuBar, Add, FAQ, MenuOptionFAQ
-	Menu, MenuBar, Add, About, MenuOptionAbout
+	Menu, MenuBar, Add, &About, MenuOptionAbout
 
 	Gui, Menu, MenuBar
 
@@ -139,10 +140,10 @@ EnvGet, LOCALAPPDATA, LOCALAPPDATA ;Searches Fivem default location
 			MsgBox, FiveM.exe cannot be found.`nPlease locate it using the option in the File menu
 			LV_Delete()
 			gosub lookforfivem
-			Menu, FileMenu, Enable, Locate FiveM.exe
+			Menu, FileMenu, Enable, &Locate FiveM.exe
 		}
 		else{
-			Menu, FileMenu, Disable, Locate FiveM.exe
+			Menu, FileMenu, Disable, &Locate FiveM.exe
 		}
 	gosub updatefiles
 	gosub UpdateList
@@ -174,10 +175,10 @@ lookforfivem: ;Opens dialogue box to allow selecting FiveM.exe location
 	if (SelectedFile = ""){
 			MsgBox, The user didn't select anything.
 			LV_Delete()
-			Menu, FileMenu, Enable, Locate FiveM.exe
+			Menu, FileMenu, Enable, &Locate FiveM.exe
 	}
 	else{
-		Menu, FileMenu, Disable, Locate FiveM.exe
+		Menu, FileMenu, Disable, &Locate FiveM.exe
 	}
 	gosub, updatefiles
 	return
