@@ -12,81 +12,66 @@ vFAQ =
 	READ THE WHOLE THING.
 	)
 
-Bold(text)
-	{	Gui, font, bold
-		Gui, Add, text, w600, %text%
+RulesBold(text)
+	{	Gui, RulesWindow: font, bold
+		Gui, RulesWindow: Add, text, w600, %text%
 	}
 
-Normal(text)
-	{	Gui, font, Norm
-		Gui, Add, text, w600, %text%
+RulesNormal(text)
+	{	Gui, RulesWindow: font, Norm
+		Gui, RulesWindow: Add, text, w600, %text%
 	}
 
 Gui, New ;Main Window
-	Gui, Add, Tab3,, Connect|Rules|FAQ|Tools|About
+	Gui, Add, Tab3,, Connect|Misc
 
 	Gui, Tab, 1 ;Connect
-		Gui, Add, Picture, w620 h-1, 8thGearLauncher/8GLogo.png
+		Gui, Add, Picture, w465 h-1, 8thGearLauncher/8GLogo.png
 		Gui, Add, GroupBox, w220 h81, 8th Gear Servers:
 		gui, add, DropDownList, xp+10 yp+20 w133 vServerName,
 		gui, add, button, xp+139 yp-1 w60 gConnect, Connect
-		GUi, add, button, xp-140 yp+30 w200 gLocalhost, &Localhost
-		Gui, add, Groupbox, xp+220 yp-49 w370 h45, Disclaimer
-		Gui, add, link, xp+10 yp+20 w350, By joining our servers you agree to be bound to the <a href="https://discordapp.com/channels/">#rules</a> of our server.
-		gui, add, groupbox, xp-10 yp+21 w370 h40,
-		gui, add, link, xp+10 yp+15 w350, <a href="https://8thgear.com/status">To see server status, click here to go to the website</a>
+		Gui, add, button, xp-140 yp+30 w200 gLocalhost, &Localhost
+		Gui, add, Groupbox, xp+220 yp-49 w236 h81, Disclaimer
+		Gui, add, link, xp+10 yp+20 w215, By joining our servers you agree to be bound to the <a href="https://discord.gg/Ts2kEEH">#rules</a> of our server.
+		;gui, add, groupbox, xp-10 yp+21 w370 h40,
+		;gui, add, link, xp+10 yp+15 w350, <a href="https://8thgear.racing/status">To see server status, click here to go to the website</a>
 
-	Gui, Tab, 2 ;Rules
-		Gui, Add, GroupBox, w620 h700, 8th Gear Specific Rules:
-		Gui, font, bold
-		Gui, Add, text, xp+10 yp+20 w550, 1) THE GOLDEN RULE: Don't be a Dick
-		Normal("Personal attacks, harassment, hate speech, etc. will not be tolerated. Treat others with respect at all times.")
-		Bold("2) Follow Discord TOS and Community Guidelines")
-		Gui, font, Norm
-		Gui, Add, Link,, <a href="https://discordapp.com/terms">https://discordapp.com/terms</a> && <a href="https://discordapp.com/guidelines">https://discordapp.com/guidelines</a>
-		Bold("3) No NSFW/NSFL Content")
-		Bold("4) No Spamming or Trolling")
-		Bold("5) No Cheating on the Server")
-		Normal("Using 3rd-party menus to gain an unfair advantage will result in a ban.")
-		Bold("6) No Drama")
-		Normal("Arguments should be resolved in a respectful manner or kept out of the discord entirely.")
-		Bold("7) No Advertising")
-		Normal("Links to youtube channels, streams, other discords, etc. are prohibited unless approved by a staff member.")
-		Bold("8) Listen to the Staff")
-		Normal("Staff have the final say and are free to moderate at their own discretion.")
-		Bold("By taking part in this community you acknowledge that you understand and accept these rules. Ignoring them or not knowing them does not excuse you from them.")
-
-	Gui, Tab, 3 ;FAQ
+	Gui, Tab, 2 ;Misc
 		Gui, font, s10 norm
-		Gui, Add, edit, w620 h700 Multi ReadOnly, %vFAQ%
-
-	Gui, Tab, 4 ;Tools
-		Gui, font, s10 norm
-		Gui, Add, groupbox, w620 h50, FiveM install location:
-		Gui, add, text, xp+10 yp+20 w300 vselfile, (Not found)
-		Gui, add, button, xp+470 yp-6 glookforfivem, Locate FiveM install
-		Gui, Add, groupbox, xp-480 yp+40 w620 h290, Current Logs:
-		Gui, Add, ListView, xp+10 yp+20 r10 w600 AltSubmit Grid -Multi gMyListView vMyListView, Name|Size (KB)|Modified
-		Gui, add, button, xp-1 yp+234 gOpenLogFolder, Open Log Folder
-		Gui, add, button, xp+495 gupdatefiles, Refresh Log list
-		Gui, Add, groupbox, xp-504 yp+40 w620 h56, Log Backups:
-		Gui, add, button, xp+9 yp+20 gBackupLogs, Backup Current Logs
-		gui, add, button, xp+145 gOpenBackupWindow, Manage Saved Logs
-		gui, add, groupbox, xp-154 yp+40 w620 h56, Cache Backups:
-		gui, add, button, xp+9 yp+20 gOpenCacheFolder vOpenCacheFolder, Open Cache Folder
-		gui, add, button, xp+138 gBackupCache, Backup Cache Files
-		gui, add, button, xp+141 gOpenBackupCacheFolder, Open Backup Folder
-		gui, add, button, xp+145 gRestoreCache, Restore Backups
-
-	Gui, Tab, 5 ;About
-		Gui, font, s10 norm
-		Gui, Add, link, w620, Hello and welcome to the 8th Gear FiveM Launcher! `n`nThis Launcher serves as the hub for everything you need to play on the 8th Gear servers and a few useful tools that will help you along the way. `n`n<Blurb goes here>
+		Gui, Add, groupbox, xp-239 yp-496 w465 h290, Current Logs:
+		Gui, Add, ListView, xp+10 yp+20 r10 w445 AltSubmit Grid -Multi gMyListView vMyListView, Name|Size (KB)|Modified
+		Gui, add, button, xp+339 yp+234 gupdatefiles, Refresh Log list
 
 	Gui, Tab ;All Tabs
 		Gui, font, norm
-		Gui, add, button, w100 g8GDiscord, Discord
-		GUi, add, button, xp+545 w100 gGuiClose, Exit
-		Gui, Show, AutoSize Center, 8th Gear FiveM Launcher
+		Gui, add, button, xp-1 yp+596 w100 g8GDiscord, Discord
+		GUi, add, button, xp+391 w100 gGuiClose, Exit
+		Gui, Show, Center h657, 8th Gear FiveM Launcher
+
+Menu, FileMenu, Add, &Locate FiveM.exe, lookforfivem  ;Top Menu
+	Menu, FileMenu, Add, E&xit, MenuOptionExit
+
+	Menu, CacheMenu, Add, &Open Cache Folder, OpenCacheFolder
+	Menu, CacheMenu, Add, &Back-up Cache, BackupCache
+	Menu, CacheMenu, Add, Open Back-up Folder, OpenBackupCacheFolder
+	Menu, CacheMenu, Add, &Restore Cache from Back-ups, RestoreCache
+
+	Menu, LogMenu, Add, &Open Log Folder, OpenLogFolder
+	Menu, LogMenu, Add, &Back-up Logs, BackupLogs
+	Menu, LogMenu, Add, &Manage Backed-up Logs, OpenBackupWindow
+	Menu, LogMenu, Add, Open Back-up Folder, OpenLogBackupFolder
+	Menu, LogMenu, Add, Open &Arbitrary log..., MenuOptionArbitraryLog
+
+	Menu, ToolsMenu, Add, &Cache, :CacheMenu
+	Menu, ToolsMenu, Add, &Logs, :LogMenu
+
+	Menu, MenuBar, Add, &File, :FileMenu
+	Menu, MenuBar, Add, &Tools, :ToolsMenu
+	Menu, MenuBar, Add, &Rules, MenuOptionRules
+	Menu, MenuBar, Add, FAQ, MenuOptionFAQ
+	Menu, MenuBar, Add, &About, MenuOptionAbout
+
+	Gui, Menu, MenuBar
 
 Gui, LogViewerWindow: +Resize ;LogViewer Window
 	gui, LogViewerWindow: font, s10 norm
@@ -96,13 +81,51 @@ Gui, LogViewerWindow: +Resize ;LogViewer Window
 	gui, LogViewerWindow: add, edit, xp-10 yp+39 w1000 r30 ReadOnly t10 vLogContents, (Loading)
 	gui, LogViewerWindow: font,
 	gui, LogViewerWindow: font, s10
-	gui, LogViewerWindow: add, button, vParse gParse, Parse
+	gui, LogViewerWindow: add, button, vParse gParseLog, Parse
 	gui, LogViewerWindow: add, button, vSlowOpen gSlowOpen, Thorough Open (Slow)
 
 Gui, BackupWindow: +Resize ;LogBackupManager Window
 	gui, BackupWindow: font, s10 Norm
 	Gui, BackupWindow: Add, groupbox, w620 h260 vGB2, Backed-up Logs:
 	Gui, BackupWindow: Add, ListView, xp+10 yp+20 r10 w600 AltSubmit Grid -Multi gMyNewerListView vMyNewerListView, Name|Size (KB)|Modified
+
+Gui, RulesWindow: ;Rules Window
+	Gui, RulesWindow: font, s10 Norm
+	Gui, RulesWindow: Add, GroupBox, w620 h790, 8th Gear Specific Rules:
+	Gui, RulesWindow: font, bold
+	Gui, RulesWindow: Add, text, xp+10 yp+20 w550, 1) THE GOLDEN RULE: Don't be a Dick
+	RulesNormal("Personal attacks, harassment, hate speech, etc. will not be tolerated. Treat others with respect at all times.")
+	RulesBold("2) Follow Discord TOS and Community Guidelines")
+	Gui, RulesWindow: font, Norm
+	Gui, RulesWindow: Add, Link,, <a href="https://discordapp.com/terms">https://discordapp.com/terms</a> && <a href="https://discordapp.com/guidelines">https://discordapp.com/guidelines</a>
+	RulesBold("3) No NSFW/NSFL Content")
+	RulesBold("4) No Spamming or Trolling")
+	RulesBold("5) English Only")
+	RulesNormal("Please speak English at all times while on the server. This helps everyone to understand each other.")
+	RulesBold("6) No Cheating on the Server")
+	RulesNormal("Using 3rd-party menus to gain an unfair advantage will result in a ban.")
+	RulesBold("7) No Drama")
+	RulesNormal("Arguments should be resolved in a respectful manner or kept out of the discord entirely.")
+	RulesBold("8) Keep channels on-topic")
+	RulesNormal("Try to keep conversations in their appropriate channels. A little spillover is fine, but don't let it get out of hand.")
+	RulesBold("9) No Politics")
+	RulesNormal("This server is for people to have fun playing games together. Other servers exist for political discussion and this is not one of them.")
+	RulesBold("10) No Advertising")
+	RulesNormal("Links to youtube channels, streams, other discords, etc. are prohibited unless approved by a staff member.")
+	RulesBold("8) Listen to the Staff")
+	RulesNormal("Staff have the final say and are free to moderate at their own discretion.")
+	RulesBold("By taking part in this community you acknowledge that you understand and accept these rules. Ignoring them or not knowing them does not excuse you from them.")
+	Gui, RulesWindow: font, norm
+	Gui, RulesWindow: Add, link, w600, The rules found on the official discord channel superceed the ones found on this launcher, please refer to the <a href="https://discord.gg/Ts2kEEH">discord #rules channel</a> for the most up to date list.
+
+Gui, FAQWindow: ;FAQ Window
+	Gui, FAQWindow: font, s10 norm
+	Gui, FAQWindow: Add, edit, w620 h700 Multi ReadOnly, %vFAQ%
+
+gui, AboutWindow: ;About Window
+	Gui, AboutWindow: font, s10 norm
+	Gui, AboutWindow: Add, link, w620, Hello and welcome to the 8th Gear FiveM Launcher! `n`nThis Launcher serves as the hub for everything you need to play on the 8th Gear servers and a few useful tools that will help you along the way. `n`nThis launcher is built using AHK by Firecul and is open-source and can be found on <a href="https://github.com/Firecul/8th-Gear-Launcher">GitHub</a>.`n`nIf you would like to contribute to this program, you are welcome to contact me there or submit a <a href="https://github.com/Firecul/8th-Gear-Launcher/pulls">pull request</a>.`n`nIf you find any problems please <a href="https://github.com/Firecul/8th-Gear-Launcher/issues/new">let me know</a>.
+	gui, AboutWindow:+Owner
 
 menu, submenu, add, Log Viewer, OpenLogViewer ;Context Menu
 	menu, submenu, Default, Log Viewer
@@ -113,10 +136,42 @@ menu, submenu, add, Log Viewer, OpenLogViewer ;Context Menu
 EnvGet, LOCALAPPDATA, LOCALAPPDATA ;Searches Fivem default location
 	Loop, %LOCALAPPDATA%\FiveM\FiveM.exe, , 1
 	SelectedFile := A_LoopFileFullPath
-	Guicontrol, , selfile, %SelectedFile%
-	gosub updatefiles
-	gosub UpdateList
+	Menu, MenuBar, Disable, FAQ
+	if (SelectedFile = ""){
+			MsgBox, FiveM.exe cannot be found.`nPlease locate it using the option in the File menu
+			LV_Delete()
+			gosub lookforfivem
+			Menu, FileMenu, Enable, &Locate FiveM.exe
+		}
+		else{
+			Menu, FileMenu, Disable, &Locate FiveM.exe
+		}
+	GoSub, updatefiles
+	GoSub, UpdateList
+	;GoSub, DownloadServerList
 	return
+
+DownloadServerList: ;Will donwnload the serverlistini once it's hosted somewhere
+	req := ComObjCreate("Msxml2.XMLHTTP")
+	req.open("GET", "https://www.autohotkey.com/download/1.1/version.txt", true)
+	req.onreadystatechange := Func("Ready") ; Send the request.  Ready() will be called when it's complete.
+	req.send()
+	/*
+	while req.readyState != 4
+		sleep 100
+	*/
+	#Persistent
+
+	Ready() {
+		global req
+		if (req.readyState != 4)  ; Not done yet.
+				return
+		if (req.status == 200) ; OK.
+				MsgBox % "Latest AutoHotkey version: " req.responseText
+		else
+				MsgBox 16,, % "Status " req.status
+	}
+	Return
 
 Localhost: ;Launches FiveM and connects to Localhost
 	Run fivem://connect/127.0.0.1
@@ -141,10 +196,14 @@ Connect: ;Connects to the selected server in the list
 lookforfivem: ;Opens dialogue box to allow selecting FiveM.exe location
 	Gui +OwnDialogs
 	FileSelectFile, SelectedFile, 3, , Locate FiveM.exe, FiveM (FiveM.exe)
-	if (SelectedFile = "")
+	if (SelectedFile = ""){
 			MsgBox, The user didn't select anything.
 			LV_Delete()
-	Guicontrol, , selfile, %SelectedFile%
+			Menu, FileMenu, Enable, &Locate FiveM.exe
+	}
+	else{
+		Menu, FileMenu, Disable, &Locate FiveM.exe
+	}
 	gosub, updatefiles
 	return
 
@@ -238,6 +297,7 @@ OpenLogViewer: ;Opens the selected log with the Log Viewer
 	return
 
 OpenBackupWindow: ;Opens the Log backup management window
+	Gui +OwnDialogs
 	gosub, updatefiles
 	gui, BackupWindow: show, AutoSize Center, Log Backups
 	IfExist, %seldir5%
@@ -258,6 +318,7 @@ OpenCacheFolder: ;Opens normal cache folder
 	return
 
 BackupCache: ;Backs up cache priv folder
+	Gui +OwnDialogs
 	IfNotExist, %CacheBackupLocation%
 		MsgBox, The target folder does not exist. Creating it.
 		FileCreateDir, %CacheBackupLocation%
@@ -266,12 +327,14 @@ BackupCache: ;Backs up cache priv folder
 	FileCopyDir, %cachedir%\db\, %CacheBackupLocation%\db\, 1
 	FileCopyDir, %cachedir%\unconfirmed\, %CacheBackupLocation%\unconfirmed\ , 1
 	msgbox, Done
+	Return
 
 OpenBackupCacheFolder: ;Opens the backup Cache folder
 	run %CacheBackupLocation%
 	return
 
 RestoreCache: ;Restores cache from backups
+	Gui +OwnDialogs
 	FileCopy, %CacheBackupLocation%\*.*, %cachedir%\*.*
 	FileCopyDir, %CacheBackupLocation%\db\, %cachedir%\db\, 1
 	FileCopyDir, %CacheBackupLocation%\unconfirmed\, %cachedir%\unconfirmed\ , 1
@@ -284,23 +347,54 @@ BackupWindowGuiSize: ;Makes BackupWindow resize correctly
 	Anchor("LogContents","wh")
 	return
 
-Parse: ;Parses logs looking for meaningfull errors
+ParseLog: ;Determines the type of log(old-style vs new-style)
 	StringSplit, LogLines, LogContents, `r, `n
 	logline :=
 	TrimmedLinea :=
+
+	LogContains := "abnormally,attempt new connection,can't,Cannot,couldn't,Couldn't,Could not,crash,error,Error,ERROR,ERR_CONNECTION_REFUSED,exception,Exception,failed,Failed,Fatal,GlobalError,is not a valid number,nui://racescript/,#overriding,parse,#recieved,#Recieving,SyntaxError,Uncaught,unexpected,Unexpected,warning,Warning,^1SCRIPT,^3>,----------------"
+	LogDoesNotContain := "charlie,f7c13cb204bc9aecf40b,ignore-certificate-errors,index.html:244,is not a platform image,NurburgringNordschleife/_manifest.ymf,script.js:214,script.js:458,script.js:461,terrorbyte,warmenu,WarningScreen INIT_CORE"
+
+	Needle := "CitizenFX_log_"
+
+	IfInString, SelectedLog, %Needle%
+	{
+		gosub, ParseNewLog ;New-Style log
+		return
+	}
+	else{
+		gosub, ParseOldLog ;Old-Style log
+		return
+	}
+	Return
+
+ParseNewLog: ;New-Style log parsing
 	Loop, %LogLines0%
 		{
 			logline := LogLines%a_index%
 			stringtrimleft, TrimmedLine, logline, 52
-			if TrimmedLine contains can't,Cannot,couldn't,Could not parse,error,Error,ERROR,Exception,failed,Failed,GlobalError,nui://racescript/,#overriding,unexpected,warning,^1SCRIPT
-				if TrimmedLine not contains f7c13cb204bc9aecf40b,ignore-certificate-errors,is not a platform image,terrorbyte,NurburgringNordschleife/_manifest.ymf
+			if TrimmedLine contains %LogContains%
+				if TrimmedLine not contains %LogDoesNotContain%
 					TrimmedLinea = %TrimmedLinea%Line #%A_Index%:%A_Tab%%TrimmedLine%`n
 		}
 	Guicontrol, LogViewerWindow: text, LogContents, %TrimmedLinea%
 	return
 
+ParseOldLog: ;Old-Style log parsing
+	Loop, %LogLines0%
+		{
+			logline := LogLines%a_index%
+			stringtrimleft, TrimmedLine, logline, 13
+			if TrimmedLine contains %LogContains%
+				if TrimmedLine not contains %LogDoesNotContain%
+					TrimmedLinea = %TrimmedLinea%Line #%A_Index%:%A_Tab%%TrimmedLine%`n
+		}
+	Guicontrol, LogViewerWindow: text, LogContents, %TrimmedLinea%
+	MsgBox, Old-Style log suspected.
+	return
+
 SlowOpen: ;Opens the log ignoring any found null characters that normally cause issues
-	Guicontrol, LogViewerWindow: text, LogContents, % Nonulls(seldirthree)
+	Guicontrol, LogViewerWindow: text, LogContents, % Nonulls(SelectedLog)
 	return
 
 NoNulls(Filename) { ;Reads the given file character by charcter
@@ -317,7 +411,12 @@ OpenLogFolder: ;Opens the log folder
 	run %seldir2%
 	return
 
+OpenLogBackupFolder: ;Opens the log backup folder
+	run %seldir5%
+	return
+
 BackupLogs: ;Backs up logs to the backup folder for safe keeping
+	Gui +OwnDialogs
 	IfNotExist, %seldir5%
 		MsgBox, The target folder does not exist. Creating it.
 		FileCreateDir, %seldir5%
@@ -336,6 +435,7 @@ BackupLogs: ;Backs up logs to the backup folder for safe keeping
 	return
 
 opendefault: ;Opens the selected log with the users default editor for .log files
+	Gui +OwnDialogs
 	gosub, GetFileSelected
 	Run %SelectedLog%,, UseErrorLevel
 	if ErrorLevel
@@ -343,6 +443,7 @@ opendefault: ;Opens the selected log with the users default editor for .log file
 	return
 
 opennotepad: ;Opens the selected log with Notepad
+	Gui +OwnDialogs
 	gosub, GetFileSelected
 	Run C:\Windows\Notepad.exe %SelectedLog%,, UseErrorLevel
 	if ErrorLevel
@@ -350,11 +451,68 @@ opennotepad: ;Opens the selected log with Notepad
 	return
 
 8GDiscord: ;Opens 8G Main discord channel
-	Run https://discord.gg/
+	Run https://discord.gg/4Xd2uwy
 	return
 
-GuiEscape: ;Escape Stuff
+MenuOptionAbout: ;Opens about window
+	Gui AboutWindow:+ToolWindow +AlwaysOnTop
+	gui, AboutWindow: show, AutoSize Center, About
+	Return
+
+MenuOptionArbitraryLog:
+	Gui +OwnDialogs
+	FileSelectFile, SelectedLog, 3, , Open a FiveM Log, Log (*.log*)
+	if (SelectedLog = ""){
+			MsgBox, The user didn't select anything.
+	}
+	else{
+		GoSub, OpenLogViewer
+	}
+	return
+
+MenuOptionFAQ: ;Opens FAQ Window
+	Gui FAQWindow:+ToolWindow +AlwaysOnTop
+	Gui, FAQWindow: show, AutoSize Center, FAQWindow
+	Return
+
+MenuOptionRules: ;Opens rules window
+	Gui RulesWindow:+ToolWindow +AlwaysOnTop
+	gui, RulesWindow: show, AutoSize Center, Rules
+	Return
+
+AboutWindowGuiEscape: ;About window escape stuff
+	AboutWindowGuiClose:
+	Gui AboutWindow:Cancel
+	WinActivate, 8th Gear FiveM Launcher
+	return
+
+BackupWindowGuiEscape: ;Rules window escape stuff
+	BackupWindowGuiClose:
+	Gui BackupWindow:Cancel
+	WinActivate, 8th Gear FiveM Launcher
+	return
+
+FAQWindowGuiEscape: ;Rules window escape stuff
+	FAQWindowGuiClose:
+	Gui FAQWindow:Cancel
+	WinActivate, 8th Gear FiveM Launcher
+	return
+
+LogViewerWindowGuiEscape: ;Rules window escape stuff
+	LogViewerWindowGuiClose:
+	Gui LogViewerWindow:Cancel
+	WinActivate, 8th Gear FiveM Launcher
+	return
+
+RulesWindowGuiEscape: ;Rules window escape stuff
+	RulesWindowGuiClose:
+	Gui RulesWindow:Cancel
+	WinActivate, 8th Gear FiveM Launcher
+	return
+
+GuiEscape: ;Main window escape Stuff
 	GuiClose:
 	ButtonCancel:
+	MenuOptionExit:
 	FileRemoveDir, 8thGearLauncher, 1
 	ExitApp
