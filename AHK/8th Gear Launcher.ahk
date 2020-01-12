@@ -146,9 +146,32 @@ EnvGet, LOCALAPPDATA, LOCALAPPDATA ;Searches Fivem default location
 		else{
 			Menu, FileMenu, Disable, &Locate FiveM.exe
 		}
-	gosub updatefiles
-	gosub UpdateList
+	GoSub, updatefiles
+	GoSub, UpdateList
+	;GoSub, DownloadServerList
 	return
+
+DownloadServerList: ;Will donwnload the serverlistini once it's hosted somewhere
+	req := ComObjCreate("Msxml2.XMLHTTP")
+	req.open("GET", "https://www.autohotkey.com/download/1.1/version.txt", true)
+	req.onreadystatechange := Func("Ready") ; Send the request.  Ready() will be called when it's complete.
+	req.send()
+	/*
+	while req.readyState != 4
+		sleep 100
+	*/
+	#Persistent
+
+	Ready() {
+		global req
+		if (req.readyState != 4)  ; Not done yet.
+				return
+		if (req.status == 200) ; OK.
+				MsgBox % "Latest AutoHotkey version: " req.responseText
+		else
+				MsgBox 16,, % "Status " req.status
+	}
+	Return
 
 Localhost: ;Launches FiveM and connects to Localhost
 	Run fivem://connect/127.0.0.1
