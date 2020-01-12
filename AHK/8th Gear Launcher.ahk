@@ -347,6 +347,10 @@ BackupWindowGuiSize: ;Makes BackupWindow resize correctly
 	return
 
 ParseLog: ;Determines the type of log(old-style vs new-style)
+	StringSplit, LogLines, LogContents, `r, `n
+	logline :=
+	TrimmedLinea :=
+
 	LogContains := "can't,Cannot,couldn't,Couldn't,Could not,crash,error,Error,ERROR,Exception,failed,Failed,Fatal,GlobalError,nui://racescript/,#overriding,parse,#recieved,#Recieving,Uncaught,unexpected,Unexpected,warning,^1SCRIPT"
 	LogDoesNotContain := "charlie,f7c13cb204bc9aecf40b,ignore-certificate-errors,is not a platform image,NurburgringNordschleife/_manifest.ymf,script.js:214,script.js:458,terrorbyte,warmenu"
 
@@ -361,12 +365,9 @@ ParseLog: ;Determines the type of log(old-style vs new-style)
 		gosub, ParseOldLog ;Old-Style log
 		return
 	}
+	Return
 
 ParseNewLog: ;New-Style log parsing
-	StringSplit, LogLines, LogContents, `r, `n
-	logline :=
-	TrimmedLinea :=
-
 	Loop, %LogLines0%
 		{
 			logline := LogLines%a_index%
@@ -379,9 +380,6 @@ ParseNewLog: ;New-Style log parsing
 	return
 
 ParseOldLog: ;Old-Style log parsing
-	StringSplit, LogLines, LogContents, `r, `n
-	logline :=
-	TrimmedLinea :=
 	Loop, %LogLines0%
 		{
 			logline := LogLines%a_index%
