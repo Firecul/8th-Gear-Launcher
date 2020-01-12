@@ -352,8 +352,8 @@ ParseLog: ;Determines the type of log(old-style vs new-style)
 	logline :=
 	TrimmedLinea :=
 
-	LogContains := "can't,Cannot,couldn't,Couldn't,Could not,crash,error,Error,ERROR,Exception,failed,Failed,Fatal,GlobalError,nui://racescript/,#overriding,parse,#recieved,#Recieving,Uncaught,unexpected,Unexpected,warning,^1SCRIPT"
-	LogDoesNotContain := "charlie,f7c13cb204bc9aecf40b,ignore-certificate-errors,is not a platform image,NurburgringNordschleife/_manifest.ymf,script.js:214,script.js:458,terrorbyte,warmenu"
+	LogContains := "abnormally,attempt new connection,can't,Cannot,couldn't,Couldn't,Could not,crash,error,Error,ERROR,ERR_CONNECTION_REFUSED,exception,Exception,failed,Failed,Fatal,GlobalError,is not a valid number,nui://racescript/,#overriding,parse,#recieved,#Recieving,SyntaxError,Uncaught,unexpected,Unexpected,warning,Warning,^1SCRIPT,^3>,----------------"
+	LogDoesNotContain := "charlie,f7c13cb204bc9aecf40b,ignore-certificate-errors,index.html:244,is not a platform image,NurburgringNordschleife/_manifest.ymf,script.js:214,script.js:458,script.js:461,terrorbyte,warmenu,WarningScreen INIT_CORE"
 
 	Needle := "CitizenFX_log_"
 
