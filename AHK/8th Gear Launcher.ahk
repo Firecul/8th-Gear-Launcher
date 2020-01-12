@@ -34,7 +34,7 @@ Gui, New ;Main Window
 		Gui, add, Groupbox, xp+220 yp-49 w236 h81, Disclaimer
 		Gui, add, link, xp+10 yp+20 w215, By joining our servers you agree to be bound to the <a href="https://discord.gg/Ts2kEEH">#rules</a> of our server.
 		;gui, add, groupbox, xp-10 yp+21 w370 h40,
-		;gui, add, link, xp+10 yp+15 w350, <a href="https://8thgear.com/status">To see server status, click here to go to the website</a>
+		;gui, add, link, xp+10 yp+15 w350, <a href="https://8thgear.racing/status">To see server status, click here to go to the website</a>
 
 	Gui, Tab, 2 ;Misc
 		Gui, font, s10 norm
