@@ -327,6 +327,7 @@ BackupCache: ;Backs up cache priv folder
 	FileCopyDir, %cachedir%\db\, %CacheBackupLocation%\db\, 1
 	FileCopyDir, %cachedir%\unconfirmed\, %CacheBackupLocation%\unconfirmed\ , 1
 	msgbox, Done
+	Return
 
 OpenBackupCacheFolder: ;Opens the backup Cache folder
 	run %CacheBackupLocation%
