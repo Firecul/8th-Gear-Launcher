@@ -147,13 +147,13 @@ EnvGet, LOCALAPPDATA, LOCALAPPDATA ;Searches Fivem default location
 			Menu, FileMenu, Disable, &Locate FiveM.exe
 		}
 	GoSub, updatefiles
+	;GoSub, DownloadServerList ;Uncomment to enable downloading serverlist from URL
 	GoSub, UpdateList
-	;GoSub, DownloadServerList
 	return
 
 DownloadServerList: ;Will donwnload the serverlistini once it's hosted somewhere
 	req := ComObjCreate("Msxml2.XMLHTTP")
-	req.open("GET", "https://www.autohotkey.com/download/1.1/version.txt", true)
+	req.open("GET", "https://gist.githubusercontent.com/Firecul/c368e1f0c75426824b9020a30876982d/raw/4b22bc84d9f9217133e75963cbfeaa12ebb63496/test.ini", true) ;Update URL to public server list has a home
 	req.onreadystatechange := Func("Ready") ; Send the request.  Ready() will be called when it's complete.
 	req.send()
 	/*
@@ -167,9 +167,16 @@ DownloadServerList: ;Will donwnload the serverlistini once it's hosted somewhere
 		if (req.readyState != 4)  ; Not done yet.
 				return
 		if (req.status == 200) ; OK.
-				MsgBox % "Latest AutoHotkey version: " req.responseText
-		else
-				MsgBox 16,, % "Status " req.status
+		{
+			DownloadedList := req.responseText
+			;MsgBox % "Downloaded text: `n" DownloadedList
+			FileAppend, %DownloadedList%, 8thGearLauncher/NewServerList.ini ;Change to ServerList.ini once public and line:156 URL is correct
+			Return
+		}
+		else{
+			MsgBox 16,, % "Status " req.status
+			Return
+		}
 	}
 	Return
 
