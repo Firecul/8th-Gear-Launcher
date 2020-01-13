@@ -62,8 +62,13 @@ Menu, FileMenu, Add, &Locate FiveM.exe, lookforfivem  ;Top Menu
 	Menu, LogMenu, Add, Open Back-up Folder, OpenLogBackupFolder
 	Menu, LogMenu, Add, Open &Arbitrary log..., MenuOptionArbitraryLog
 
+	Menu, GTASettingsMenu, Add, Open in &Default editor, MenuOptionOpenGTASettingsDefault
+	Menu, GTASettingsMenu, Add, Open in &Notepad, MenuOptionOpenGTASettingsNotepad
+	Menu, GTASettingsMenu, Add, Open &Containing Folder, MenuOptionOpenGTASettingsFolder
+
 	Menu, ToolsMenu, Add, &Cache, :CacheMenu
 	Menu, ToolsMenu, Add, &Logs, :LogMenu
+	Menu, ToolsMenu, Add, &GTAV Settings, :GTASettingsMenu
 
 	Menu, MenuBar, Add, &File, :FileMenu
 	Menu, MenuBar, Add, &Tools, :ToolsMenu
@@ -480,6 +485,27 @@ MenuOptionArbitraryLog:
 MenuOptionFAQ: ;Opens FAQ Window
 	Gui FAQWindow:+ToolWindow +AlwaysOnTop
 	Gui, FAQWindow: show, AutoSize Center, FAQWindow
+	Return
+
+MenuOptionOpenGTASettingsDefault:
+	Run %A_MyDocuments%\Rockstar Games\GTA V\settings.xml,, UseErrorLevel
+	if ErrorLevel{
+		MsgBox Could not open %SelectedLog%
+	}
+	Return
+
+MenuOptionOpenGTASettingsFolder:
+	Run %A_MyDocuments%\Rockstar Games\GTA V,, UseErrorLevel
+	if ErrorLevel{
+		MsgBox, Could not open %A_MyDocuments%
+	}
+	Return
+
+MenuOptionOpenGTASettingsNotepad:
+	Run C:\Windows\Notepad.exe %A_MyDocuments%\Rockstar Games\GTA V\settings.xml,, UseErrorLevel
+	if ErrorLevel{
+		MsgBox Could not open %SelectedLog%
+	}
 	Return
 
 MenuOptionRules: ;Opens rules window
