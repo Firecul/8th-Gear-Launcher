@@ -308,6 +308,15 @@ OpenLogViewer: ;Opens the selected log with the Log Viewer
 	Guicontrol, LogViewerWindow: text, LogContents, %LogContents%
 	return
 
+F5::
+	SetTitleMatchMode, 3
+	IfWinActive, Log Viewer
+	{
+		fileread, LogContents, %SelectedLog%
+		Guicontrol, LogViewerWindow: text, LogContents, %LogContents%
+	}
+	Return
+
 OpenBackupWindow: ;Opens the Log backup management window
 	Gui +OwnDialogs
 	gosub, updatefiles
