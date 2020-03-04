@@ -446,7 +446,7 @@ BackupLogs: ;Backs up logs to the backup folder for safe keeping
 	FileCopy, %seldir2%\*.log, %seldir5%\*.*, 1
 	msgbox, Done
 	LV_Delete()
-	Loop, %seldir5%\*.log
+	Loop, %seldir2%\*.log
 		LV_Add("", A_LoopFileName, A_LoopFileSizeKB, A_LoopFileTimeModified, A_LoopFileFullPath)
 		LV_ModifyCol()
 		LV_ModifyCol(2, "AutoHdr Integer")
