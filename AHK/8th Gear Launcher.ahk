@@ -186,6 +186,7 @@ DownloadServerList: ;Will donwnload the serverlistini once it's hosted somewhere
 	Return
 
 Localhost: ;Launches FiveM and connects to Localhost
+	GoSub, BackupLogs
 	Run fivem://connect/127.0.0.1
 	return
 
@@ -202,6 +203,7 @@ Connect: ;Connects to the selected server in the list
 	GuiControlGet, ServerName
 	iniread, ServerIP, ServerList.ini, %ServerName%, IP
 	iniread, ServerPort, ServerList.ini, %ServerName%, Port
+	GoSub, BackupLogs
 	Run fivem://connect/%ServerIP%:%ServerPort%
 	return
 
@@ -439,10 +441,10 @@ OpenLogBackupFolder: ;Opens the log backup folder
 BackupLogs: ;Backs up logs to the backup folder for safe keeping
 	Gui +OwnDialogs
 	IfNotExist, %seldir5%
-		MsgBox, The target folder does not exist. Creating it.
+		;MsgBox, The target folder does not exist. Creating it.
 		FileCreateDir, %seldir5%
 	IfExist, %seldir5%
-		MsgBox, The target folder exists. Copying files.
+		;MsgBox, The target folder exists. Copying files.
 	FileCopy, %seldir2%\*.log, %seldir5%\*.*, 1
 	msgbox, Done
 	LV_Delete()
