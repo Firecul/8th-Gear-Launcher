@@ -181,6 +181,7 @@ EnvGet, LOCALAPPDATA, LOCALAPPDATA ;Searches Fivem default location
 		}
 	;GoSub, DownloadServerList
 	GoSub, updatefiles
+	sleep, 750
 	GoSub, UpdateList
 	return
 
@@ -200,8 +201,8 @@ UpdateList: ;Updates the list of servers from the ini file
 
 Connect: ;Connects to the selected server in the list
 	GuiControlGet, ServerName
-	iniread, ServerIP, ServerList.ini, %ServerName%, IP
-	iniread, ServerPort, ServerList.ini, %ServerName%, Port
+	iniread, ServerIP, 8thGearLauncher/ServerList.ini, %ServerName%, IP
+	iniread, ServerPort, 8thGearLauncher/ServerList.ini, %ServerName%, Port
 	GoSub, BackupLogs
 	Run fivem://connect/%ServerIP%:%ServerPort%
 	return
@@ -445,7 +446,7 @@ BackupLogs: ;Backs up logs to the backup folder for safe keeping
 	IfExist, %seldir5%
 		;MsgBox, The target folder exists. Copying files.
 	FileCopy, %seldir2%\*.log, %seldir5%\*.*, 1
-	msgbox, Done
+	msgbox, Logs Backed Up
 	LV_Delete()
 	Loop, %seldir2%\*.log
 		LV_Add("", A_LoopFileName, A_LoopFileSizeKB, A_LoopFileTimeModified, A_LoopFileFullPath)
