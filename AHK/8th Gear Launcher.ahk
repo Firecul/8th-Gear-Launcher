@@ -179,7 +179,6 @@ EnvGet, LOCALAPPDATA, LOCALAPPDATA ;Searches Fivem default location
 		else{
 			Menu, FileMenu, Disable, &Locate FiveM.exe
 		}
-	;GoSub, DownloadServerList
 	GoSub, updatefiles
 	sleep, 750
 	GoSub, UpdateList
@@ -234,18 +233,18 @@ updatefiles: ;Updates the log list for the tools tab and populates related varia
 	LV_ModifyCol(2, "AutoHdr Integer")
 	LV_ModifyCol(3, "Digit")
 	LV_ModifyCol(3, "SortDesc")
-		Gui, Show
+	Gui, Show
 	return
 
 GetFileSelected: ;Gets right-clicked file from main gui log listview
 	RowNumber := 0 ;start at the top
 	Loop
 	{
-			RowNumber := LV_GetNext(RowNumber)
-			if not RowNumber ;if no more selected rows
-					break
-			LV_GetText(Text, RowNumber)
-			SelectedLog := seldir2 . Text
+		RowNumber := LV_GetNext(RowNumber)
+		if not RowNumber ;if no more selected rows
+			break
+		LV_GetText(Text, RowNumber)
+		SelectedLog := seldir2 . Text
 	}
 	return
 
@@ -253,11 +252,11 @@ BackupWindowGetFileSelected: ;Gets right-clicked file from backedup log listview
 	RowNumber := 0 ;start at the top
 	Loop
 	{
-			RowNumber := LV_GetNext(RowNumber)
-			if not RowNumber ;if no more selected rows
-					break
-			LV_GetText(Text, RowNumber)
-			SelectedLog := seldir5 . Text
+		RowNumber := LV_GetNext(RowNumber)
+		if not RowNumber ;if no more selected rows
+			break
+		LV_GetText(Text, RowNumber)
+		SelectedLog := seldir5 . Text
 	}
 	return
 
@@ -349,7 +348,7 @@ BackupCache: ;Backs up cache priv folder
 		MsgBox, The target folder exists. Copying files.
 	FileCopyDir, %cachedir%\db\, %CacheBackupLocation%\db\, 1
 	FileCopyDir, %cachedir%\unconfirmed\, %CacheBackupLocation%\unconfirmed\ , 1
-	msgbox, Done
+	msgbox, Cache Backed Up
 	Return
 
 OpenBackupCacheFolder: ;Opens the backup Cache folder
@@ -361,7 +360,7 @@ RestoreCache: ;Restores cache from backups
 	FileCopy, %CacheBackupLocation%\*.*, %cachedir%\*.*
 	FileCopyDir, %CacheBackupLocation%\db\, %cachedir%\db\, 1
 	FileCopyDir, %CacheBackupLocation%\unconfirmed\, %cachedir%\unconfirmed\ , 1
-	msgbox, Done
+	msgbox, Cache Restored
 	return
 
 BackupWindowGuiSize: ;Makes BackupWindow resize correctly
@@ -530,22 +529,22 @@ AboutWindowGuiEscape: ;About window escape stuff
 	WinActivate, 8th Gear FiveM Launcher
 	return
 
-BackupWindowGuiEscape: ;Rules window escape stuff
+BackupWindowGuiEscape: ;Backup window escape stuff
 	BackupWindowGuiClose:
 	Gui BackupWindow:Cancel
 	WinActivate, 8th Gear FiveM Launcher
 	return
 
-FAQWindowGuiEscape: ;Rules window escape stuff
+FAQWindowGuiEscape: ;FAQ window escape stuff
 	FAQWindowGuiClose:
 	Gui FAQWindow:Cancel
 	WinActivate, 8th Gear FiveM Launcher
 	return
 
-LogViewerWindowGuiEscape: ;Rules window escape stuff
+LogViewerWindowGuiEscape: ;LogViewer window escape stuff
 	LogViewerWindowGuiClose:
 	Gui LogViewerWindow:Cancel
-	WinActivate, 8th Gear FiveM Launcher
+	;WinActivate, 8th Gear FiveM Launcher
 	return
 
 RulesWindowGuiEscape: ;Rules window escape stuff
