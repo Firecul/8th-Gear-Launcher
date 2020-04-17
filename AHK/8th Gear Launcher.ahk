@@ -139,26 +139,9 @@ menu, submenu, add, Log Viewer, OpenLogViewer ;Context Menu
 	Menu, ContextMenu, Add, Open In, :Submenu
 
 EnvGet, LOCALAPPDATA, LOCALAPPDATA ;Searches Fivem default location
-	Loop, %LOCALAPPDATA%\FiveM\FiveM.exe, , 1
-	SelectedFile := A_LoopFileFullPath
-	Menu, MenuBar, Disable, FAQ
-	if (SelectedFile = ""){
-			MsgBox, FiveM.exe cannot be found.`nPlease locate it using the option in the File menu
-			LV_Delete()
-			gosub lookforfivem
-			Menu, FileMenu, Enable, &Locate FiveM.exe
-		}
-		else{
-			Menu, FileMenu, Disable, &Locate FiveM.exe
-		}
-	GoSub, updatefiles
-	;GoSub, DownloadServerList ;Uncomment to enable downloading serverlist from URL
-	GoSub, UpdateList
-	return
 
-DownloadServerList: ;Will donwnload the serverlistini once it's hosted somewhere
 	req := ComObjCreate("Msxml2.XMLHTTP")
-	req.open("GET", "https://gist.githubusercontent.com/Firecul/c368e1f0c75426824b9020a30876982d/raw/4b22bc84d9f9217133e75963cbfeaa12ebb63496/test.ini", true) ;Update URL to public server list has a home
+	req.open("GET", "https://8thgear.racing/api/serverlist", true)
 	req.onreadystatechange := Func("Ready") ; Send the request.  Ready() will be called when it's complete.
 	req.send()
 	/*
@@ -174,8 +157,8 @@ DownloadServerList: ;Will donwnload the serverlistini once it's hosted somewhere
 		if (req.status == 200) ; OK.
 		{
 			DownloadedList := req.responseText
-			;MsgBox % "Downloaded text: `n" DownloadedList
-			FileAppend, %DownloadedList%, 8thGearLauncher/NewServerList.ini ;Change to ServerList.ini once public and line:156 URL is correct
+			FileDelete, 8thGearLauncher/ServerList.ini
+			FileAppend, %DownloadedList%, 8thGearLauncher/ServerList.ini, UTF-16
 			Return
 		}
 		else{
@@ -183,7 +166,23 @@ DownloadServerList: ;Will donwnload the serverlistini once it's hosted somewhere
 			Return
 		}
 	}
-	Return
+
+	Loop, %LOCALAPPDATA%\FiveM\FiveM.exe, , 1
+	SelectedFile := A_LoopFileFullPath
+	Menu, MenuBar, Disable, FAQ
+	if (SelectedFile = ""){
+			MsgBox, FiveM.exe cannot be found.`nPlease locate it using the option in the File menu
+			LV_Delete()
+			gosub lookforfivem
+			Menu, FileMenu, Enable, &Locate FiveM.exe
+		}
+		else{
+			Menu, FileMenu, Disable, &Locate FiveM.exe
+		}
+	;GoSub, DownloadServerList
+	GoSub, updatefiles
+	GoSub, UpdateList
+	return
 
 Localhost: ;Launches FiveM and connects to Localhost
 	GoSub, BackupLogs
