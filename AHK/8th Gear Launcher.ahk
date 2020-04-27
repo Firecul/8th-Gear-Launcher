@@ -1,6 +1,8 @@
 #SingleInstance, Force
 #Include Anchor.ahk
 StringCaseSense, On
+SetWorkingDir, %A_ScriptDir%
+
 FileCreateDir, 8thGearLauncher ;Creation stuff
 	Fileinstall, pictures/8GLogo.png, 8thGearLauncher/8GLogo.png, 0
 	Fileinstall, icons/8G.ico, 8thGearLauncher/8G.ico, 0
@@ -88,6 +90,7 @@ Gui, LogViewerWindow: +Resize ;LogViewer Window
 	gui, LogViewerWindow: font, s10
 	gui, LogViewerWindow: add, button, vParse gParseLog, Parse
 	gui, LogViewerWindow: add, button, vSlowOpen gSlowOpen, Thorough Open (Slow)
+	gui, LogViewerWindow: add, button, vSaveLog gSaveLog, Save Log...
 
 Gui, BackupWindow: +Resize ;LogBackupManager Window
 	gui, BackupWindow: font, s10 Norm
@@ -300,6 +303,7 @@ LogViewerWindowGuiSize: ;Makes LogViewer resize correctly
 	Anchor("LogContents","wh")
 	Anchor("Parse","y")
 	Anchor("SlowOpen","y")
+	Anchor("SaveLog","y")
 	return
 
 OpenLogViewer: ;Opens the selected log with the Log Viewer
@@ -333,6 +337,10 @@ OpenBackupWindow: ;Opens the Log backup management window
 		LV_ModifyCol(3, "SortDesc")
 	IfNotExist, %seldir5%
 		MsgBox, No logs are currently backed up.
+	return
+
+SaveLog:
+	FileSelectFile, SavedLogName, S 18, %USERPROFILE%\Documents, 
 	return
 
 OpenCacheFolder: ;Opens normal cache folder
