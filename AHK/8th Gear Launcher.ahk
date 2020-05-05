@@ -341,6 +341,7 @@ OpenBackupWindow: ;Opens the Log backup management window
 
 SaveLog:
 	FileSelectFile, SavedLogName, S18, %SelectedLog%, Where to save the Log?, Log Files (*.log)
+	FileAppend, %LogContents%, %SavedLogName%, 
 	return
 
 OpenCacheFolder: ;Opens normal cache folder
