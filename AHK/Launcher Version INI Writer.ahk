@@ -22,7 +22,7 @@ Write:
 	GuiControlGet, NewestVersion
 	GuiControlGet, VersionNumber
 	GuiControlGet, Changes
-
+	StringReplace, Changes, Changes, `n, ``n, All
 	IniWrite, %NewestVersion%, VERSION_INFO.ini, NewestVersion, Version
 	IniWrite, %Changes%, VERSION_INFO.ini, %VersionNumber%, Changes
 	if ErrorLevel
@@ -38,16 +38,18 @@ Delete:
 UpdateList:
 	guicontrol,, NewestVersion, `n
 	IniRead, NewestVersion, VERSION_INFO.ini, NewestVersion, Version
+	IniRead, VersionNumber, VERSION_INFO.ini
 	guicontrol, , NewestVersion, %NewestVersion%
-	guicontrol, text, ServerIP
+	guicontrol, , VersionNumber, %VersionNumber%
 	gui, show
 	goto UpdateDetails
 	return
 
 UpdateDetails:
 	GuiControlGet, VersionNumber
-	iniread, ServerIP, VERSION_INFO.ini, %VersionNumber%, IP
-	guicontrol, , ServerIP, %ServerIP%
+	iniread, Changes, VERSION_INFO.ini, %VersionNumber%, Changes
+	StringReplace, Changes, Changes, ``n, `n, All" Seems to work
+	guicontrol, , Changes, %Changes%
 	return
 
 GuiEscape: ;Escape Stuff
