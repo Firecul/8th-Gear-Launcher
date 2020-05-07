@@ -37,6 +37,7 @@ Delete:
 
 UpdateList:
 	guicontrol,, NewestVersion, `n
+	guicontrol,, VersionNumber, `n
 	IniRead, NewestVersion, VERSION_INFO.ini, NewestVersion, Version
 	IniRead, VersionNumber, VERSION_INFO.ini
 	guicontrol, , NewestVersion, %NewestVersion%
