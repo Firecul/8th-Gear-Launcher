@@ -7,7 +7,10 @@ FileCreateDir, 8thGearLauncher ;Creation stuff
 	Fileinstall, pictures/8GLogo.png, 8thGearLauncher/8GLogo.png, 0
 	Fileinstall, icons/8G.ico, 8thGearLauncher/8G.ico, 0
 	Fileinstall, ServerList.ini, 8thGearLauncher/ServerList.ini, 0
+	Fileinstall, ServerList.ini, 8thGearLauncher/VERSION_INFO.ini, 0
 	Menu, Tray, Icon, 8thGearLauncher/8G.ico, 1, 1
+
+LauncherVersion = v0.x
 
 vFAQ =
 	(
@@ -72,11 +75,14 @@ Menu, FileMenu, Add, &Locate FiveM.exe, lookforfivem  ;Top Menu
 	Menu, ToolsMenu, Add, &Logs, :LogMenu
 	Menu, ToolsMenu, Add, &GTAV Settings, :GTASettingsMenu
 
+	Menu, AboutMenu, Add, &Version Check, MenuOptionVersionCheck
+	Menu, AboutMenu, Add, &About, MenuOptionAbout
+
 	Menu, MenuBar, Add, &File, :FileMenu
 	Menu, MenuBar, Add, &Tools, :ToolsMenu
 	Menu, MenuBar, Add, &Rules, MenuOptionRules
 	Menu, MenuBar, Add, FAQ, MenuOptionFAQ
-	Menu, MenuBar, Add, &About, MenuOptionAbout
+	Menu, MenuBar, Add, &About, :AboutMenu
 
 	Gui, Menu, MenuBar
 
@@ -165,7 +171,34 @@ EnvGet, LOCALAPPDATA, LOCALAPPDATA ;Searches Fivem default location
 			Return
 		}
 		else{
-			MsgBox 16,, % "Status " req.status
+			;MsgBox 16,, % "Status " req.status
+			Return
+		}
+	}
+
+	req2 := ComObjCreate("Msxml2.XMLHTTP")
+	req2.open("GET", "https://gist.githubusercontent.com/Firecul/a885a2cf150000fbc0a2c5d0fc86a5bd/raw/b2139076a7b44deed10e250bb325c17e5f4bf4e2/VERSION_INFO.ini", true)
+	req2.onreadystatechange := Func("Ready2") ; Send the request.  Ready() will be called when it's complete.
+	req2.send()
+	/*
+	while req2.readyState != 4
+		sleep 100
+	*/
+	#Persistent
+
+	Ready2() {
+		global req2
+		if (req2.readyState != 4)  ; Not done yet.
+				return
+		if (req2.status == 200) ; OK.
+		{
+			VERSION_INFO := req2.responseText
+			FileDelete, 8thGearLauncher/VERSION_INFO.ini
+			FileAppend, %VERSION_INFO%, 8thGearLauncher/VERSION_INFO.ini, UTF-16
+			Return
+		}
+		else{
+			;MsgBox 16,, % "Status " req.status
 			Return
 		}
 	}
@@ -531,6 +564,16 @@ MenuOptionRules: ;Opens rules window
 	Gui RulesWindow:+ToolWindow +AlwaysOnTop
 	gui, RulesWindow: show, AutoSize Center, Rules
 	Return
+
+MenuOptionVersionCheck:
+		IniRead, NewestVersion, 8thGearLauncher/VERSION_INFO.ini, NewestVersion, Version
+		Gui VersionWindow:+ToolWindow +AlwaysOnTop
+		Gui VersionWindow: Font, s10 norm
+		Gui VersionWindow: Add, text,, This launcher is version: %LauncherVersion%
+		Gui VersionWindow: Add, text,, The most recent version of the launcher is: %NewestVersion%
+		Gui VersionWindow: Add, link,, To download another version please go to <a href="https://github.com/Firecul/8th-Gear-Launcher/releases">My Github releases page</a>
+		Gui VersionWindow: show, AutoSize Center, About
+	return
 
 AboutWindowGuiEscape: ;About window escape stuff
 	AboutWindowGuiClose:
