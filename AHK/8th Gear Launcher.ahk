@@ -62,7 +62,7 @@ Menu, FileMenu, Add, &Locate FiveM.exe, lookforfivem  ;Top Menu
 	Menu, CacheMenu, Add, &Restore Cache from Back-ups, RestoreCache
 
 	Menu, LogMenu, Add, &Open Log Folder, OpenLogFolder
-	Menu, LogMenu, Add, &Back-up Logs, BackupLogs
+	Menu, LogMenu, Add, &Back-up Logs, MenuOptionBackupLogs
 	Menu, LogMenu, Add, &Manage Backed-up Logs, OpenBackupWindow
 	Menu, LogMenu, Add, Open Back-up Folder, OpenLogBackupFolder
 	Menu, LogMenu, Add, Open &Arbitrary log..., MenuOptionArbitraryLog
@@ -480,6 +480,25 @@ OpenLogBackupFolder: ;Opens the log backup folder
 	return
 
 BackupLogs: ;Backs up logs to the backup folder for safe keeping
+	Gui +OwnDialogs
+	IfNotExist, %seldir5%
+		;MsgBox, The target folder does not exist. Creating it.
+		FileCreateDir, %seldir5%
+	IfExist, %seldir5%
+		;MsgBox, The target folder exists. Copying files.
+	FileCopy, %seldir2%\*.log, %seldir5%\*.*, 1
+	;msgbox, Logs Backed Up
+	LV_Delete()
+	Loop, %seldir2%\*.log
+		LV_Add("", A_LoopFileName, A_LoopFileSizeKB, A_LoopFileTimeModified, A_LoopFileFullPath)
+		LV_ModifyCol()
+		LV_ModifyCol(2, "AutoHdr Integer")
+		LV_ModifyCol(3, "Digit")
+		LV_ModifyCol(3, "SortDesc")
+	Gui, Show
+	return
+
+MenuOptionBackupLogs: ;Backs up logs to the backup folder for safe keeping
 	Gui +OwnDialogs
 	IfNotExist, %seldir5%
 		;MsgBox, The target folder does not exist. Creating it.
