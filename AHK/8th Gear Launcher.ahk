@@ -7,7 +7,7 @@ FileCreateDir, 8thGearLauncher ;Creation stuff
 	Fileinstall, pictures/8GLogo.png, 8thGearLauncher/8GLogo.png, 0
 	Fileinstall, icons/8G.ico, 8thGearLauncher/8G.ico, 0
 	Fileinstall, ServerList.ini, 8thGearLauncher/ServerList.ini, 0
-	Fileinstall, ServerList.ini, 8thGearLauncher/VERSION_INFO.ini, 0
+	;Fileinstall, ServerList.ini, 8thGearLauncher/VERSION_INFO.ini, 0
 	Menu, Tray, Icon, 8thGearLauncher/8G.ico, 1, 1
 
 LauncherVersion = v0.x
@@ -75,7 +75,7 @@ Menu, FileMenu, Add, &Locate FiveM.exe, lookforfivem  ;Top Menu
 	Menu, ToolsMenu, Add, &Logs, :LogMenu
 	Menu, ToolsMenu, Add, &GTAV Settings, :GTASettingsMenu
 
-	Menu, AboutMenu, Add, &Version Check, MenuOptionVersionCheck
+	;Menu, AboutMenu, Add, &Version Check, MenuOptionVersionCheck
 	Menu, AboutMenu, Add, &About, MenuOptionAbout
 
 	Menu, MenuBar, Add, &File, :FileMenu
@@ -139,6 +139,8 @@ Gui, FAQWindow: ;FAQ Window
 gui, AboutWindow: ;About Window
 	Gui, AboutWindow: font, s10 norm
 	Gui, AboutWindow: Add, link, w620, Hello and welcome to the 8th Gear FiveM Launcher! `n`nThis Launcher serves as the hub for everything you need to play on the 8th Gear servers and a few useful tools that will help you along the way. `n`nThis launcher is built using AHK by Firecul and is open-source and can be found on <a href="https://github.com/Firecul/8th-Gear-Launcher">GitHub</a>.`n`nIf you would like to contribute to this program, you are welcome to contact me there or submit a <a href="https://github.com/Firecul/8th-Gear-Launcher/pulls">pull request</a>.`n`nIf you find any problems please <a href="https://github.com/Firecul/8th-Gear-Launcher/issues/new">let me know</a>.
+	Gui AboutWindow: Add, text,, This launcher is version: %LauncherVersion%
+	Gui AboutWindow: Add, link,, To download another version please go to <a href="https://github.com/Firecul/8th-Gear-Launcher/releases">My Github releases page</a>
 	gui, AboutWindow:+Owner
 
 menu, submenu, add, Log Viewer, OpenLogViewer ;Context Menu
@@ -176,32 +178,32 @@ EnvGet, LOCALAPPDATA, LOCALAPPDATA ;Searches Fivem default location
 		}
 	}
 
-	req2 := ComObjCreate("Msxml2.XMLHTTP")
-	req2.open("GET", "https://gist.githubusercontent.com/Firecul/a885a2cf150000fbc0a2c5d0fc86a5bd/raw/b2139076a7b44deed10e250bb325c17e5f4bf4e2/VERSION_INFO.ini", true)
-	req2.onreadystatechange := Func("Ready2") ; Send the request.  Ready() will be called when it's complete.
-	req2.send()
-	/*
-	while req2.readyState != 4
-		sleep 100
-	*/
-	#Persistent
+	;req2 := ComObjCreate("Msxml2.XMLHTTP")
+	;req2.open("GET", "https://gist.githubusercontent.com/Firecul/a885a2cf150000fbc0a2c5d0fc86a5bd/raw/b2139076a7b44deed10e250bb325c17e5f4bf4e2/VERSION_INFO.ini", true)
+	;req2.onreadystatechange := Func("Ready2") ; Send the request.  Ready() will be called when it's complete.
+	;req2.send()
+	;/*
+	;while req2.readyState != 4
+	;	sleep 100
+	;*/
+	;#Persistent
 
-	Ready2() {
-		global req2
-		if (req2.readyState != 4)  ; Not done yet.
-				return
-		if (req2.status == 200) ; OK.
-		{
-			VERSION_INFO := req2.responseText
-			FileDelete, 8thGearLauncher/VERSION_INFO.ini
-			FileAppend, %VERSION_INFO%, 8thGearLauncher/VERSION_INFO.ini, UTF-16
-			Return
-		}
-		else{
-			;MsgBox 16,, % "Status " req.status
-			Return
-		}
-	}
+	;Ready2() {
+	;	global req2
+	;	if (req2.readyState != 4)  ; Not done yet.
+	;			return
+	;	if (req2.status == 200) ; OK.
+	;	{
+	;		VERSION_INFO := req2.responseText
+	;		FileDelete, 8thGearLauncher/VERSION_INFO.ini
+	;		FileAppend, %VERSION_INFO%, 8thGearLauncher/VERSION_INFO.ini, UTF-16
+	;		Return
+	;	}
+	;	else{
+	;		;MsgBox 16,, % "Status " req.status
+	;		Return
+	;	}
+	;}
 
 	Loop, %LOCALAPPDATA%\FiveM\FiveM.exe, , 1
 	SelectedFile := A_LoopFileFullPath
@@ -584,15 +586,15 @@ MenuOptionRules: ;Opens rules window
 	gui, RulesWindow: show, AutoSize Center, Rules
 	Return
 
-MenuOptionVersionCheck:
-		IniRead, NewestVersion, 8thGearLauncher/VERSION_INFO.ini, NewestVersion, Version
-		Gui VersionWindow:+ToolWindow +AlwaysOnTop
-		Gui VersionWindow: Font, s10 norm
-		Gui VersionWindow: Add, text,, This launcher is version: %LauncherVersion%
-		Gui VersionWindow: Add, text,, The most recent version of the launcher is: %NewestVersion%
-		Gui VersionWindow: Add, link,, To download another version please go to <a href="https://github.com/Firecul/8th-Gear-Launcher/releases">My Github releases page</a>
-		Gui VersionWindow: show, AutoSize Center, About
-	return
+;MenuOptionVersionCheck:
+;		IniRead, NewestVersion, 8thGearLauncher/VERSION_INFO.ini, NewestVersion, Version
+;		Gui VersionWindow:+ToolWindow +AlwaysOnTop
+;		Gui VersionWindow: Font, s10 norm
+;		Gui VersionWindow: Add, text,, This launcher is version: %LauncherVersion%
+;		Gui VersionWindow: Add, text,, The most recent version of the launcher is: %NewestVersion%
+;		Gui VersionWindow: Add, link,, To download another version please go to <a href="https://github.com/Firecul/8th-Gear-Launcher/releases">My Github releases page</a>
+;		Gui VersionWindow: show, AutoSize Center, About
+;	return
 
 AboutWindowGuiEscape: ;About window escape stuff
 	AboutWindowGuiClose:
