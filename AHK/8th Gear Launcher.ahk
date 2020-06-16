@@ -10,7 +10,7 @@ FileCreateDir, 8thGearLauncher ;Creation stuff
 	;Fileinstall, ServerList.ini, 8thGearLauncher/VERSION_INFO.ini, 0
 	Menu, Tray, Icon, 8thGearLauncher/8G.ico, 1, 1
 
-LauncherVersion = v0.x
+LauncherVersion = v1.0
 
 vFAQ =
 	(
