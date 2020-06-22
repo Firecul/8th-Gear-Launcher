@@ -172,6 +172,10 @@ EnvGet, LOCALAPPDATA, LOCALAPPDATA ;Searches Fivem default location
 			FileAppend, %DownloadedList%, 8thGearLauncher/ServerList.ini, UTF-16
 			Return
 		}
+		if (req.status >= 400 && req.status <= 599)
+		{
+			MsgBox 16,, % "Error " req.status " detected, falling back server list."
+		}
 		else{
 			;MsgBox 16,, % "Status " req.status
 			Return
