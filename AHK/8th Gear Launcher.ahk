@@ -75,7 +75,7 @@ Menu, FileMenu, Add, &Locate FiveM.exe, lookforfivem  ;Top Menu
 	Menu, ToolsMenu, Add, &Logs, :LogMenu
 	Menu, ToolsMenu, Add, &GTAV Settings, :GTASettingsMenu
 
-	;Menu, AboutMenu, Add, &Version Check, MenuOptionVersionCheck
+	Menu, AboutMenu, Add, &Version Check, MenuOptionVersionCheck
 	Menu, AboutMenu, Add, &About, MenuOptionAbout
 
 	Menu, MenuBar, Add, &File, :FileMenu
@@ -182,32 +182,32 @@ EnvGet, LOCALAPPDATA, LOCALAPPDATA ;Searches Fivem default location
 		}
 	}
 
-	;req2 := ComObjCreate("Msxml2.XMLHTTP")
-	;req2.open("GET", "https://gist.githubusercontent.com/Firecul/a885a2cf150000fbc0a2c5d0fc86a5bd/raw/b2139076a7b44deed10e250bb325c17e5f4bf4e2/VERSION_INFO.ini", true)
-	;req2.onreadystatechange := Func("Ready2") ; Send the request.  Ready() will be called when it's complete.
-	;req2.send()
-	;/*
-	;while req2.readyState != 4
-	;	sleep 100
-	;*/
-	;#Persistent
+	req2 := ComObjCreate("Msxml2.XMLHTTP")
+	req2.open("GET", "https://raw.githubusercontent.com/Firecul/8th-Gear-Launcher/master/AHK/VERSION_INFO.ini", true)
+	req2.onreadystatechange := Func("Ready2") ; Send the request.  Ready() will be called when it's complete.
+	req2.send()
+	/*
+	while req2.readyState != 4
+		sleep 100
+	*/
+	#Persistent
 
-	;Ready2() {
-	;	global req2
-	;	if (req2.readyState != 4)  ; Not done yet.
-	;			return
-	;	if (req2.status == 200) ; OK.
-	;	{
-	;		VERSION_INFO := req2.responseText
-	;		FileDelete, 8thGearLauncher/VERSION_INFO.ini
-	;		FileAppend, %VERSION_INFO%, 8thGearLauncher/VERSION_INFO.ini, UTF-16
-	;		Return
-	;	}
-	;	else{
-	;		;MsgBox 16,, % "Status " req.status
-	;		Return
-	;	}
-	;}
+	Ready2() {
+		global req2
+		if (req2.readyState != 4)  ; Not done yet.
+				return
+		if (req2.status == 200) ; OK.
+		{
+			VERSION_INFO := req2.responseText
+			;FileDelete, 8thGearLauncher/VERSION_INFO.ini
+			FileAppend, %VERSION_INFO%, 8thGearLauncher/VERSION_INFO.ini, UTF-16
+			Return
+		}
+		else{
+			;MsgBox 16,, % "Status " req.status
+			Return
+		}
+	}
 
 	Loop, %LOCALAPPDATA%\FiveM\FiveM.exe, , 1
 	SelectedFile := A_LoopFileFullPath
@@ -590,15 +590,15 @@ MenuOptionRules: ;Opens rules window
 	gui, RulesWindow: show, AutoSize Center, Rules
 	Return
 
-;MenuOptionVersionCheck:
-;		IniRead, NewestVersion, 8thGearLauncher/VERSION_INFO.ini, NewestVersion, Version
-;		Gui VersionWindow:+ToolWindow +AlwaysOnTop
-;		Gui VersionWindow: Font, s10 norm
-;		Gui VersionWindow: Add, text,, This launcher is version: %LauncherVersion%
-;		Gui VersionWindow: Add, text,, The most recent version of the launcher is: %NewestVersion%
-;		Gui VersionWindow: Add, link,, To download another version please go to <a href="https://github.com/Firecul/8th-Gear-Launcher/releases">My Github releases page</a>
-;		Gui VersionWindow: show, AutoSize Center, About
-;	return
+MenuOptionVersionCheck:
+		IniRead, NewestVersion, 8thGearLauncher/VERSION_INFO.ini, NewestVersion, Version
+		Gui VersionWindow:+ToolWindow +AlwaysOnTop
+		Gui VersionWindow: Font, s10 norm
+		Gui VersionWindow: Add, text,, This launcher is version: %LauncherVersion%
+		Gui VersionWindow: Add, text,, The most recent version of the launcher is: %NewestVersion%
+		Gui VersionWindow: Add, link,, To download another version please go to <a href="https://github.com/Firecul/8th-Gear-Launcher/releases">My Github releases page</a>
+		Gui VersionWindow: show, AutoSize Center, About
+	return
 
 AboutWindowGuiEscape: ;About window escape stuff
 	AboutWindowGuiClose:
