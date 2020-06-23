@@ -75,73 +75,13 @@ Menu, FileMenu, Add, &Locate FiveM.exe, lookforfivem  ;Top Menu
 	Menu, ToolsMenu, Add, &Logs, :LogMenu
 	Menu, ToolsMenu, Add, &GTAV Settings, :GTASettingsMenu
 
-	Menu, AboutMenu, Add, &Version Check, MenuOptionVersionCheck
-	Menu, AboutMenu, Add, &About, MenuOptionAbout
-
 	Menu, MenuBar, Add, &File, :FileMenu
 	Menu, MenuBar, Add, &Tools, :ToolsMenu
 	Menu, MenuBar, Add, &Rules, MenuOptionRules
 	Menu, MenuBar, Add, FAQ, MenuOptionFAQ
-	Menu, MenuBar, Add, &About, :AboutMenu
+	Menu, MenuBar, Add, &About, MenuOptionAbout
 
 	Gui, Menu, MenuBar
-
-Gui, LogViewerWindow: +Resize ;LogViewer Window
-	gui, LogViewerWindow: font, s10 norm
-	gui, LogViewerWindow: add, groupbox, w1000 h50 vGB, Selected log file:
-	gui, LogViewerWindow: add, text, xp+10 yp+20 w980 vSelLog, (Error)
-	gui, LogViewerWindow: font,, Lucida Console
-	gui, LogViewerWindow: add, edit, xp-10 yp+39 w1000 r30 ReadOnly t10 vLogContents, (Loading)
-	gui, LogViewerWindow: font,
-	gui, LogViewerWindow: font, s10
-	gui, LogViewerWindow: add, button, vParse gParseLog, Parse
-	gui, LogViewerWindow: add, button, vSlowOpen gSlowOpen, Thorough Open (Slow)
-	gui, LogViewerWindow: add, button, vSaveLog gSaveLog, Save Log...
-
-Gui, BackupWindow: +Resize ;LogBackupManager Window
-	gui, BackupWindow: font, s10 Norm
-	Gui, BackupWindow: Add, groupbox, w620 h260 vGB2, Backed-up Logs:
-	Gui, BackupWindow: Add, ListView, xp+10 yp+20 r10 w600 AltSubmit Grid -Multi gMyNewerListView vMyNewerListView, Name|Size (KB)|Modified
-
-Gui, RulesWindow: ;Rules Window
-	Gui, RulesWindow: font, s10 Norm
-	Gui, RulesWindow: Add, GroupBox, w620 h790, 8th Gear Specific Rules:
-	Gui, RulesWindow: font, bold
-	Gui, RulesWindow: Add, text, xp+10 yp+20 w550, 1) THE GOLDEN RULE: Don't be a Dick
-	RulesNormal("Personal attacks, harassment, hate speech, etc. will not be tolerated. Treat others with respect at all times.")
-	RulesBold("2) Follow Discord TOS and Community Guidelines")
-	Gui, RulesWindow: font, Norm
-	Gui, RulesWindow: Add, Link,, <a href="https://discordapp.com/terms">https://discordapp.com/terms</a> && <a href="https://discordapp.com/guidelines">https://discordapp.com/guidelines</a>
-	RulesBold("3) No NSFW/NSFL Content")
-	RulesBold("4) No Spamming or Trolling")
-	RulesBold("5) English Only")
-	RulesNormal("Please speak English at all times while on the server. This helps everyone to understand each other.")
-	RulesBold("6) No Cheating on the Server")
-	RulesNormal("Using 3rd-party menus to gain an unfair advantage will result in a ban.")
-	RulesBold("7) No Drama")
-	RulesNormal("Arguments should be resolved in a respectful manner or kept out of the discord entirely.")
-	RulesBold("8) Keep channels on-topic")
-	RulesNormal("Try to keep conversations in their appropriate channels. A little spillover is fine, but don't let it get out of hand.")
-	RulesBold("9) No Politics")
-	RulesNormal("This server is for people to have fun playing games together. Other servers exist for political discussion and this is not one of them.")
-	RulesBold("10) No Advertising")
-	RulesNormal("Links to youtube channels, streams, other discords, etc. are prohibited unless approved by a staff member.")
-	RulesBold("8) Listen to the Staff")
-	RulesNormal("Staff have the final say and are free to moderate at their own discretion.")
-	RulesBold("By taking part in this community you acknowledge that you understand and accept these rules. Ignoring them or not knowing them does not excuse you from them.")
-	Gui, RulesWindow: font, norm
-	Gui, RulesWindow: Add, link, w600, The rules found on the official discord channel superceed the ones found on this launcher, please refer to the <a href="https://discord.gg/Ts2kEEH">discord #rules channel</a> for the most up to date list.
-
-Gui, FAQWindow: ;FAQ Window
-	Gui, FAQWindow: font, s10 norm
-	Gui, FAQWindow: Add, edit, w620 h700 Multi ReadOnly, %vFAQ%
-
-gui, AboutWindow: ;About Window
-	Gui, AboutWindow: font, s10 norm
-	Gui, AboutWindow: Add, link, w620, Hello and welcome to the 8th Gear FiveM Launcher! `n`nThis Launcher serves as the hub for everything you need to play on the 8th Gear servers and a few useful tools that will help you along the way. `n`nThis launcher is built using AHK by Firecul and is open-source and can be found on <a href="https://github.com/Firecul/8th-Gear-Launcher">GitHub</a>.`n`nIf you would like to contribute to this program, you are welcome to contact me there or submit a <a href="https://github.com/Firecul/8th-Gear-Launcher/pulls">pull request</a>.`n`nIf you find any problems please <a href="https://github.com/Firecul/8th-Gear-Launcher/issues/new">let me know</a>.
-	Gui AboutWindow: Add, text,, This launcher is version: %LauncherVersion%
-	Gui AboutWindow: Add, link,, To download another version please go to <a href="https://github.com/Firecul/8th-Gear-Launcher/releases">My Github releases page</a>
-	gui, AboutWindow:+Owner
 
 menu, submenu, add, Log Viewer, OpenLogViewer ;Context Menu
 	menu, submenu, Default, Log Viewer
@@ -346,6 +286,17 @@ LogViewerWindowGuiSize: ;Makes LogViewer resize correctly
 	return
 
 OpenLogViewer: ;Opens the selected log with the Log Viewer
+	Gui, LogViewerWindow: +Resize ;LogViewer Window
+	gui, LogViewerWindow: font, s10 norm
+	gui, LogViewerWindow: add, groupbox, w1000 h50 vGB, Selected log file:
+	gui, LogViewerWindow: add, text, xp+10 yp+20 w980 vSelLog, (Error)
+	gui, LogViewerWindow: font,, Lucida Console
+	gui, LogViewerWindow: add, edit, xp-10 yp+39 w1000 r30 ReadOnly t10 vLogContents, (Loading)
+	gui, LogViewerWindow: font,
+	gui, LogViewerWindow: font, s10
+	gui, LogViewerWindow: add, button, vParse gParseLog, Parse
+	gui, LogViewerWindow: add, button, vSlowOpen gSlowOpen, Thorough Open (Slow)
+	gui, LogViewerWindow: add, button, vSaveLog gSaveLog, Save Log...
 	gui, LogViewerWindow: show, AutoSize Center, Log Viewer
 	Guicontrol, LogViewerWindow: text, SelLog, %SelectedLog%
 	fileread, LogContents, %SelectedLog%
@@ -364,6 +315,10 @@ F5::
 OpenBackupWindow: ;Opens the Log backup management window
 	Gui +OwnDialogs
 	gosub, updatefiles
+	Gui, BackupWindow: +Resize ;LogBackupManager Window
+	gui, BackupWindow: font, s10 Norm
+	Gui, BackupWindow: Add, groupbox, w620 h260 vGB2, Backed-up Logs:
+	Gui, BackupWindow: Add, ListView, xp+10 yp+20 r10 w600 AltSubmit Grid -Multi gMyNewerListView vMyNewerListView, Name|Size (KB)|Modified
 	gui, BackupWindow: show, AutoSize Center, Log Backups
 	IfExist, %seldir5%
 		Gui, BackupWindow:Default
@@ -544,7 +499,10 @@ opennotepad: ;Opens the selected log with Notepad
 	return
 
 MenuOptionAbout: ;Opens about window
+	IniRead, NewestVersion, 8thGearLauncher/VERSION_INFO.ini, NewestVersion, Version
+	Gui, AboutWindow: font, s10 norm
 	Gui AboutWindow:+ToolWindow +AlwaysOnTop
+	Gui, AboutWindow: Add, link, w620, Hello and welcome to the 8th Gear FiveM Launcher.`n`nThis Launcher serves as the hub for everything you need to play on the 8th Gear servers and a few useful tools that will help you along the way. `n`nThis launcher is built using AHK by Firecul and is open-source and can be found on <a href="https://github.com/Firecul/8th-Gear-Launcher">GitHub</a>.`n`nThis launcher is version: %LauncherVersion%`nThe most recent version of the launcher is: %NewestVersion%`nTo download another version please go to <a href="https://github.com/Firecul/8th-Gear-Launcher/releases">My Github releases page</a>`n`nIf you would like to contribute to this program, you are welcome to contact me there or submit a <a href="https://github.com/Firecul/8th-Gear-Launcher/pulls">pull request</a>.`n`nIf you find any problems please <a href="https://github.com/Firecul/8th-Gear-Launcher/issues/new">let me know</a>.
 	gui, AboutWindow: show, AutoSize Center, About
 	Return
 
@@ -561,6 +519,8 @@ MenuOptionArbitraryLog:
 
 MenuOptionFAQ: ;Opens FAQ Window
 	Gui FAQWindow:+ToolWindow +AlwaysOnTop
+	Gui, FAQWindow: font, s10 norm
+	Gui, FAQWindow: Add, edit, w620 h700 Multi ReadOnly, %vFAQ%
 	Gui, FAQWindow: show, AutoSize Center, FAQWindow
 	Return
 
@@ -587,46 +547,68 @@ MenuOptionOpenGTASettingsNotepad:
 
 MenuOptionRules: ;Opens rules window
 	Gui RulesWindow:+ToolWindow +AlwaysOnTop
+	Gui, RulesWindow: font, s10 Norm
+	Gui, RulesWindow: Add, GroupBox, w620 h790, 8th Gear Specific Rules:
+	Gui, RulesWindow: font, bold
+	Gui, RulesWindow: Add, text, xp+10 yp+20 w550, 1) THE GOLDEN RULE: Don't be a Dick
+	RulesNormal("Personal attacks, harassment, hate speech, etc. will not be tolerated. Treat others with respect at all times.")
+	RulesBold("2) Follow Discord TOS and Community Guidelines")
+	Gui, RulesWindow: font, Norm
+	Gui, RulesWindow: Add, Link,, <a href="https://discordapp.com/terms">https://discordapp.com/terms</a> && <a href="https://discordapp.com/guidelines">https://discordapp.com/guidelines</a>
+	RulesBold("3) No NSFW/NSFL Content")
+	RulesBold("4) No Spamming or Trolling")
+	RulesBold("5) English Only")
+	RulesNormal("Please speak English at all times while on the server. This helps everyone to understand each other.")
+	RulesBold("6) No Cheating on the Server")
+	RulesNormal("Using 3rd-party menus to gain an unfair advantage will result in a ban.")
+	RulesBold("7) No Drama")
+	RulesNormal("Arguments should be resolved in a respectful manner or kept out of the discord entirely.")
+	RulesBold("8) Keep channels on-topic")
+	RulesNormal("Try to keep conversations in their appropriate channels. A little spillover is fine, but don't let it get out of hand.")
+	RulesBold("9) No Politics")
+	RulesNormal("This server is for people to have fun playing games together. Other servers exist for political discussion and this is not one of them.")
+	RulesBold("10) No Advertising")
+	RulesNormal("Links to youtube channels, streams, other discords, etc. are prohibited unless approved by a staff member.")
+	RulesBold("8) Listen to the Staff")
+	RulesNormal("Staff have the final say and are free to moderate at their own discretion.")
+	RulesBold("By taking part in this community you acknowledge that you understand and accept these rules. Ignoring them or not knowing them does not excuse you from them.")
+	Gui, RulesWindow: font, norm
+	Gui, RulesWindow: Add, link, w600, The rules found on the official discord channel superceed the ones found on this launcher, please refer to the <a href="https://discord.gg/Ts2kEEH">discord #rules channel</a> for the most up to date list.
 	gui, RulesWindow: show, AutoSize Center, Rules
 	Return
-
-MenuOptionVersionCheck:
-		IniRead, NewestVersion, 8thGearLauncher/VERSION_INFO.ini, NewestVersion, Version
-		Gui VersionWindow:+ToolWindow +AlwaysOnTop
-		Gui VersionWindow: Font, s10 norm
-		Gui VersionWindow: Add, text,, This launcher is version: %LauncherVersion%
-		Gui VersionWindow: Add, text,, The most recent version of the launcher is: %NewestVersion%
-		Gui VersionWindow: Add, link,, To download another version please go to <a href="https://github.com/Firecul/8th-Gear-Launcher/releases">My Github releases page</a>
-		Gui VersionWindow: show, AutoSize Center, About
-	return
-
-AboutWindowGuiEscape: ;About window escape stuff
-	AboutWindowGuiClose:
-	Gui AboutWindow:Cancel
-	WinActivate, 8th Gear FiveM Launcher
-	return
 
 BackupWindowGuiEscape: ;Backup window escape stuff
 	BackupWindowGuiClose:
 	Gui BackupWindow:Cancel
+	Gui Destroy
 	WinActivate, 8th Gear FiveM Launcher
 	return
 
 FAQWindowGuiEscape: ;FAQ window escape stuff
 	FAQWindowGuiClose:
 	Gui FAQWindow:Cancel
+	Gui Destroy
 	WinActivate, 8th Gear FiveM Launcher
 	return
 
 LogViewerWindowGuiEscape: ;LogViewer window escape stuff
 	LogViewerWindowGuiClose:
 	Gui LogViewerWindow:Cancel
+	Gui Destroy
 	;WinActivate, 8th Gear FiveM Launcher
 	return
 
 RulesWindowGuiEscape: ;Rules window escape stuff
 	RulesWindowGuiClose:
 	Gui RulesWindow:Cancel
+	Gui Destroy
+	WinActivate, 8th Gear FiveM Launcher
+	return
+
+AboutWindowGuiEscape: ;About window escape stuff
+	AboutWindowGuiClose:
+	Gui AboutWindow:Cancel
+	Gui Destroy
 	WinActivate, 8th Gear FiveM Launcher
 	return
 
