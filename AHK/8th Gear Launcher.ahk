@@ -44,7 +44,7 @@ Gui, New ;Main Window
 	Gui, Tab, 2 ;Misc
 		Gui, font, s10 norm
 		Gui, Add, groupbox, xp-239 yp-496 w465 h290, Current Logs:
-		Gui, Add, ListView, xp+10 yp+20 r10 w445 AltSubmit Grid -Multi gMyListView vMyListView, Name|Size (KB)|Modified
+		Gui, Add, ListView, xp+10 yp+20 r10 w445 AltSubmit Grid -LV0x10 -Multi gMyListView vMyListView, Name|Size (KB)|Modified
 		Gui, add, button, xp+339 yp+234 gupdatefiles, Refresh Log list
 
 	Gui, Tab ;All Tabs
@@ -169,7 +169,9 @@ EnvGet, LOCALAPPDATA, LOCALAPPDATA ;Searches Fivem default location
 Localhost: ;Launches FiveM and connects to Localhost
 	GoSub, BackupLogs
 	Run fivem://connect/127.0.0.1
-	return
+	Sleep 5000
+	GoSub, updatefiles
+	Return
 
 UpdateList: ;Updates the list of servers from the ini file
 	Gui +Delimiter`n
@@ -186,7 +188,9 @@ Connect: ;Connects to the selected server in the list
 	iniread, ServerPort, 8thGearLauncher/ServerList.ini, %ServerName%, Port
 	GoSub, BackupLogs
 	Run fivem://connect/%ServerIP%:%ServerPort%
-	return
+	Sleep 5000
+	GoSub, updatefiles
+	Return
 
 lookforfivem: ;Opens dialogue box to allow selecting FiveM.exe location
 	Gui +OwnDialogs
@@ -216,7 +220,7 @@ updatefiles: ;Updates the log list for the tools tab and populates related varia
 	LV_ModifyCol(3, "Digit")
 	LV_ModifyCol(3, "SortDesc")
 	Gui, Show
-	return
+	Return
 
 GetFileSelected: ;Gets right-clicked file from main gui log listview
 	RowNumber := 0 ;start at the top
@@ -286,7 +290,9 @@ LogViewerWindowGuiSize: ;Makes LogViewer resize correctly
 	return
 
 OpenLogViewer: ;Opens the selected log with the Log Viewer
-	Gui, LogViewerWindow: +Resize ;LogViewer Window
+	GoSub, LogViewerWindowGuiEscape
+	Sleep 50
+	Gui, LogViewerWindow:+ToolWindow +Resize ;LogViewer Window
 	gui, LogViewerWindow: font, s10 norm
 	gui, LogViewerWindow: add, groupbox, w1000 h50 vGB, Selected log file:
 	gui, LogViewerWindow: add, text, xp+10 yp+20 w980 vSelLog, (Error)
@@ -301,7 +307,7 @@ OpenLogViewer: ;Opens the selected log with the Log Viewer
 	Guicontrol, LogViewerWindow: text, SelLog, %SelectedLog%
 	fileread, LogContents, %SelectedLog%
 	Guicontrol, LogViewerWindow: text, LogContents, %LogContents%
-	return
+	Return
 
 F5::
 	SetTitleMatchMode, 3
@@ -314,7 +320,9 @@ F5::
 
 OpenBackupWindow: ;Opens the Log backup management window
 	Gui +OwnDialogs
-	gosub, updatefiles
+	GoSub, updatefiles
+	GoSub, BackupWindowGuiEscape
+	Sleep 50
 	Gui, BackupWindow: +Resize ;LogBackupManager Window
 	gui, BackupWindow: font, s10 Norm
 	Gui, BackupWindow: Add, groupbox, w620 h260 vGB2, Backed-up Logs:
@@ -500,6 +508,8 @@ opennotepad: ;Opens the selected log with Notepad
 
 MenuOptionAbout: ;Opens about window
 	IniRead, NewestVersion, 8thGearLauncher/VERSION_INFO.ini, NewestVersion, Version
+	GoSub, AboutWindowGuiEscape
+	Sleep 50
 	Gui, AboutWindow: font, s10 norm
 	Gui AboutWindow:+ToolWindow +AlwaysOnTop
 	Gui, AboutWindow: Add, link, w620, Hello and welcome to the 8th Gear FiveM Launcher.`n`nThis Launcher serves as the hub for everything you need to play on the 8th Gear servers and a few useful tools that will help you along the way. `n`nThis launcher is built using AHK by Firecul and is open-source and can be found on <a href="https://github.com/Firecul/8th-Gear-Launcher">GitHub</a>.`n`nThis launcher is version: %LauncherVersion%`nThe most recent version of the launcher is: %NewestVersion%`nTo download another version please go to <a href="https://github.com/Firecul/8th-Gear-Launcher/releases">My Github releases page</a>`n`nIf you would like to contribute to this program, you are welcome to contact me there or submit a <a href="https://github.com/Firecul/8th-Gear-Launcher/pulls">pull request</a>.`n`nIf you find any problems please <a href="https://github.com/Firecul/8th-Gear-Launcher/issues/new">let me know</a>.
@@ -518,6 +528,8 @@ MenuOptionArbitraryLog:
 	return
 
 MenuOptionFAQ: ;Opens FAQ Window
+	GoSub, FAQWindowGuiEscape
+	Sleep 50
 	Gui FAQWindow:+ToolWindow +AlwaysOnTop
 	Gui, FAQWindow: font, s10 norm
 	Gui, FAQWindow: Add, edit, w620 h700 Multi ReadOnly, %vFAQ%
@@ -546,6 +558,8 @@ MenuOptionOpenGTASettingsNotepad:
 	Return
 
 MenuOptionRules: ;Opens rules window
+	GoSub, RulesWindowGuiEscape
+	Sleep 50
 	Gui RulesWindow:+ToolWindow +AlwaysOnTop
 	Gui, RulesWindow: font, s10 Norm
 	Gui, RulesWindow: Add, GroupBox, w620 h790, 8th Gear Specific Rules:
@@ -580,37 +594,46 @@ MenuOptionRules: ;Opens rules window
 BackupWindowGuiEscape: ;Backup window escape stuff
 	BackupWindowGuiClose:
 	Gui BackupWindow:Cancel
-	Gui Destroy
+	Gui BackupWindow:Destroy
 	WinActivate, 8th Gear FiveM Launcher
-	return
+	Return
 
 FAQWindowGuiEscape: ;FAQ window escape stuff
 	FAQWindowGuiClose:
 	Gui FAQWindow:Cancel
-	Gui Destroy
+	Gui FAQWindow:Destroy
 	WinActivate, 8th Gear FiveM Launcher
 	return
 
 LogViewerWindowGuiEscape: ;LogViewer window escape stuff
 	LogViewerWindowGuiClose:
 	Gui LogViewerWindow:Cancel
-	Gui Destroy
-	;WinActivate, 8th Gear FiveM Launcher
+	Gui LogViewerWindow:Destroy
+	ifWinExist, Log Backups
+	{
+		WinActivate
+		Return
+	}
+	else
+	{
+		WinActivate, 8th Gear FiveM Launcher
+		Return
+	}
 	return
 
 RulesWindowGuiEscape: ;Rules window escape stuff
 	RulesWindowGuiClose:
 	Gui RulesWindow:Cancel
-	Gui Destroy
+	Gui RulesWindow:Destroy
 	WinActivate, 8th Gear FiveM Launcher
-	return
+	Return
 
 AboutWindowGuiEscape: ;About window escape stuff
 	AboutWindowGuiClose:
 	Gui AboutWindow:Cancel
-	Gui Destroy
+	Gui AboutWindow:Destroy
 	WinActivate, 8th Gear FiveM Launcher
-	return
+	Return
 
 GuiEscape: ;Main window escape Stuff
 	GuiClose:
