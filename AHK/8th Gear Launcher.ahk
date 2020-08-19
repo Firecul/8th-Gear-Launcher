@@ -87,7 +87,9 @@ menu, submenu, add, Log Viewer, OpenLogViewer ;Context Menu
 	menu, submenu, Default, Log Viewer
 	menu, submenu, add, Default Editor, opendefault
 	menu, submenu, add, Notepad, opennotepad
-	Menu, ContextMenu, Add, Open In, :Submenu
+	Menu, ContextMenu, Add, Open With, :Submenu
+	Menu, ContextMenu, Default, Open With
+	Menu, ContextMenu, Add, Delete, DeleteLog
 
 EnvGet, LOCALAPPDATA, LOCALAPPDATA ;Searches Fivem default location
 
@@ -171,6 +173,19 @@ Localhost: ;Launches FiveM and connects to Localhost
 	Run fivem://connect/127.0.0.1
 	Sleep 5000
 	GoSub, updatefiles
+	Return
+
+DeleteLog:
+	MsgBox, 0x40124, Delete Log?, Are you sure you want to delete this file? `n%SelectedLog%
+	IfMsgBox, Yes
+		{
+			;MsgBox 2
+			FileDelete, %SelectedLog%
+
+		}
+	IfMsgBox, No
+			Return
+	;MsgBox 3
 	Return
 
 UpdateList: ;Updates the list of servers from the ini file
