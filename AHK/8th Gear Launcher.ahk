@@ -367,10 +367,7 @@ SaveLog:
 
 SaveLogCopy:
 	FileSelectFile, NewLog, S18, %SelectedLog%, Where to save the Log?, Log Files (*.log)
-	MsgBox, %NewLog%
-	MsgBox, %SelectedLog%
 	FileCopy, %SelectedLog%, %NewLog%
-	MsgBox, Done
 	Return
 
 OpenCacheFolder: ;Opens normal cache folder
