@@ -179,13 +179,11 @@ DeleteLog:
 	MsgBox, 0x40124, Delete Log?, Are you sure you want to delete this file? `n%SelectedLog%
 	IfMsgBox, Yes
 		{
-			;MsgBox 2
 			FileDelete, %SelectedLog%
-
+			Return
 		}
 	IfMsgBox, No
 			Return
-	;MsgBox 3
 	Return
 
 UpdateList: ;Updates the list of servers from the ini file
