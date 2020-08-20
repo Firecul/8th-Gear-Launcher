@@ -91,6 +91,7 @@ menu, submenu, add, Log Viewer, OpenLogViewer ;Context Menu
 	Menu, ContextMenu, Default, Open With
 	Menu, ContextMenu, Add, Save To..., SaveLogCopy
 	Menu, ContextMenu, Add, Delete, DeleteLog
+	Menu, ContextMenu, Add, Properties, GetFileProperties
 
 EnvGet, LOCALAPPDATA, LOCALAPPDATA ;Searches Fivem default location
 
@@ -174,6 +175,10 @@ Localhost: ;Launches FiveM and connects to Localhost
 	Run fivem://connect/127.0.0.1
 	Sleep 5000
 	GoSub, updatefiles
+	Return
+
+GetFileProperties:
+	run, Properties "%SelectedLog%"
 	Return
 
 DeleteLog:
