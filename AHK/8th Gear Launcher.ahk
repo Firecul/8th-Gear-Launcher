@@ -89,6 +89,7 @@ menu, submenu, add, Log Viewer, OpenLogViewer ;Context Menu
 	menu, submenu, add, Notepad, opennotepad
 	Menu, ContextMenu, Add, Open With, :Submenu
 	Menu, ContextMenu, Default, Open With
+	Menu, ContextMenu, Add, Save To..., SaveLogCopy
 	Menu, ContextMenu, Add, Delete, DeleteLog
 
 EnvGet, LOCALAPPDATA, LOCALAPPDATA ;Searches Fivem default location
@@ -358,6 +359,14 @@ SaveLog:
 	FileSelectFile, SavedLogName, S18, %SelectedLog%, Where to save the Log?, Log Files (*.log)
 	FileAppend, %LogContents%, %SavedLogName%,
 	return
+
+SaveLogCopy:
+	FileSelectFile, NewLog, S18, %SelectedLog%, Where to save the Log?, Log Files (*.log)
+	MsgBox, %NewLog%
+	MsgBox, %SelectedLog%
+	FileCopy, %SelectedLog%, %NewLog%
+	MsgBox, Done
+	Return
 
 OpenCacheFolder: ;Opens normal cache folder
 	run %cachedir%
