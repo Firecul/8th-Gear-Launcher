@@ -409,8 +409,8 @@ ParseLog: ;Determines the type of log(old-style vs new-style)
 	logline :=
 	TrimmedLinea :=
 
-	LogContains := "abnormally,attempt new connection,can't,Cannot,couldn't,Couldn't,Could not,crash,Dropping,error,Error,ERROR,ERR_CONNECTION_REFUSED,exception,Exception,failed,Failed,Fatal,GlobalError,invalid,INVALID,is not a valid number,nui://racescript/,#overriding,parse,racescript,Racescript,RaceScript,#recieved,#Recieving,streaming entry without blockmap,SyntaxError,Uncaught,unexpected,Unexpected,warning,Warning,^1SCRIPT,handling entries,^3>,----------------"
-	LogDoesNotContain := "charlie,fix the exporter,f7c13cb204bc9aecf40b,handling entries from dlc,ignore-certificate-errors,is not a platform image,It leads to vertex,NurburgringNordschleife/_manifest.ymf,Physics validation failed,script.js:214,script.js:458,script.js:461,terrorbyte,warmenu,WarningScreen INIT_CORE, 1 handling entries"
+	LogContains := "abnormally,attempt new connection,can't,Cannot,couldn't,Couldn't,Could not,crash,Dropping,DumpServer,error,Error,ERROR,ERR_CONNECTION_REFUSED,exception,Exception,failed,Failed,Fatal,GlobalError,invalid,INVALID,is not a valid number,nui://racescript/,#overriding,parse,racescript,Racescript,RaceScript,#recieved,#Recieving,streaming entry without blockmap,SyntaxError,Uncaught,unexpected,Unexpected,warning,Warning,^1SCRIPT,handling entries,^3>,----------------"
+	LogDoesNotContain := "charlie,DumpServer is active and waiting.,fix the exporter,f7c13cb204bc9aecf40b,handling entries from dlc,ignore-certificate-errors,is not a platform image,It leads to vertex,NurburgringNordschleife/_manifest.ymf,Physics validation failed,script.js:214,script.js:458,script.js:461,terrorbyte,warmenu,WarningScreen INIT_CORE, 1 handling entries"
 
 	Needle := "CitizenFX_log_"
 
@@ -429,10 +429,12 @@ ParseNewLog: ;New-Style log parsing
 	Loop, %LogLines0%
 		{
 			logline := LogLines%a_index%
-			stringtrimleft, TrimmedLine, logline, 52
-			if TrimmedLine contains %LogContains%
-				if TrimmedLine not contains %LogDoesNotContain%
+			if logline contains %LogContains%
+				if logline not contains %LogDoesNotContain%
+				{
+					stringtrimleft, TrimmedLine, logline, 52
 					TrimmedLinea = %TrimmedLinea%Line #%A_Index%:%A_Tab%%TrimmedLine%`n
+				}
 		}
 	Guicontrol, LogViewerWindow: text, LogContents, %TrimmedLinea%
 	return
@@ -441,10 +443,12 @@ ParseOldLog: ;Old-Style log parsing
 	Loop, %LogLines0%
 		{
 			logline := LogLines%a_index%
-			stringtrimleft, TrimmedLine, logline, 13
-			if TrimmedLine contains %LogContains%
-				if TrimmedLine not contains %LogDoesNotContain%
+			if logline contains %LogContains%
+				if logline not contains %LogDoesNotContain%
+				{
+					stringtrimleft, TrimmedLine, logline, 13
 					TrimmedLinea = %TrimmedLinea%Line #%A_Index%:%A_Tab%%TrimmedLine%`n
+				}
 		}
 	Guicontrol, LogViewerWindow: text, LogContents, %TrimmedLinea%
 	MsgBox, Old-Style log suspected.
