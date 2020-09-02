@@ -198,7 +198,7 @@ UpdateList: ;Updates the list of servers from the ini file
 	IniRead, ServerName, 8thGearLauncher/ServerList.ini,,
 	guicontrol, , ServerName, %ServerName%
 	GuiControl, ChooseString, ComboBox1, 8th
-	gui, show
+	Gui, Show, NoActivate
 	return
 
 Connect: ;Connects to the selected server in the list
@@ -238,7 +238,7 @@ updatefiles: ;Updates the log list for the tools tab and populates related varia
 	LV_ModifyCol(2, "AutoHdr Integer")
 	LV_ModifyCol(3, "Digit")
 	LV_ModifyCol(3, "SortDesc")
-	Gui, Show
+	Gui, Show, NoActivate
 	Return
 
 GetFileSelected: ;Gets right-clicked file from main gui log listview
@@ -497,7 +497,7 @@ BackupLogs: ;Backs up logs to the backup folder for safe keeping
 		LV_ModifyCol(2, "AutoHdr Integer")
 		LV_ModifyCol(3, "Digit")
 		LV_ModifyCol(3, "SortDesc")
-	Gui, Show
+	Gui, Show, NoActivate
 	return
 
 MenuOptionBackupLogs: ;Backs up logs to the backup folder for safe keeping
@@ -516,7 +516,7 @@ MenuOptionBackupLogs: ;Backs up logs to the backup folder for safe keeping
 		LV_ModifyCol(2, "AutoHdr Integer")
 		LV_ModifyCol(3, "Digit")
 		LV_ModifyCol(3, "SortDesc")
-	Gui, Show
+	Gui, Show, NoActivate
 	return
 
 opendefault: ;Opens the selected log with the users default editor for .log files
