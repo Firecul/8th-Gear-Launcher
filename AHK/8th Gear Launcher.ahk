@@ -377,13 +377,18 @@ OpenCacheFolder: ;Opens normal cache folder
 BackupCache: ;Backs up cache priv folder
 	Gui +OwnDialogs
 	IfNotExist, %CacheBackupLocation%
+	{
 		MsgBox, The target folder does not exist. Creating it.
 		FileCreateDir, %CacheBackupLocation%
+	}
 	IfExist, %CacheBackupLocation%
+	{
 		MsgBox, The target folder exists. Copying files.
-	FileCopyDir, %cachedir%\db\, %CacheBackupLocation%\db\, 1
-	FileCopyDir, %cachedir%\unconfirmed\, %CacheBackupLocation%\unconfirmed\ , 1
-	msgbox, Cache Backed Up
+		FileCopy,  %cachedir%\*.*, %CacheBackupLocation%\*.*
+		FileCopyDir, %cachedir%\db\, %CacheBackupLocation%\db\, 1
+		FileCopyDir, %cachedir%\unconfirmed\, %CacheBackupLocation%\unconfirmed\ , 1
+		msgbox, Cache Backed Up
+	}
 	Return
 
 OpenBackupCacheFolder: ;Opens the backup Cache folder
