@@ -44,7 +44,7 @@ Gui, New ;Main Window
 	Gui, Tab, 2 ;Misc
 		Gui, font, s10 norm
 		Gui, Add, groupbox, xp-239 yp-496 w465 h290, Current Logs:
-		Gui, Add, ListView, xp+10 yp+20 r10 w445 AltSubmit Grid -LV0x10 -Multi gMyListView vMyListView, Name|Size (KB)|Modified
+		Gui, Add, ListView, xp+10 yp+20 r10 w445 AltSubmit Grid -LV0x10 -Multi gMyListView vMyListView, Name|Size (KB)|Modified|SortingDate
 		Gui, add, button, xp+339 yp+234 gupdatefiles, Refresh Log list
 
 	Gui, Tab ;All Tabs
@@ -233,11 +233,15 @@ updatefiles: ;Updates the log list for the tools tab and populates related varia
 	CacheBackupLocation := seldir . "FiveM.app\CacheBackup\"
 	LV_Delete()
 	Loop, %seldir2%\*.log*
-	LV_Add("", A_LoopFileName, A_LoopFileSizeKB, A_LoopFileTimeModified, A_LoopFileFullPath)
-	LV_ModifyCol() ;Auto-size each column
-	LV_ModifyCol(2, "AutoHdr Integer")
-	LV_ModifyCol(3, "Digit")
-	LV_ModifyCol(3, "SortDesc")
+	{
+		FormatTime, LogTimeAndDate, %A_LoopFileTimeModified%
+		LV_Add("", A_LoopFileName, A_LoopFileSizeKB, LogTimeAndDate, A_LoopFileTimeModified, A_LoopFileFullPath)
+		LV_ModifyCol() ;Auto-size each column
+		LV_ModifyCol(1, "AutoHdr Text")
+		LV_ModifyCol(2, "AutoHdr Integer")
+		LV_ModifyCol(3, "AutoHdrText NoSort")
+		LV_ModifyCol(4, "AutoHdr Digit SortDesc 0")
+	}
 	Gui, Show, NoActivate
 	Return
 
@@ -272,6 +276,14 @@ MyListView: ;Gets double-clicked file from main gui log listview
 		LV_GetText(FileName, A_EventInfo, 1)
 		SelectedLog := seldir2 . FileName
 		gosub, OpenLogViewer
+		}
+	if ( A_GuiEvent = "ColClick" And A_EventInfo = 3 )
+		{
+		If Sort
+		LV_ModifyCol(4, "Sort")
+		else
+		LV_ModifyCol(4, "SortDesc")
+		Sort := not Sort
 		}
 	return
 
