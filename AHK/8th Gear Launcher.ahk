@@ -359,7 +359,6 @@ F5::
 
 OpenBackupWindow: ;Opens the Log backup management window
 	Gui +OwnDialogs
-	GoSub, updatefiles
 	GoSub, BackupWindowGuiEscape
 	Sleep 50
 	Gui, BackupWindow: +Resize +ToolWindow ;LogBackupManager Window
@@ -367,6 +366,10 @@ OpenBackupWindow: ;Opens the Log backup management window
 	Gui, BackupWindow: Add, groupbox, w485 h260 vGB2, Backed-up Logs:
 	Gui, BackupWindow: Add, ListView, xp+10 yp+20 r10 w465 AltSubmit Grid -Multi gMyNewerListView vMyNewerListView, Name|Size (KB)|Modified|SortingDate
 	IfExist, %seldir5%
+		Gui, MessageWindow:+ToolWindow
+		Gui, MessageWindow: Font, s11 Norm
+		Gui, MessageWindow: Add, Text,, Scanning for backed up logs, Please Wait.
+		Gui, MessageWindow: Show
 		Gui, BackupWindow:Default
 		LV_Delete()
 		Loop, %seldir5%\*.log
@@ -379,6 +382,7 @@ OpenBackupWindow: ;Opens the Log backup management window
 			LV_ModifyCol(3, "Text NoSort")
 			LV_ModifyCol(4, "AutoHdr Digit SortDesc 0")
 		}
+		Gui, MessageWindow: Destroy
 		Gui, BackupWindow: Show, AutoSize Center, Log Backups
 	IfNotExist, %seldir5%
 		MsgBox, No logs are currently backed up.
@@ -652,6 +656,13 @@ BackupWindowGuiEscape: ;Backup window escape stuff
 	BackupWindowGuiClose:
 	Gui BackupWindow:Cancel
 	Gui BackupWindow:Destroy
+	WinActivate, 8th Gear FiveM Launcher
+	Return
+
+MessageWindowGuiEscape: ;Backup window escape stuff
+	MessageWindowGuiClose:
+	Gui MessageWindow:Cancel
+	Gui MessageWindow:Destroy
 	WinActivate, 8th Gear FiveM Launcher
 	Return
 
