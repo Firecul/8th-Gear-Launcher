@@ -295,6 +295,14 @@ MyNewerListView: ;Gets double-clicked file from backedup log listview
 		SelectedLog := seldir5 . FileName
 		gosub, OpenLogViewer
 		}
+	if ( A_GuiEvent = "ColClick" And A_EventInfo = 3 )
+		{
+		If Sort
+		LV_ModifyCol(4, "Sort")
+		else
+		LV_ModifyCol(4, "SortDesc")
+		Sort := not Sort
+		}
 	return
 
 GuiContextMenu: ;MainUI context menu control
@@ -354,20 +362,24 @@ OpenBackupWindow: ;Opens the Log backup management window
 	GoSub, updatefiles
 	GoSub, BackupWindowGuiEscape
 	Sleep 50
-	Gui, BackupWindow: +Resize ;LogBackupManager Window
+	Gui, BackupWindow: +Resize +ToolWindow ;LogBackupManager Window
 	gui, BackupWindow: font, s10 Norm
-	Gui, BackupWindow: Add, groupbox, w620 h260 vGB2, Backed-up Logs:
-	Gui, BackupWindow: Add, ListView, xp+10 yp+20 r10 w600 AltSubmit Grid -Multi gMyNewerListView vMyNewerListView, Name|Size (KB)|Modified
-	gui, BackupWindow: show, AutoSize Center, Log Backups
+	Gui, BackupWindow: Add, groupbox, w485 h260 vGB2, Backed-up Logs:
+	Gui, BackupWindow: Add, ListView, xp+10 yp+20 r10 w465 AltSubmit Grid -Multi gMyNewerListView vMyNewerListView, Name|Size (KB)|Modified|SortingDate
 	IfExist, %seldir5%
 		Gui, BackupWindow:Default
 		LV_Delete()
 		Loop, %seldir5%\*.log
-		LV_Add("", A_LoopFileName, A_LoopFileSizeKB, A_LoopFileTimeModified, A_LoopFileFullPath)
-		LV_ModifyCol() ;Auto-size each column
-		LV_ModifyCol(2, "AutoHdr Integer")
-		LV_ModifyCol(3, "Digit")
-		LV_ModifyCol(3, "SortDesc")
+		{
+			FormatTime, LogTimeAndDate, %A_LoopFileTimeModified%
+			LV_Add("", A_LoopFileName, A_LoopFileSizeKB, LogTimeAndDate, A_LoopFileTimeModified, A_LoopFileFullPath)
+			LV_ModifyCol() ;Auto-size each column
+			LV_ModifyCol(1, "AutoHdr Text")
+			LV_ModifyCol(2, "AutoHdr Integer")
+			LV_ModifyCol(3, "Text NoSort")
+			LV_ModifyCol(4, "AutoHdr Digit SortDesc 0")
+		}
+		Gui, BackupWindow: Show, AutoSize Center, Log Backups
 	IfNotExist, %seldir5%
 		MsgBox, No logs are currently backed up.
 	return
