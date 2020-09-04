@@ -484,7 +484,12 @@ ParseOldLog: ;Old-Style log parsing
 				}
 		}
 	Guicontrol, LogViewerWindow: text, LogContents, %TrimmedLinea%
-	MsgBox, Old-Style log suspected.
+	Gui, MessageWindow:+ToolWindow
+	Gui, MessageWindow: Font, s12 Norm
+	Gui, MessageWindow: Add, Text,, Old-Style log suspected.
+	Gui, MessageWindow: Show
+	Sleep, 2000
+	Gui, MessageWindow: Destroy
 	return
 
 SlowOpen: ;Opens the log ignoring any found null characters that normally cause issues
