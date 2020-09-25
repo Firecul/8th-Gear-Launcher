@@ -154,9 +154,9 @@ EnvGet, LOCALAPPDATA, LOCALAPPDATA ;Searches Fivem default location
 	}
 
 	Loop, %LOCALAPPDATA%\FiveM\FiveM.exe, , 1
-	SelectedFile := A_LoopFileFullPath
+	FiveMExeFullPath := A_LoopFileFullPath
 	Menu, MenuBar, Disable, FAQ
-	if (SelectedFile = ""){
+	if (FiveMExeFullPath = ""){
 			MsgBox, FiveM.exe cannot be found.`nPlease locate it using the option in the File menu
 			LV_Delete()
 			gosub lookforfivem
@@ -213,8 +213,8 @@ Connect: ;Connects to the selected server in the list
 
 lookforfivem: ;Opens dialogue box to allow selecting FiveM.exe location
 	Gui +OwnDialogs
-	FileSelectFile, SelectedFile, 3, , Locate FiveM.exe, FiveM (FiveM.exe)
-	if (SelectedFile = ""){
+	FileSelectFile, FiveMExeFullPath, 3, , Locate FiveM.exe, FiveM (FiveM.exe)
+	if (FiveMExeFullPath = ""){
 			MsgBox, The user didn't select anything.
 			LV_Delete()
 			Menu, FileMenu, Enable, &Locate FiveM.exe
@@ -226,7 +226,7 @@ lookforfivem: ;Opens dialogue box to allow selecting FiveM.exe location
 	return
 
 updatefiles: ;Updates the log list for the tools tab and populates related variables
-	StringTrimRight, seldir, selectedfile, 9
+	StringTrimRight, seldir, FiveMExeFullPath, 9
 	seldir2 := seldir . "FiveM.app\logs\"
 	seldir5 := seldir . "FiveM.app\Backed-up logs\"
 	cachedir := seldir . "FiveM.app\cache\priv\"
