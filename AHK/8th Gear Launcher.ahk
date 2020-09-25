@@ -172,7 +172,10 @@ EnvGet, LOCALAPPDATA, LOCALAPPDATA ;Searches Fivem default location
 
 Localhost: ;Launches FiveM and connects to Localhost
 	GoSub, BackupLogs
-	Run fivem://connect/127.0.0.1
+	;Run, fivem://connect/127.0.0.1
+	;send, #r fivem://connect/127.0.0.1{Enter}
+	;Run, cmd.exe /C start fivem://connect/127.0.0.1,,hide
+	Run, cmd.exe /C %FiveMExeFullPath% +connect 127.0.0.1,,hide
 	Sleep 5000
 	GoSub, updatefiles
 	Return
@@ -206,7 +209,10 @@ Connect: ;Connects to the selected server in the list
 	iniread, ServerIP, 8thGearLauncher/ServerList.ini, %ServerName%, IP
 	iniread, ServerPort, 8thGearLauncher/ServerList.ini, %ServerName%, Port
 	GoSub, BackupLogs
-	Run fivem://connect/%ServerIP%:%ServerPort%
+	;Run fivem://connect/%ServerIP%:%ServerPort%
+	;send, #r fivem://connect/%ServerIP%:%ServerPort%{Enter}
+	;Run, cmd.exe /C start fivem://connect/%ServerIP%:%ServerPort%,,hide
+	Run, cmd.exe /C %FiveMExeFullPath% +connect %ServerIP%:%ServerPort%,,hide
 	Sleep 5000
 	GoSub, updatefiles
 	Return
