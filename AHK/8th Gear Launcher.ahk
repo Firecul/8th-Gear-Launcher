@@ -418,7 +418,7 @@ BackupCache: ;Backs up cache priv folder
 	IfExist, %CacheBackupLocation%
 	{
 		MsgBox, The target folder exists. Copying files.
-		FileCopy,  %cachedir%\*.*, %CacheBackupLocation%\*.*
+		FileCopyDir, %cachedir%db\, %CacheBackupLocation%db\, 1
 		FileCopy,  %cachedir%priv\*.*, %CacheBackupLocation%priv\*.*
 		FileCopyDir, %cachedir%priv\db\, %CacheBackupLocation%priv\db\, 1
 		FileCopyDir, %cachedir%priv\unconfirmed\, %CacheBackupLocation%priv\unconfirmed\ , 1
@@ -432,7 +432,7 @@ OpenBackupCacheFolder: ;Opens the backup Cache folder
 
 RestoreCache: ;Restores cache from backups
 	Gui +OwnDialogs
-	FileCopy, %CacheBackupLocation%\*.*, %cachedir%\*.*
+	FileCopyDir, %CacheBackupLocation%db\, %cachedir%db\, 1
 	FileCopy, %CacheBackupLocation%priv\*.*, %cachedir%priv\*.*
 	FileCopyDir, %CacheBackupLocation%priv\db\, %cachedir%priv\db\, 1
 	FileCopyDir, %CacheBackupLocation%priv\unconfirmed\, %cachedir%priv\unconfirmed\ , 1
