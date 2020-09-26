@@ -235,10 +235,10 @@ updatefiles: ;Updates the log list for the tools tab and populates related varia
 	StringTrimRight, seldir, FiveMExeFullPath, 9
 	seldir2 := seldir . "FiveM.app\logs\"
 	seldir5 := seldir . "FiveM.app\Backed-up logs\"
-	cachedir := seldir . "FiveM.app\cache\priv\"
+	cachedir := seldir . "FiveM.app\cache\"
 	CacheBackupLocation := seldir . "FiveM.app\CacheBackup\"
 	LV_Delete()
-	Loop, %seldir2%\*.log*
+	Loop, %seldir2%*.log*
 	{
 		FormatTime, LogTimeAndDate, %A_LoopFileTimeModified%
 		LV_Add("", A_LoopFileName, A_LoopFileSizeKB, LogTimeAndDate, A_LoopFileTimeModified, A_LoopFileFullPath)
@@ -378,7 +378,7 @@ OpenBackupWindow: ;Opens the Log backup management window
 		Gui, MessageWindow: Show
 		Gui, BackupWindow:Default
 		LV_Delete()
-		Loop, %seldir5%\*.log
+		Loop, %seldir5%*.log
 		{
 			FormatTime, LogTimeAndDate, %A_LoopFileTimeModified%
 			LV_Add("", A_LoopFileName, A_LoopFileSizeKB, LogTimeAndDate, A_LoopFileTimeModified, A_LoopFileFullPath)
@@ -419,8 +419,9 @@ BackupCache: ;Backs up cache priv folder
 	{
 		MsgBox, The target folder exists. Copying files.
 		FileCopy,  %cachedir%\*.*, %CacheBackupLocation%\*.*
-		FileCopyDir, %cachedir%\db\, %CacheBackupLocation%\db\, 1
-		FileCopyDir, %cachedir%\unconfirmed\, %CacheBackupLocation%\unconfirmed\ , 1
+		FileCopy,  %cachedir%priv\*.*, %CacheBackupLocation%priv\*.*
+		FileCopyDir, %cachedir%priv\db\, %CacheBackupLocation%priv\db\, 1
+		FileCopyDir, %cachedir%priv\unconfirmed\, %CacheBackupLocation%priv\unconfirmed\ , 1
 		msgbox, Cache Backed Up
 	}
 	Return
@@ -432,8 +433,9 @@ OpenBackupCacheFolder: ;Opens the backup Cache folder
 RestoreCache: ;Restores cache from backups
 	Gui +OwnDialogs
 	FileCopy, %CacheBackupLocation%\*.*, %cachedir%\*.*
-	FileCopyDir, %CacheBackupLocation%\db\, %cachedir%\db\, 1
-	FileCopyDir, %CacheBackupLocation%\unconfirmed\, %cachedir%\unconfirmed\ , 1
+	FileCopy, %CacheBackupLocation%priv\*.*, %cachedir%priv\*.*
+	FileCopyDir, %CacheBackupLocation%priv\db\, %cachedir%priv\db\, 1
+	FileCopyDir, %CacheBackupLocation%priv\unconfirmed\, %cachedir%priv\unconfirmed\ , 1
 	msgbox, Cache Restored
 	return
 
@@ -527,10 +529,10 @@ BackupLogs: ;Backs up logs to the backup folder for safe keeping
 		FileCreateDir, %seldir5%
 	IfExist, %seldir5%
 		;MsgBox, The target folder exists. Copying files.
-	FileCopy, %seldir2%\*.log, %seldir5%\*.*, 1
+	FileCopy, %seldir2%*.log, %seldir5%*.*, 1
 	;msgbox, Logs Backed Up
 	LV_Delete()
-	Loop, %seldir2%\*.log
+	Loop, %seldir2%*.log
 		LV_Add("", A_LoopFileName, A_LoopFileSizeKB, A_LoopFileTimeModified, A_LoopFileFullPath)
 		LV_ModifyCol()
 		LV_ModifyCol(2, "AutoHdr Integer")
@@ -546,10 +548,10 @@ MenuOptionBackupLogs: ;Backs up logs to the backup folder for safe keeping
 		FileCreateDir, %seldir5%
 	IfExist, %seldir5%
 		;MsgBox, The target folder exists. Copying files.
-	FileCopy, %seldir2%\*.log, %seldir5%\*.*, 1
+	FileCopy, %seldir2%*.log, %seldir5%*.*, 1
 	msgbox, Logs Backed Up
 	LV_Delete()
-	Loop, %seldir2%\*.log
+	Loop, %seldir2%*.log
 		LV_Add("", A_LoopFileName, A_LoopFileSizeKB, A_LoopFileTimeModified, A_LoopFileFullPath)
 		LV_ModifyCol()
 		LV_ModifyCol(2, "AutoHdr Integer")
