@@ -170,6 +170,16 @@ EnvGet, LOCALAPPDATA, LOCALAPPDATA ;Searches Fivem default location
 	GoSub, UpdateList
 	return
 
+GetNumberFormatEx(Value, LocaleName := "!x-sys-default-locale"){
+	if (Size := DllCall("GetNumberFormatEx", "str", LocaleName, "uint", 0, "str", Value, "ptr", 0, "ptr", 0, "int", 0)) {
+		VarSetCapacity(NumberStr, Size << !!A_IsUnicode, 0)
+		if (DllCall("GetNumberFormatEx", "str", LocaleName, "uint", 0, "str", Value, "ptr", 0, "str", NumberStr, "int", Size))
+			return NumberStr
+		}
+	return false
+	}
+	;MsgBox % GetNumberFormatEx(1149.99, "en-GB")               ; -> 1,149.99         ( LANG_ENGLISH      | SUBLANG_ENGLISH_GB )
+
 Localhost: ;Launches FiveM and connects to Localhost
 	GoSub, BackupLogs
 	;Run, fivem://connect/127.0.0.1
@@ -240,8 +250,9 @@ updatefiles: ;Updates the log list for the tools tab and populates related varia
 	LV_Delete()
 	Loop, %seldir2%*.log*
 	{
+		FileSize := regExReplace(GetNumberFormatEx(A_LoopFileSizeKB), "[,.]?0+$")
 		FormatTime, LogTimeAndDate, %A_LoopFileTimeModified%
-		LV_Add("", A_LoopFileName, A_LoopFileSizeKB, LogTimeAndDate, A_LoopFileTimeModified, A_LoopFileFullPath)
+		LV_Add("", A_LoopFileName, FileSize, LogTimeAndDate, A_LoopFileTimeModified, A_LoopFileFullPath)
 		LV_ModifyCol() ;Auto-size each column
 		LV_ModifyCol(1, "AutoHdr Text")
 		LV_ModifyCol(2, "AutoHdr Integer")
@@ -380,8 +391,9 @@ OpenBackupWindow: ;Opens the Log backup management window
 		LV_Delete()
 		Loop, %seldir5%*.log
 		{
+			FileSize := regExReplace(GetNumberFormatEx(A_LoopFileSizeKB), "[,.]?0+$")
 			FormatTime, LogTimeAndDate, %A_LoopFileTimeModified%
-			LV_Add("", A_LoopFileName, A_LoopFileSizeKB, LogTimeAndDate, A_LoopFileTimeModified, A_LoopFileFullPath)
+			LV_Add("", A_LoopFileName, FileSize, LogTimeAndDate, A_LoopFileTimeModified, A_LoopFileFullPath)
 			LV_ModifyCol() ;Auto-size each column
 			LV_ModifyCol(1, "AutoHdr Text")
 			LV_ModifyCol(2, "AutoHdr Integer")
