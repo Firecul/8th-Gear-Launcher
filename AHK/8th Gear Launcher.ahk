@@ -94,7 +94,6 @@ menu, submenu, add, Log Viewer, OpenLogViewer ;Context Menu
 	Menu, ContextMenu, Add, Properties, GetFileProperties
 
 EnvGet, LOCALAPPDATA, LOCALAPPDATA ;Searches Fivem default location
-
 	req := ComObjCreate("Msxml2.XMLHTTP")
 	req.open("GET", "https://8thgear.racing/api/serverlist", true)
 	req.onreadystatechange := Func("Ready") ; Send the request.  Ready() will be called when it's complete.
@@ -153,16 +152,18 @@ EnvGet, LOCALAPPDATA, LOCALAPPDATA ;Searches Fivem default location
 		}
 	}
 
-	Loop, %LOCALAPPDATA%\FiveM\FiveM.exe, , 1
-	FiveMExeFullPath := A_LoopFileFullPath
 	Menu, MenuBar, Disable, FAQ
-	if (FiveMExeFullPath = ""){
+
+	RegRead, FiveMPath, HKEY_CURRENT_USER\Software\CitizenFX\FiveM, Last Run Location
+	if (FiveMPath = ""){
 			MsgBox, FiveM.exe cannot be found.`nPlease locate it using the option in the File menu
 			LV_Delete()
 			gosub lookforfivem
 			Menu, FileMenu, Enable, &Locate FiveM.exe
 		}
 		else{
+			StringTrimRight, FiveMExeFullPath, FiveMPath, 10
+			FiveMExeFullPath := FiveMExeFullPath . "FiveM.exe"
 			Menu, FileMenu, Disable, &Locate FiveM.exe
 		}
 	GoSub, updatefiles
@@ -242,13 +243,12 @@ lookforfivem: ;Opens dialogue box to allow selecting FiveM.exe location
 	return
 
 updatefiles: ;Updates the log list for the tools tab and populates related variables
-	StringTrimRight, seldir, FiveMExeFullPath, 9
-	seldir2 := seldir . "FiveM.app\logs\"
-	seldir5 := seldir . "FiveM.app\Backed-up logs\"
-	cachedir := seldir . "FiveM.app\cache\"
-	CacheBackupLocation := seldir . "FiveM.app\CacheBackup\"
+	FiveMLogsPath := FiveMPath . "logs\"
+	FiveMBackupLogsPath := FiveMPath . "Backed-up logs\"
+	FiveMCachePath := FiveMPath . "cache\"
+	FiveMBackupCachePath := FiveMPath . "CacheBackup\"
 	LV_Delete()
-	Loop, %seldir2%*.log*
+	Loop, %FiveMLogsPath%*.log*
 	{
 		FileSize := regExReplace(GetNumberFormatEx(A_LoopFileSizeKB), "[,.]?0+$")
 		FormatTime, LogTimeAndDate, %A_LoopFileTimeModified%
@@ -270,7 +270,7 @@ GetFileSelected: ;Gets right-clicked file from main gui log listview
 		if not RowNumber ;if no more selected rows
 			break
 		LV_GetText(Text, RowNumber)
-		SelectedLog := seldir2 . Text
+		SelectedLog := FiveMLogsPath . Text
 	}
 	return
 
@@ -282,7 +282,7 @@ BackupWindowGetFileSelected: ;Gets right-clicked file from backedup log listview
 		if not RowNumber ;if no more selected rows
 			break
 		LV_GetText(Text, RowNumber)
-		SelectedLog := seldir5 . Text
+		SelectedLog := FiveMBackupLogsPath . Text
 	}
 	return
 
@@ -291,7 +291,7 @@ MyListView: ;Gets double-clicked file from main gui log listview
 		{
 		SelectedLog :=
 		LV_GetText(FileName, A_EventInfo, 1)
-		SelectedLog := seldir2 . FileName
+		SelectedLog := FiveMLogsPath . FileName
 		gosub, OpenLogViewer
 		}
 	if ( A_GuiEvent = "ColClick" And A_EventInfo = 3 )
@@ -309,7 +309,7 @@ MyNewerListView: ;Gets double-clicked file from backedup log listview
 		{
 		SelectedLog :=
 		LV_GetText(FileName, A_EventInfo, 1)
-		SelectedLog := seldir5 . FileName
+		SelectedLog := FiveMBackupLogsPath . FileName
 		gosub, OpenLogViewer
 		}
 	if ( A_GuiEvent = "ColClick" And A_EventInfo = 3 )
@@ -382,14 +382,14 @@ OpenBackupWindow: ;Opens the Log backup management window
 	gui, BackupWindow: font, s10 Norm
 	Gui, BackupWindow: Add, groupbox, w485 h260 vGB2, Backed-up Logs:
 	Gui, BackupWindow: Add, ListView, xp+10 yp+20 r10 w465 AltSubmit Grid -Multi gMyNewerListView vMyNewerListView, Name|Size (KB)|Modified|SortingDate
-	IfExist, %seldir5%
+	IfExist, %FiveMBackupLogsPath%
 		Gui, MessageWindow:+ToolWindow
 		Gui, MessageWindow: Font, s11 Norm
 		Gui, MessageWindow: Add, Text,, Scanning for backed up logs, Please Wait.
 		Gui, MessageWindow: Show
 		Gui, BackupWindow:Default
 		LV_Delete()
-		Loop, %seldir5%*.log
+		Loop, %FiveMBackupLogsPath%*.log
 		{
 			FileSize := regExReplace(GetNumberFormatEx(A_LoopFileSizeKB), "[,.]?0+$")
 			FormatTime, LogTimeAndDate, %A_LoopFileTimeModified%
@@ -402,7 +402,7 @@ OpenBackupWindow: ;Opens the Log backup management window
 		}
 		Gui, MessageWindow: Destroy
 		Gui, BackupWindow: Show, AutoSize Center, Log Backups
-	IfNotExist, %seldir5%
+	IfNotExist, %FiveMBackupLogsPath%
 		MsgBox, No logs are currently backed up.
 	return
 
@@ -417,37 +417,37 @@ SaveLogCopy:
 	Return
 
 OpenCacheFolder: ;Opens normal cache folder
-	run %cachedir%
+	run %FiveMCachePath%
 	return
 
 BackupCache: ;Backs up cache priv folder
 	Gui +OwnDialogs
-	IfNotExist, %CacheBackupLocation%
+	IfNotExist, %FiveMBackupCachePath%
 	{
 		MsgBox, The target folder does not exist. Creating it.
-		FileCreateDir, %CacheBackupLocation%
+		FileCreateDir, %FiveMBackupCachePath%
 	}
-	IfExist, %CacheBackupLocation%
+	IfExist, %FiveMBackupCachePath%
 	{
 		MsgBox, The target folder exists. Copying files.
-		FileCopyDir, %cachedir%db\, %CacheBackupLocation%db\, 1
-		FileCopy,  %cachedir%priv\*.*, %CacheBackupLocation%priv\*.*
-		FileCopyDir, %cachedir%priv\db\, %CacheBackupLocation%priv\db\, 1
-		FileCopyDir, %cachedir%priv\unconfirmed\, %CacheBackupLocation%priv\unconfirmed\ , 1
+		FileCopyDir, %FiveMCachePath%db\, %FiveMBackupCachePath%db\, 1
+		FileCopy,  %FiveMCachePath%priv\*.*, %FiveMBackupCachePath%priv\*.*
+		FileCopyDir, %FiveMCachePath%priv\db\, %FiveMBackupCachePath%priv\db\, 1
+		FileCopyDir, %FiveMCachePath%priv\unconfirmed\, %FiveMBackupCachePath%priv\unconfirmed\ , 1
 		msgbox, Cache Backed Up
 	}
 	Return
 
 OpenBackupCacheFolder: ;Opens the backup Cache folder
-	run %CacheBackupLocation%
+	run %FiveMBackupCachePath%
 	return
 
 RestoreCache: ;Restores cache from backups
 	Gui +OwnDialogs
-	FileCopyDir, %CacheBackupLocation%db\, %cachedir%db\, 1
-	FileCopy, %CacheBackupLocation%priv\*.*, %cachedir%priv\*.*
-	FileCopyDir, %CacheBackupLocation%priv\db\, %cachedir%priv\db\, 1
-	FileCopyDir, %CacheBackupLocation%priv\unconfirmed\, %cachedir%priv\unconfirmed\ , 1
+	FileCopyDir, %FiveMBackupCachePath%db\, %FiveMCachePath%db\, 1
+	FileCopy, %FiveMBackupCachePath%priv\*.*, %FiveMCachePath%priv\*.*
+	FileCopyDir, %FiveMBackupCachePath%priv\db\, %FiveMCachePath%priv\db\, 1
+	FileCopyDir, %FiveMBackupCachePath%priv\unconfirmed\, %FiveMCachePath%priv\unconfirmed\ , 1
 	msgbox, Cache Restored
 	return
 
@@ -527,24 +527,24 @@ NoNulls(Filename) { ;Reads the given file character by charcter
 	}
 
 OpenLogFolder: ;Opens the log folder
-	run %seldir2%
+	run %FiveMLogsPath%
 	return
 
 OpenLogBackupFolder: ;Opens the log backup folder
-	run %seldir5%
+	run %FiveMBackupLogsPath%
 	return
 
 BackupLogs: ;Backs up logs to the backup folder for safe keeping
 	Gui +OwnDialogs
-	IfNotExist, %seldir5%
+	IfNotExist, %FiveMBackupLogsPath%
 		;MsgBox, The target folder does not exist. Creating it.
-		FileCreateDir, %seldir5%
-	IfExist, %seldir5%
+		FileCreateDir, %FiveMBackupLogsPath%
+	IfExist, %FiveMBackupLogsPath%
 		;MsgBox, The target folder exists. Copying files.
-	FileCopy, %seldir2%*.log, %seldir5%*.*, 1
+	FileCopy, %FiveMLogsPath%*.log, %FiveMBackupLogsPath%*.*, 1
 	;msgbox, Logs Backed Up
 	LV_Delete()
-	Loop, %seldir2%*.log
+	Loop, %FiveMLogsPath%*.log
 		LV_Add("", A_LoopFileName, A_LoopFileSizeKB, A_LoopFileTimeModified, A_LoopFileFullPath)
 		LV_ModifyCol()
 		LV_ModifyCol(2, "AutoHdr Integer")
@@ -555,15 +555,15 @@ BackupLogs: ;Backs up logs to the backup folder for safe keeping
 
 MenuOptionBackupLogs: ;Backs up logs to the backup folder for safe keeping
 	Gui +OwnDialogs
-	IfNotExist, %seldir5%
+	IfNotExist, %FiveMBackupLogsPath%
 		;MsgBox, The target folder does not exist. Creating it.
-		FileCreateDir, %seldir5%
-	IfExist, %seldir5%
+		FileCreateDir, %FiveMBackupLogsPath%
+	IfExist, %FiveMBackupLogsPath%
 		;MsgBox, The target folder exists. Copying files.
-	FileCopy, %seldir2%*.log, %seldir5%*.*, 1
+	FileCopy, %FiveMLogsPath%*.log, %FiveMBackupLogsPath%*.*, 1
 	msgbox, Logs Backed Up
 	LV_Delete()
-	Loop, %seldir2%*.log
+	Loop, %FiveMLogsPath%*.log
 		LV_Add("", A_LoopFileName, A_LoopFileSizeKB, A_LoopFileTimeModified, A_LoopFileFullPath)
 		LV_ModifyCol()
 		LV_ModifyCol(2, "AutoHdr Integer")
