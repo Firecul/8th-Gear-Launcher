@@ -160,7 +160,6 @@ StartUpStuff: ;Stuff to run at start up
 	RegRead, FiveMPath, HKEY_CURRENT_USER\Software\CitizenFX\FiveM, Last Run Location
 	if (FiveMPath = ""){
 			MsgBox, FiveM.exe cannot be found.`nPlease locate it using the option in the File menu
-			LV_Delete()
 			gosub lookforfivem
 			Menu, FileMenu, Enable, &Locate FiveM.exe
 		}
@@ -546,13 +545,6 @@ BackupLogs: ;Backs up logs to the backup folder for safe keeping
 		;MsgBox, The target folder exists. Copying files.
 	FileCopy, %FiveMLogsPath%*.log, %FiveMBackupLogsPath%*.*, 1
 	;msgbox, Logs Backed Up
-	LV_Delete()
-	Loop, %FiveMLogsPath%*.log
-		LV_Add("", A_LoopFileName, A_LoopFileSizeKB, A_LoopFileTimeModified, A_LoopFileFullPath)
-		LV_ModifyCol()
-		LV_ModifyCol(2, "AutoHdr Integer")
-		LV_ModifyCol(3, "Digit")
-		LV_ModifyCol(3, "SortDesc")
 	Gui, Show, NoActivate
 	return
 
@@ -565,13 +557,6 @@ MenuOptionBackupLogs: ;Backs up logs to the backup folder for safe keeping
 		;MsgBox, The target folder exists. Copying files.
 	FileCopy, %FiveMLogsPath%*.log, %FiveMBackupLogsPath%*.*, 1
 	msgbox, Logs Backed Up
-	LV_Delete()
-	Loop, %FiveMLogsPath%*.log
-		LV_Add("", A_LoopFileName, A_LoopFileSizeKB, A_LoopFileTimeModified, A_LoopFileFullPath)
-		LV_ModifyCol()
-		LV_ModifyCol(2, "AutoHdr Integer")
-		LV_ModifyCol(3, "Digit")
-		LV_ModifyCol(3, "SortDesc")
 	Gui, Show, NoActivate
 	return
 
