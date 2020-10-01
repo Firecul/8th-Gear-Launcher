@@ -93,7 +93,10 @@ menu, submenu, add, Log Viewer, OpenLogViewer ;Context Menu
 	Menu, ContextMenu, Add, Delete, DeleteLog
 	Menu, ContextMenu, Add, Properties, GetFileProperties
 
-EnvGet, LOCALAPPDATA, LOCALAPPDATA ;Searches Fivem default location
+GoSub, StartUpStuff
+Return
+
+StartUpStuff: ;Stuff to run at start up
 	req := ComObjCreate("Msxml2.XMLHTTP")
 	req.open("GET", "https://8thgear.racing/api/serverlist", true)
 	req.onreadystatechange := Func("Ready") ; Send the request.  Ready() will be called when it's complete.
