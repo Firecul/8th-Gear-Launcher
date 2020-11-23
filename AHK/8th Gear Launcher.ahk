@@ -37,7 +37,7 @@ Gui, New ;Main Window
 		gui, add, button, xp+139 yp-1 w60 gConnect, Connect
 		Gui, add, button, xp-140 yp+30 w200 gLocalhost, &Localhost
 		Gui, add, Groupbox, xp+220 yp-49 w236 h81, Disclaimer
-		Gui, add, link, xp+10 yp+20 w215, By joining our servers you agree to be bound to the <a href="https://discord.gg/Ts2kEEH">#rules</a> of our server.
+		Gui, add, link, xp+10 yp+20 w215, By joining our servers you agree to be bound to the <a href="https://discord.gg/ygWU5ms">#rules</a> of our server.
 		;gui, add, groupbox, xp-10 yp+21 w370 h40,
 		;gui, add, link, xp+10 yp+15 w350, <a href="https://8thgear.racing/status">To see server status, click here to go to the website</a>
 
@@ -181,13 +181,9 @@ GetNumberFormatEx(Value, LocaleName := "!x-sys-default-locale"){
 		}
 	return false
 	}
-	;MsgBox % GetNumberFormatEx(1149.99, "en-GB")               ; -> 1,149.99         ( LANG_ENGLISH      | SUBLANG_ENGLISH_GB )
 
 Localhost: ;Launches FiveM and connects to Localhost
 	GoSub, BackupLogs
-	;Run, fivem://connect/127.0.0.1
-	;send, #r fivem://connect/127.0.0.1{Enter}
-	;Run, cmd.exe /C start fivem://connect/127.0.0.1,,hide
 	Run, cmd.exe /C %FiveMExeFullPath% +connect 127.0.0.1,,hide
 	Sleep 5000
 	GoSub, updatefiles
@@ -222,9 +218,6 @@ Connect: ;Connects to the selected server in the list
 	iniread, ServerIP, 8thGearLauncher/ServerList.ini, %ServerName%, IP
 	iniread, ServerPort, 8thGearLauncher/ServerList.ini, %ServerName%, Port
 	GoSub, BackupLogs
-	;Run fivem://connect/%ServerIP%:%ServerPort%
-	;send, #r fivem://connect/%ServerIP%:%ServerPort%{Enter}
-	;Run, cmd.exe /C start fivem://connect/%ServerIP%:%ServerPort%,,hide
 	Run, cmd.exe /C %FiveMExeFullPath% +connect %ServerIP%:%ServerPort%,,hide
 	Sleep 5000
 	GoSub, updatefiles
@@ -415,7 +408,7 @@ SaveLog:
 
 SaveLogCopy:
 	FileSelectFile, NewLog, S18, %SelectedLog%, Where to save the Log?, Log Files (*.log)
-	FileCopy, %SelectedLog%, %NewLog%
+	FileCopy, %SelectedLog%, %NewLog% ;TODO improve, prob using dllcall.
 	Return
 
 OpenCacheFolder: ;Opens normal cache folder
@@ -465,7 +458,7 @@ ParseLog: ;Determines the type of log(old-style vs new-style)
 	TrimmedLinea :=
 
 	LogContains := "abnormally,attempt new connection,can't,Cannot,couldn't,Couldn't,Could not,crash,Dropping,DumpServer,error,Error,ERROR,ERR_CONNECTION_REFUSED,exception,Exception,failed,Failed,Fatal,GlobalError,invalid,INVALID,is not a valid number,MainThrd/   at ,nui://racescript/,#overriding,parse,racescript,Racescript,RaceScript,#recieved,#Recieving,streaming entry without blockmap,SyntaxError,Uncaught,unexpected,Unexpected,warning,Warning,^1SCRIPT,handling entries,^3>,----------------"
-	LogDoesNotContain := "charlie,DumpServer is active and waiting.,fix the exporter,f7c13cb204bc9aecf40b,handling entries from dlc,ignore-certificate-errors,is not a platform image,It leads to vertex,NurburgringNordschleife/_manifest.ymf,Physics validation failed,script.js:214,script.js:458,script.js:461,terrorbyte,warmenu,WarningScreen INIT_CORE, 1 handling entries"
+	LogDoesNotContain := "DumpServer is active and waiting.,fix the exporter,f7c13cb204bc9aecf40b,handling entries from dlc,ignore-certificate-errors,is not a platform image,It leads to vertex,NurburgringNordschleife/_manifest.ymf,Physics validation failed,script.js:214,script.js:458,script.js:461,terrorbyte,warmenu,WarningScreen INIT_CORE, 1 handling entries"
 
 	Needle := "CitizenFX_log_"
 
@@ -661,7 +654,7 @@ MenuOptionRules: ;Opens rules window
 	RulesNormal("Staff have the final say and are free to moderate at their own discretion.")
 	RulesBold("By taking part in this community you acknowledge that you understand and accept these rules. Ignoring them or not knowing them does not excuse you from them.")
 	Gui, RulesWindow: font, norm
-	Gui, RulesWindow: Add, link, w600, The rules found on the official discord channel superceed the ones found on this launcher, please refer to the <a href="https://discord.gg/Ts2kEEH">discord #rules channel</a> for the most up to date list.
+	Gui, RulesWindow: Add, link, w600, The rules found on the official discord channel superceed the ones found on this launcher, please refer to the <a href="https://discord.gg/ygWU5ms">discord #rules channel</a> for the most up to date list.
 	gui, RulesWindow: show, AutoSize Center, Rules
 	Return
 
