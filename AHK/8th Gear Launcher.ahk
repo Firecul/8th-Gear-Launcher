@@ -7,7 +7,7 @@ FileCreateDir, 8thGearLauncher ;Creation stuff
 	Fileinstall, pictures/8GLogo.png, 8thGearLauncher/8GLogo.png, 0
 	Fileinstall, icons/8G.ico, 8thGearLauncher/8G.ico, 0
 	Fileinstall, ServerList.ini, 8thGearLauncher/ServerList.ini, 0
-	;Fileinstall, ServerList.ini, 8thGearLauncher/VERSION_INFO.ini, 0
+	Fileinstall, ServerList.ini, 8thGearLauncher/VERSION_INFO.ini, 0
 	Menu, Tray, Icon, 8thGearLauncher/8G.ico, 1, 1
 
 LauncherVersion = v1.0
