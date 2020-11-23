@@ -128,33 +128,6 @@ StartUpStuff: ;Stuff to run at start up
 		}
 	}
 
-	req2 := ComObjCreate("Msxml2.XMLHTTP")
-	req2.open("GET", "https://raw.githubusercontent.com/Firecul/8th-Gear-Launcher/master/AHK/VERSION_INFO.ini", true)
-	req2.onreadystatechange := Func("Ready2") ; Send the request.  Ready() will be called when it's complete.
-	req2.send()
-	/*
-	while req2.readyState != 4
-		sleep 100
-	*/
-	#Persistent
-
-	Ready2() {
-		global req2
-		if (req2.readyState != 4)  ; Not done yet.
-				return
-		if (req2.status == 200) ; OK.
-		{
-			VERSION_INFO := req2.responseText
-			;FileDelete, 8thGearLauncher/VERSION_INFO.ini
-			FileAppend, %VERSION_INFO%, 8thGearLauncher/VERSION_INFO.ini, UTF-16
-			Return
-		}
-		else{
-			;MsgBox 16,, % "Status " req.status
-			Return
-		}
-	}
-
 	Menu, MenuBar, Disable, FAQ
 
 	RegRead, FiveMPath, HKEY_CURRENT_USER\Software\CitizenFX\FiveM, Last Run Location
@@ -579,7 +552,7 @@ MenuOptionAbout: ;Opens about window
 	Sleep 50
 	Gui, AboutWindow: font, s10 norm
 	Gui AboutWindow:+ToolWindow +AlwaysOnTop
-	Gui, AboutWindow: Add, link, w620, Hello and welcome to the 8th Gear FiveM Launcher.`n`nThis Launcher serves as the hub for everything you need to play on the 8th Gear servers and a few useful tools that will help you along the way. `n`nThis launcher is built using AHK by Firecul and is open-source and can be found on <a href="https://github.com/Firecul/8th-Gear-Launcher">GitHub</a>.`n`nThis launcher is version: %LauncherVersion%`nThe most recent version of the launcher is: %NewestVersion%`nTo download another version please go to <a href="https://github.com/Firecul/8th-Gear-Launcher/releases">My Github releases page</a>`n`nIf you would like to contribute to this program, you are welcome to contact me there or submit a <a href="https://github.com/Firecul/8th-Gear-Launcher/pulls">pull request</a>.`n`nIf you find any problems please <a href="https://github.com/Firecul/8th-Gear-Launcher/issues/new">let me know</a>.
+	Gui, AboutWindow: Add, link, w620, Hello and welcome to the 8th Gear FiveM Launcher.`n`nThis Launcher serves as the hub for everything you need to play on the 8th Gear servers and a few useful tools that will help you along the way. `n`nThis launcher is built using AHK by Firecul and is open-source and can be found on <a href="https://github.com/Firecul/8th-Gear-Launcher">GitHub</a>.`n`nThis launcher is version: %LauncherVersion%`nTo download another version please go to <a href="https://github.com/Firecul/8th-Gear-Launcher/releases">My Github releases page</a>`n`nIf you would like to contribute to this program, you are welcome to contact me there or submit a <a href="https://github.com/Firecul/8th-Gear-Launcher/pulls">pull request</a>.`n`nIf you find any problems please <a href="https://github.com/Firecul/8th-Gear-Launcher/issues/new">let me know</a>.
 	gui, AboutWindow: show, AutoSize Center, About
 	Return
 
