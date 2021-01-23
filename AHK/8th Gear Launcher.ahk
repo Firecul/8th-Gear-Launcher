@@ -1,4 +1,5 @@
 #SingleInstance, Force
+#NoEnv
 #Include Anchor.ahk
 StringCaseSense, On
 SetWorkingDir, %A_ScriptDir%
