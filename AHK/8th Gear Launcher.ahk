@@ -112,16 +112,13 @@ StartUpStuff: ;Stuff to run at start up
 		if (req.status == 200) ; OK.
 		{
 			DownloadedList := req.responseText
-			FileDelete, 8thGearLauncher/ServerList.ini
+			if FileExist("8thGearLauncher/ServerList.ini")
+				FileDelete, 8thGearLauncher/ServerList.ini
 			FileAppend, %DownloadedList%, 8thGearLauncher/ServerList.ini, UTF-16
 			Return
 		}
-		if (req.status >= 400 && req.status <= 599)
-		{
-			MsgBox 16,, % "Error " req.status " detected, falling back server list."
-		}
 		else{
-			;MsgBox 16,, % "Status " req.status
+			MsgBox 16,, % "Error " req.status " detected, falling back server list."
 			Return
 		}
 	}
@@ -211,8 +208,17 @@ lookforfivem: ;Opens dialogue box to allow selecting FiveM.exe location
 updatefiles: ;Updates the log list for the tools tab and populates related variables
 	FiveMLogsPath := FiveMPath . "logs\"
 	FiveMBackupLogsPath := FiveMPath . "Backed-up logs\"
+	If !FileExist(FiveMPath . "Backed-up logs\"){
+		Menu, LogMenu, Disable, Open Back-up Folder
+		Menu, LogMenu, Disable, &Manage Backed-up Logs
+	}
 	FiveMCachePath := FiveMPath . "cache\"
 	FiveMBackupCachePath := FiveMPath . "CacheBackup\"
+	If !FileExist(FiveMPath . "CacheBackup\"){
+		Menu, CacheMenu, Disable, Open Back-up Folder
+		Menu, CacheMenu, Disable, &Restore Cache from Back-ups
+	}
+
 	LV_Delete()
 	Loop, %FiveMLogsPath%*.log*
 	{
@@ -349,25 +355,27 @@ OpenBackupWindow: ;Opens the Log backup management window
 	Gui, BackupWindow: Add, groupbox, w485 h260 vGB2, Backed-up Logs:
 	Gui, BackupWindow: Add, ListView, xp+10 yp+20 r10 w465 AltSubmit Grid -Multi gMyNewerListView vMyNewerListView, Name|Size (KB)|Modified|SortingDate
 	IfExist, %FiveMBackupLogsPath%
-		Gui, MessageWindow:+ToolWindow
-		Gui, MessageWindow: Font, s11 Norm
-		Gui, MessageWindow: Add, Text,, Scanning for backed up logs, Please Wait.
-		Gui, MessageWindow: Show
-		Gui, BackupWindow:Default
-		LV_Delete()
-		Loop, %FiveMBackupLogsPath%*.log
 		{
-			FileSize := regExReplace(GetNumberFormatEx(A_LoopFileSizeKB), "[,.]?0+$")
-			FormatTime, LogTimeAndDate, %A_LoopFileTimeModified%
-			LV_Add("", A_LoopFileName, FileSize, LogTimeAndDate, A_LoopFileTimeModified, A_LoopFileFullPath)
-			LV_ModifyCol() ;Auto-size each column
-			LV_ModifyCol(1, "AutoHdr Text")
-			LV_ModifyCol(2, "AutoHdr Integer")
-			LV_ModifyCol(3, "Text NoSort")
-			LV_ModifyCol(4, "AutoHdr Digit SortDesc 0")
+			Gui, MessageWindow:+ToolWindow
+			Gui, MessageWindow: Font, s11 Norm
+			Gui, MessageWindow: Add, Text,, Scanning for backed up logs, Please Wait.
+			Gui, MessageWindow: Show
+			Gui, BackupWindow:Default
+			LV_Delete()
+			Loop, %FiveMBackupLogsPath%*.log
+			{
+				FileSize := regExReplace(GetNumberFormatEx(A_LoopFileSizeKB), "[,.]?0+$")
+				FormatTime, LogTimeAndDate, %A_LoopFileTimeModified%
+				LV_Add("", A_LoopFileName, FileSize, LogTimeAndDate, A_LoopFileTimeModified, A_LoopFileFullPath)
+				LV_ModifyCol() ;Auto-size each column
+				LV_ModifyCol(1, "AutoHdr Text")
+				LV_ModifyCol(2, "AutoHdr Integer")
+				LV_ModifyCol(3, "Text NoSort")
+				LV_ModifyCol(4, "AutoHdr Digit SortDesc 0")
+			}
+			Gui, MessageWindow: Destroy
+			Gui, BackupWindow: Show, AutoSize Center, Log Backups
 		}
-		Gui, MessageWindow: Destroy
-		Gui, BackupWindow: Show, AutoSize Center, Log Backups
 	IfNotExist, %FiveMBackupLogsPath%
 		MsgBox, No logs are currently backed up.
 	return
@@ -503,22 +511,15 @@ OpenLogBackupFolder: ;Opens the log backup folder
 BackupLogs: ;Backs up logs to the backup folder for safe keeping
 	Gui +OwnDialogs
 	IfNotExist, %FiveMBackupLogsPath%
-		;MsgBox, The target folder does not exist. Creating it.
 		FileCreateDir, %FiveMBackupLogsPath%
-	IfExist, %FiveMBackupLogsPath%
-		;MsgBox, The target folder exists. Copying files.
 	FileCopy, %FiveMLogsPath%*.log, %FiveMBackupLogsPath%*.*, 1
-	;msgbox, Logs Backed Up
 	Gui, Show, NoActivate
 	return
 
 MenuOptionBackupLogs: ;Backs up logs to the backup folder for safe keeping
 	Gui +OwnDialogs
 	IfNotExist, %FiveMBackupLogsPath%
-		;MsgBox, The target folder does not exist. Creating it.
 		FileCreateDir, %FiveMBackupLogsPath%
-	IfExist, %FiveMBackupLogsPath%
-		;MsgBox, The target folder exists. Copying files.
 	FileCopy, %FiveMLogsPath%*.log, %FiveMBackupLogsPath%*.*, 1
 	msgbox, Logs Backed Up
 	Gui, Show, NoActivate
@@ -529,7 +530,7 @@ opendefault: ;Opens the selected log with the users default editor for .log file
 	gosub, GetFileSelected
 	Run %SelectedLog%,, UseErrorLevel
 	if ErrorLevel
-	MsgBox Could not open %SelectedLog%
+		MsgBox Could not open %SelectedLog%
 	return
 
 opennotepad: ;Opens the selected log with Notepad
@@ -537,7 +538,7 @@ opennotepad: ;Opens the selected log with Notepad
 	gosub, GetFileSelected
 	Run C:\Windows\Notepad.exe %SelectedLog%,, UseErrorLevel
 	if ErrorLevel
-	MsgBox Could not open %SelectedLog%
+		MsgBox Could not open %SelectedLog%
 	return
 
 8GDiscord: ;Opens 8G Main discord channel
@@ -772,5 +773,6 @@ GuiEscape: ;Main window escape Stuff
 	GuiClose:
 	ButtonCancel:
 	MenuOptionExit:
-	FileRemoveDir, 8thGearLauncher, 1
+	if FileExist("8thGearLauncher")
+		FileRemoveDir, 8thGearLauncher, 1
 	ExitApp
