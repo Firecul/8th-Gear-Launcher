@@ -236,29 +236,18 @@ UpdateFiles: ;Updates the log list for the tools tab and populates related varia
 	Gui, Show, NoActivate
 	Return
 
-GetFileSelected: ;Gets right-clicked file from main gui log listview
-	RowNumber := 0 ;start at the top
-	Loop
-	{
-		RowNumber := LV_GetNext(RowNumber)
-		if not RowNumber ;if no more selected rows
-			break
-		LV_GetText(Text, RowNumber)
-		SelectedLog := FiveMLogsPath . Text
-	}
-	return
-
-BackupWindowGetFileSelected: ;Gets right-clicked file from backedup log listview
-	RowNumber := 0 ;start at the top
-	Loop
-	{
-		RowNumber := LV_GetNext(RowNumber)
-		if not RowNumber ;if no more selected rows
-			break
-		LV_GetText(Text, RowNumber)
-		SelectedLog := FiveMBackupLogsPath . Text
-	}
-	return
+GetFileSelected(LogsPath){
+		RowNumber := 0 ;start at the top
+		Loop
+		{
+			RowNumber := LV_GetNext(RowNumber)
+			if not RowNumber ;if no more selected rows
+				break
+			LV_GetText(Text, RowNumber)
+			SelectedLog := LogsPath . Text
+		}
+	return SelectedLog
+}
 
 MyListView: ;Gets double-clicked file from main gui log listview
 	if (A_GuiEvent = "DoubleClick")
@@ -298,7 +287,7 @@ MyNewerListView: ;Gets double-clicked file from backedup log listview
 
 GuiContextMenu: ;MainUI context menu control
 	if (A_GuiControl = "MyListView") {
-		gosub, GetFileSelected
+		SelectedLog := GetFileSelected(FiveMLogsPath)
 		Menu, ContextMenu, Show, %A_GuiX%, %A_GuiY%
 	}
 	return
@@ -306,7 +295,7 @@ GuiContextMenu: ;MainUI context menu control
 BackupWindowGuiContextMenu: ;BackedupLogUI context menu control
 	if (A_GuiControl != "MyNewerListView")
 		return
-	gosub, BackupWindowGetFileSelected
+	SelectedLog := GetFileSelected(FiveMBackupLogsPath)
 	Menu, ContextMenu, Show, %A_GuiX%, %A_GuiY%
 	return
 
@@ -529,7 +518,6 @@ MenuOptionBackupLogs: ;Backs up logs to the backup folder for safe keeping
 
 opendefault: ;Opens the selected log with the users default editor for .log files
 	Gui +OwnDialogs
-	gosub, GetFileSelected
 	Run %SelectedLog%,, UseErrorLevel
 	if ErrorLevel
 		MsgBox Could not open %SelectedLog%
@@ -537,7 +525,6 @@ opendefault: ;Opens the selected log with the users default editor for .log file
 
 opennotepad: ;Opens the selected log with Notepad
 	Gui +OwnDialogs
-	gosub, GetFileSelected
 	Run C:\Windows\Notepad.exe %SelectedLog%,, UseErrorLevel
 	if ErrorLevel
 		MsgBox Could not open %SelectedLog%
