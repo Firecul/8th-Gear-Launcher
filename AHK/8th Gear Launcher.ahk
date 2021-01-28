@@ -1,5 +1,7 @@
 #SingleInstance, Force
 #NoEnv
+;#Warn
+SetBatchLines -1
 #Include Anchor.ahk
 StringCaseSense, On
 SetWorkingDir, %A_ScriptDir%
@@ -8,7 +10,7 @@ FileCreateDir, 8thGearLauncher ;Creation stuff
 	Fileinstall, ServerList.ini, 8thGearLauncher/ServerList.ini, 0
 	Menu, Tray, Icon, % "HBITMAP:*" . Create_8G_ico(), 1, 1
 
-LauncherVersion = v1.1
+LauncherVersion = v1.2
 
 vFAQ =
 	(
@@ -43,7 +45,7 @@ Gui, New ;Main Window
 		Gui, font, s10 norm
 		Gui, Add, groupbox, xp-239 yp-496 w465 h290, Current Logs:
 		Gui, Add, ListView, xp+10 yp+20 r10 w445 AltSubmit Grid -LV0x10 -Multi gMyListView vMyListView, Name|Size (KB)|Modified|SortingDate
-		Gui, add, button, xp+339 yp+234 gupdatefiles, Refresh Log list
+		Gui, add, button, xp+339 yp+234 gUpdateFiles, Refresh Log list
 
 	Gui, Tab ;All Tabs
 		Gui, font, norm
@@ -127,7 +129,7 @@ StartUpStuff: ;Stuff to run at start up
 
 	RegRead, FiveMPath, HKEY_CURRENT_USER\Software\CitizenFX\FiveM, Last Run Location
 	if (FiveMPath = ""){
-			MsgBox, FiveM.exe cannot be found.`nPlease locate it using the option in the File menu
+			MsgBox, FiveM.exe cannot be found.`nPlease locate it.
 			gosub lookforfivem
 			Menu, FileMenu, Enable, &Locate FiveM.exe
 		}
@@ -136,7 +138,7 @@ StartUpStuff: ;Stuff to run at start up
 			FiveMExeFullPath := FiveMExeFullPath . "FiveM.exe"
 			Menu, FileMenu, Disable, &Locate FiveM.exe
 		}
-	GoSub, updatefiles
+	GoSub, UpdateFiles
 	sleep, 750
 	GoSub, UpdateList
 	return
@@ -154,7 +156,7 @@ Localhost: ;Launches FiveM and connects to Localhost
 	GoSub, BackupLogs
 	Run, cmd.exe /C %FiveMExeFullPath% +connect 127.0.0.1,,hide
 	Sleep 5000
-	GoSub, updatefiles
+	GoSub, UpdateFiles
 	Return
 
 GetFileProperties:
@@ -188,7 +190,7 @@ Connect: ;Connects to the selected server in the list
 	GoSub, BackupLogs
 	Run, cmd.exe /C %FiveMExeFullPath% +connect %ServerIP%:%ServerPort%,,hide
 	Sleep 5000
-	GoSub, updatefiles
+	GoSub, UpdateFiles
 	Return
 
 lookforfivem: ;Opens dialogue box to allow selecting FiveM.exe location
@@ -202,10 +204,10 @@ lookforfivem: ;Opens dialogue box to allow selecting FiveM.exe location
 	else{
 		Menu, FileMenu, Disable, &Locate FiveM.exe
 	}
-	gosub, updatefiles
+	gosub, UpdateFiles
 	return
 
-updatefiles: ;Updates the log list for the tools tab and populates related variables
+UpdateFiles: ;Updates the log list for the tools tab and populates related variables
 	FiveMLogsPath := FiveMPath . "logs\"
 	FiveMBackupLogsPath := FiveMPath . "Backed-up logs\"
 	If !FileExist(FiveMPath . "Backed-up logs\"){
