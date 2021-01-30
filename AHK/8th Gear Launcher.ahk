@@ -49,7 +49,11 @@ Gui, New ;Main Window
 
 	Gui, Tab ;All Tabs
 		Gui, font, norm
-		Gui, Show, Center h657, 8th Gear FiveM Launcher
+
+
+		Gui, Add, StatusBar,,
+		SB_SetParts(271,120,120)
+		Gui, Show, Center h645, 8th Gear FiveM Launcher
 
 Menu, FileMenu, Add, &Locate FiveM.exe, lookforfivem  ;Top Menu
 	Menu, FileMenu, Add, E&xit, MenuOptionExit
