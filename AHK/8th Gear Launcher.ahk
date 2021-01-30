@@ -33,13 +33,11 @@ Gui, New ;Main Window
 	Gui, Tab, 1 ;Connect
 		Gui, Add, Picture, w465 h-1, % "HBITMAP:*" . Create_8GLogo_png()
 		Gui, Add, GroupBox, w220 h81, 8th Gear Servers:
-		gui, add, DropDownList, xp+10 yp+20 w133 vServerName,
-		gui, add, button, xp+139 yp-1 w60 gConnect, Connect
+		Gui, add, DropDownList, xp+10 yp+20 w133 vServerName,
+		Gui, add, button, xp+139 yp-1 w60 gConnect, Connect
 		Gui, add, button, xp-140 yp+30 w200 gLocalhost, &Localhost
 		Gui, add, Groupbox, xp+220 yp-49 w236 h81, Disclaimer
 		Gui, add, link, xp+10 yp+20 w215, By joining our servers you agree to be bound to the <a href="https://discord.gg/ygWU5ms">#rules</a> of our server.
-		;gui, add, groupbox, xp-10 yp+21 w370 h40,
-		;gui, add, link, xp+10 yp+15 w350, <a href="https://8thgear.racing/status">To see server status, click here to go to the website</a>
 
 	Gui, Tab, 2 ;Misc
 		Gui, font, s10 norm
@@ -49,8 +47,6 @@ Gui, New ;Main Window
 
 	Gui, Tab ;All Tabs
 		Gui, font, norm
-
-
 		Gui, Add, StatusBar,,
 		SB_SetParts(271,120,120)
 		Gui, Show, Center h645, 8th Gear FiveM Launcher
