@@ -49,8 +49,6 @@ Gui, New ;Main Window
 
 	Gui, Tab ;All Tabs
 		Gui, font, norm
-		Gui, add, button, xp-1 yp+596 w100 g8GDiscord, Discord
-		GUi, add, button, xp+391 w100 gGuiClose, Exit
 		Gui, Show, Center h657, 8th Gear FiveM Launcher
 
 Menu, FileMenu, Add, &Locate FiveM.exe, lookforfivem  ;Top Menu
@@ -79,6 +77,7 @@ Menu, FileMenu, Add, &Locate FiveM.exe, lookforfivem  ;Top Menu
 	Menu, MenuBar, Add, &Tools, :ToolsMenu
 	Menu, MenuBar, Add, &Rules, MenuOptionRules
 	Menu, MenuBar, Add, FAQ, MenuOptionFAQ
+	Menu, MenuBar, Add, &Discord, MenuOption8GDiscord
 	Menu, MenuBar, Add, &About, MenuOptionAbout
 
 	Gui, Menu, MenuBar
@@ -530,7 +529,7 @@ opennotepad: ;Opens the selected log with Notepad
 		MsgBox Could not open %SelectedLog%
 	return
 
-8GDiscord: ;Opens 8G Main discord channel
+MenuOption8GDiscord: ;Opens 8G Main discord channel
 	Run https://discord.gg/4Xd2uwy
 	return
 
