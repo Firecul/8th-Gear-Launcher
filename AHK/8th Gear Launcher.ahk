@@ -140,6 +140,7 @@ StartUpStuff: ;Stuff to run at start up
 	GoSub, UpdateFiles
 	sleep, 750
 	GoSub, UpdateList
+	GoSub, UpdateLogs
 	return
 
 GetNumberFormatEx(Value, LocaleName := "!x-sys-default-locale"){
@@ -155,7 +156,7 @@ Localhost: ;Launches FiveM and connects to Localhost
 	GoSub, BackupLogs
 	Run, cmd.exe /C %FiveMExeFullPath% +connect 127.0.0.1,,hide
 	Sleep 5000
-	GoSub, UpdateFiles
+	GoSub, UpdateLogs
 	Return
 
 GetFileProperties:
@@ -190,7 +191,7 @@ Connect: ;Connects to the selected server in the list
 	GoSub, BackupLogs
 	Run, cmd.exe /C %FiveMExeFullPath% +connect %ServerIP%:%ServerPort%,,hide
 	Sleep 5000
-	GoSub, UpdateFiles
+	GoSub, UpdateLogs
 	Return
 
 lookforfivem: ;Opens dialogue box to allow selecting FiveM.exe location
@@ -204,7 +205,8 @@ lookforfivem: ;Opens dialogue box to allow selecting FiveM.exe location
 	else{
 		Menu, FileMenu, Disable, &Locate FiveM.exe
 	}
-	gosub, UpdateFiles
+	GoSub, UpdateFiles
+	GoSub, UpdateLogs
 	return
 
 UpdateFiles: ;Updates the log list for the tools tab and populates related variables
@@ -220,7 +222,10 @@ UpdateFiles: ;Updates the log list for the tools tab and populates related varia
 		Menu, CacheMenu, Disable, Open Back-up Folder
 		Menu, CacheMenu, Disable, &Restore Cache from Back-ups
 	}
+	Gui, Show, NoActivate
+	Return
 
+UpdateLogs:
 	LV_Delete()
 	Loop, %FiveMLogsPath%*.log*
 	{
