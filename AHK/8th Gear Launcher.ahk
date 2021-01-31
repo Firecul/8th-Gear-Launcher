@@ -100,10 +100,6 @@ StartUpStuff: ;Stuff to run at start up
 	req.open("GET", "https://8thgear.racing/api/serverlist", true)
 	req.onreadystatechange := Func("Ready") ; Send the request.  Ready() will be called when it's complete.
 	req.send()
-	/*
-	while req.readyState != 4
-		sleep 100
-	*/
 	#Persistent
 
 	Ready() {
@@ -138,7 +134,6 @@ StartUpStuff: ;Stuff to run at start up
 			Menu, FileMenu, Disable, &Locate FiveM.exe
 		}
 	GoSub, UpdateFiles
-	sleep, 750
 	GoSub, UpdateList
 	GoSub, UpdateLogs
 	return
@@ -242,17 +237,17 @@ UpdateLogs:
 	Return
 
 GetFileSelected(LogsPath){
-		RowNumber := 0 ;start at the top
-		Loop
+	RowNumber := 0 ;start at the top
+	Loop
 		{
 			RowNumber := LV_GetNext(RowNumber)
 			if not RowNumber ;if no more selected rows
-				break
+			break
 			LV_GetText(Text, RowNumber)
 			SelectedLog := LogsPath . Text
 		}
 	return SelectedLog
-}
+	}
 
 MyListView: ;Gets double-clicked file from main gui log listview
 	if (A_GuiEvent = "DoubleClick")
