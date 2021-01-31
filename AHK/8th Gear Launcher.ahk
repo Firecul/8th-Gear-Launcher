@@ -10,22 +10,12 @@ FileCreateDir, 8thGearLauncher ;Creation stuff
 	Fileinstall, ServerList.ini, 8thGearLauncher/ServerList.ini, 0
 	Menu, Tray, Icon, % "HICON:*" . Create_8G_Icon_png()
 
-LauncherVersion = v1.2
+LauncherVersion = v1.3
 
 vFAQ =
 	(
 	READ THE WHOLE THING.
 	)
-
-RulesBold(text)
-	{	Gui, RulesWindow: font, bold
-		Gui, RulesWindow: Add, text, w600, %text%
-	}
-
-RulesNormal(text)
-	{	Gui, RulesWindow: font, Norm
-		Gui, RulesWindow: Add, text, w600, %text%
-	}
 
 Gui, New ;Main Window
 	Gui, Add, Tab3,, Connect|Misc
@@ -95,6 +85,18 @@ menu, submenu, add, Log Viewer, OpenLogViewer ;Context Menu
 GoSub, StartUpStuff
 Return
 
+
+
+UpdateList: ;Updates the list of servers from the ini file
+	Gui +Delimiter`n
+	guicontrol,, ServerNameList, `n
+	IniRead, ServerNames, 8thGearLauncher/ServerList.ini
+	ServerNames := StrReplace(ServerNames, "8th Gear Racing ")
+	guicontrol, , ServerNameList, %ServerNames%
+	GuiControl, ChooseString, ComboBox1, EU
+	Gui, Show, NoActivate
+	Return
+
 StartUpStuff: ;Stuff to run at start up
 	req := ComObjCreate("Msxml2.XMLHTTP")
 	req.open("GET", "https://8thgear.racing/api/serverlist", true)
@@ -120,74 +122,23 @@ StartUpStuff: ;Stuff to run at start up
 		}
 	}
 
-	Menu, MenuBar, Disable, FAQ
+		Menu, MenuBar, Disable, FAQ
 
-	RegRead, FiveMPath, HKEY_CURRENT_USER\Software\CitizenFX\FiveM, Last Run Location
-	if (FiveMPath = ""){
-			MsgBox, FiveM.exe cannot be found.`nPlease locate it.
-			gosub lookforfivem
-			Menu, FileMenu, Enable, &Locate FiveM.exe
-		}
-		else{
-			StringTrimRight, FiveMExeFullPath, FiveMPath, 10
-			FiveMExeFullPath := FiveMExeFullPath . "FiveM.exe"
-			Menu, FileMenu, Disable, &Locate FiveM.exe
-		}
-	GoSub, UpdateFiles
-	GoSub, UpdateList
-	GoSub, UpdateLogs
-	return
-
-GetNumberFormatEx(Value, LocaleName := "!x-sys-default-locale"){
-	if (Size := DllCall("GetNumberFormatEx", "str", LocaleName, "uint", 0, "str", Value, "ptr", 0, "ptr", 0, "int", 0)) {
-		VarSetCapacity(NumberStr, Size << !!A_IsUnicode, 0)
-		if (DllCall("GetNumberFormatEx", "str", LocaleName, "uint", 0, "str", Value, "ptr", 0, "str", NumberStr, "int", Size))
-			return NumberStr
-		}
-	return false
-	}
-
-Localhost: ;Launches FiveM and connects to Localhost
-	GoSub, BackupLogs
-	Run, cmd.exe /C %FiveMExeFullPath% +connect 127.0.0.1,,hide
-	Sleep 5000
-	GoSub, UpdateLogs
-	Return
-
-GetFileProperties:
-	run, Properties "%SelectedLog%"
-	Return
-
-DeleteLog:
-	MsgBox, 0x40124, Delete Log?, Are you sure you want to delete this file? `n%SelectedLog%
-	IfMsgBox, Yes
-		{
-			FileDelete, %SelectedLog%
-			Return
-		}
-	IfMsgBox, No
-			Return
-	Return
-
-UpdateList: ;Updates the list of servers from the ini file
-	Gui +Delimiter`n
-	guicontrol,, ServerNameList, `n
-	IniRead, ServerNames, 8thGearLauncher/ServerList.ini
-	ServerNames := StrReplace(ServerNames, "8th Gear Racing ")
-	guicontrol, , ServerNameList, %ServerNames%
-	GuiControl, ChooseString, ComboBox1, EU
-	Gui, Show, NoActivate
-	Return
-
-Connect: ;Connects to the selected server in the list
-	GuiControlGet, ServerName
-	iniread, ServerIP, 8thGearLauncher/ServerList.ini, %ServerName%, IP
-	iniread, ServerPort, 8thGearLauncher/ServerList.ini, %ServerName%, Port
-	GoSub, BackupLogs
-	Run, cmd.exe /C %FiveMExeFullPath% +connect %ServerIP%:%ServerPort%,,hide
-	Sleep 5000
-	GoSub, UpdateLogs
-	Return
+		RegRead, FiveMPath, HKEY_CURRENT_USER\Software\CitizenFX\FiveM, Last Run Location
+		if (FiveMPath = ""){
+				MsgBox, FiveM.exe cannot be found.`nPlease locate it.
+				gosub lookforfivem
+				Menu, FileMenu, Enable, &Locate FiveM.exe
+			}
+			else{
+				StringTrimRight, FiveMExeFullPath, FiveMPath, 10
+				FiveMExeFullPath := FiveMExeFullPath . "FiveM.exe"
+				Menu, FileMenu, Disable, &Locate FiveM.exe
+			}
+		GoSub, UpdateFiles
+		GoSub, UpdateList
+		GoSub, UpdateLogs
+		return
 
 lookforfivem: ;Opens dialogue box to allow selecting FiveM.exe location
 	Gui +OwnDialogs
@@ -218,6 +169,38 @@ UpdateFiles: ;Updates the log list for the tools tab and populates related varia
 		Menu, CacheMenu, Disable, &Restore Cache from Back-ups
 	}
 	Gui, Show, NoActivate
+	Return
+
+GetFileProperties:
+	run, Properties "%SelectedLog%"
+	Return
+
+DeleteLog:
+	MsgBox, 0x40124, Delete Log?, Are you sure you want to delete this file? `n%SelectedLog%
+	IfMsgBox, Yes
+		{
+			FileDelete, %SelectedLog%
+			Return
+		}
+	IfMsgBox, No
+			Return
+	Return
+
+Connect: ;Connects to the selected server in the list
+	GuiControlGet, ServerName
+	iniread, ServerIP, 8thGearLauncher/ServerList.ini, %ServerName%, IP
+	iniread, ServerPort, 8thGearLauncher/ServerList.ini, %ServerName%, Port
+	GoSub, BackupLogs
+	Run, cmd.exe /C %FiveMExeFullPath% +connect %ServerIP%:%ServerPort%,,hide
+	Sleep 5000
+	GoSub, UpdateLogs
+	Return
+
+Localhost: ;Launches FiveM and connects to Localhost
+	GoSub, BackupLogs
+	Run, cmd.exe /C %FiveMExeFullPath% +connect 127.0.0.1,,hide
+	Sleep 5000
+	GoSub, UpdateLogs
 	Return
 
 UpdateLogs:
@@ -481,7 +464,8 @@ SlowOpen: ;Opens the log ignoring any found null characters that normally cause 
 	Guicontrol, LogViewerWindow: text, LogContents, % Nonulls(SelectedLog)
 	return
 
-NoNulls(Filename) { ;Reads the given file character by charcter
+NoNulls(Filename)
+	{ ;Reads the given file character by charcter
 	f := FileOpen(Filename, "r")
 	While Not f.AtEOF {
 		If Byte := f.ReadUChar()
@@ -489,6 +473,27 @@ NoNulls(Filename) { ;Reads the given file character by charcter
 		}
 	f.Close
 	Return, Result
+	}
+
+GetNumberFormatEx(Value, LocaleName := "!x-sys-default-locale"){
+		if (Size := DllCall("GetNumberFormatEx", "str", LocaleName, "uint", 0, "str", Value, "ptr", 0, "ptr", 0, "int", 0)) {
+			VarSetCapacity(NumberStr, Size << !!A_IsUnicode, 0)
+			if (DllCall("GetNumberFormatEx", "str", LocaleName, "uint", 0, "str", Value, "ptr", 0, "str", NumberStr, "int", Size))
+				return NumberStr
+		}
+		return false
+		}
+
+RulesBold(text)
+	{
+	Gui, RulesWindow: font, bold
+	Gui, RulesWindow: Add, text, w600, %text%
+	}
+
+RulesNormal(text)
+	{
+		Gui, RulesWindow: font, Norm
+		Gui, RulesWindow: Add, text, w600, %text%
 	}
 
 OpenLogFolder: ;Opens the log folder
