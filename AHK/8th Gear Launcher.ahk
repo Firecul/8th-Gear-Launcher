@@ -33,7 +33,7 @@ Gui, New ;Main Window
 	Gui, Tab, 1 ;Connect
 		Gui, Add, Picture, , % "HBITMAP:*" . Create_8GLogo_png()
 		Gui, Add, GroupBox, w220 h81, 8th Gear Servers:
-		Gui, add, DropDownList, xp+10 yp+20 w133 vServerName,
+		Gui, add, DropDownList, xp+10 yp+20 w133 vServerNameList,
 		Gui, add, button, xp+139 yp-1 w60 gConnect, Connect
 		Gui, add, button, xp-140 yp+30 w200 gLocalhost, &Localhost
 		Gui, add, Groupbox, xp+220 yp-49 w236 h81, Disclaimer
@@ -175,13 +175,13 @@ DeleteLog:
 
 UpdateList: ;Updates the list of servers from the ini file
 	Gui +Delimiter`n
-	guicontrol,, ServerName, `n
-	IniRead, ServerName, 8thGearLauncher/ServerList.ini,,
-	ServerName := StrReplace(ServerName, "8th Gear Racing ")
-	guicontrol, , ServerName, %ServerName%
+	guicontrol,, ServerNameList, `n
+	IniRead, ServerNames, 8thGearLauncher/ServerList.ini
+	ServerNames := StrReplace(ServerNames, "8th Gear Racing ")
+	guicontrol, , ServerNameList, %ServerNames%
 	GuiControl, ChooseString, ComboBox1, EU
 	Gui, Show, NoActivate
-	return
+	Return
 
 Connect: ;Connects to the selected server in the list
 	GuiControlGet, ServerName
