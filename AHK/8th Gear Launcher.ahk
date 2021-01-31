@@ -177,8 +177,9 @@ UpdateList: ;Updates the list of servers from the ini file
 	Gui +Delimiter`n
 	guicontrol,, ServerName, `n
 	IniRead, ServerName, 8thGearLauncher/ServerList.ini,,
+	ServerName := StrReplace(ServerName, "8th Gear Racing ")
 	guicontrol, , ServerName, %ServerName%
-	GuiControl, ChooseString, ComboBox1, 8th
+	GuiControl, ChooseString, ComboBox1, EU
 	Gui, Show, NoActivate
 	return
 
