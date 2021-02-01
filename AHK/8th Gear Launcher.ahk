@@ -17,6 +17,8 @@ vFAQ =
 	READ THE WHOLE THING.
 	)
 
+Global ServerNames
+
 	GoSub, GenerateMainUI
 
 	GoSub, BetterDownloadServerList ;DO NOT ENABLE BOTH AT THE SAME TIME!!!!!
@@ -25,7 +27,7 @@ vFAQ =
 	GoSub, FiveMExist
 	GoSub, UpdateFiles
 
-	Return
+Return
 
 
 GenerateMainUI:
@@ -203,9 +205,11 @@ DeleteLog:
 	Return
 
 Connect: ;Connects to the selected server in the list
-	GuiControlGet, ServerName
-	iniread, ServerIP, 8thGearLauncher/ServerList.ini, %ServerName%, IP
-	iniread, ServerPort, 8thGearLauncher/ServerList.ini, %ServerName%, Port
+	GuiControlGet, ServerNameList
+	If ServerNameList contains EU 2,Central 1
+		ServerNameList := % "8th Gear Racing " . ServerNameList
+	IniRead, ServerIP, 8thGearLauncher/ServerList.ini, %ServerNameList%, IP
+	IniRead, ServerPort, 8thGearLauncher/ServerList.ini, %ServerNameList%, Port
 	GoSub, BackupLogs
 	Run, cmd.exe /C %FiveMExeFullPath% +connect %ServerIP%:%ServerPort%,,hide
 	Return
@@ -213,27 +217,10 @@ Connect: ;Connects to the selected server in the list
 Localhost: ;Launches FiveM and connects to Localhost
 	GoSub, BackupLogs
 	Run, cmd.exe /C %FiveMExeFullPath% +connect 127.0.0.1,,hide
-	Sleep 5000
-	GoSub, UpdateLogs
 	Return
 
-UpdateLogs:
-	LV_Delete()
-	Loop, %FiveMLogsPath%*.log*
+GetFileSelected(LogsPath)
 	{
-		FileSize := regExReplace(GetNumberFormatEx(A_LoopFileSizeKB), "[,.]?0+$")
-		FormatTime, LogTimeAndDate, %A_LoopFileTimeModified%
-		LV_Add("", A_LoopFileName, FileSize, LogTimeAndDate, A_LoopFileTimeModified, A_LoopFileFullPath)
-		LV_ModifyCol() ;Auto-size each column
-		LV_ModifyCol(1, "AutoHdr Text")
-		LV_ModifyCol(2, "AutoHdr Integer")
-		LV_ModifyCol(3, "AutoHdrText NoSort")
-		LV_ModifyCol(4, "AutoHdr Digit SortDesc 0")
-	}
-	Gui, Show, NoActivate
-	Return
-
-GetFileSelected(LogsPath){
 	RowNumber := 0 ;start at the top
 	Loop
 		{
@@ -524,13 +511,13 @@ NoNulls(Filename)
 	}
 
 GetNumberFormatEx(Value, LocaleName := "!x-sys-default-locale"){
-		if (Size := DllCall("GetNumberFormatEx", "str", LocaleName, "uint", 0, "str", Value, "ptr", 0, "ptr", 0, "int", 0)) {
-			VarSetCapacity(NumberStr, Size << !!A_IsUnicode, 0)
-			if (DllCall("GetNumberFormatEx", "str", LocaleName, "uint", 0, "str", Value, "ptr", 0, "str", NumberStr, "int", Size))
-				return NumberStr
-		}
-		return false
-		}
+	if (Size := DllCall("GetNumberFormatEx", "str", LocaleName, "uint", 0, "str", Value, "ptr", 0, "ptr", 0, "int", 0)) {
+		VarSetCapacity(NumberStr, Size << !!A_IsUnicode, 0)
+		if (DllCall("GetNumberFormatEx", "str", LocaleName, "uint", 0, "str", Value, "ptr", 0, "str", NumberStr, "int", Size))
+			return NumberStr
+	}
+	return false
+	}
 
 RulesBold(text)
 	{
@@ -557,7 +544,6 @@ BackupLogs: ;Backs up logs to the backup folder for safe keeping
 	IfNotExist, %FiveMBackupLogsPath%
 		FileCreateDir, %FiveMBackupLogsPath%
 	FileCopy, %FiveMLogsPath%*.log, %FiveMBackupLogsPath%*.*, 1
-	Gui, Show, NoActivate
 	return
 
 MenuOptionBackupLogs: ;Backs up logs to the backup folder for safe keeping
@@ -566,7 +552,6 @@ MenuOptionBackupLogs: ;Backs up logs to the backup folder for safe keeping
 		FileCreateDir, %FiveMBackupLogsPath%
 	FileCopy, %FiveMLogsPath%*.log, %FiveMBackupLogsPath%*.*, 1
 	msgbox, Logs Backed Up
-	Gui, Show, NoActivate
 	return
 
 opendefault: ;Opens the selected log with the users default editor for .log files
@@ -758,6 +743,13 @@ BackupWindowGuiEscape: ;Backup window escape stuff
 	WinActivate, 8th Gear FiveM Launcher
 	Return
 
+LogsWindowGuiEscape: ;Backup window escape stuff
+	LogsWindowGuiClose:
+	Gui LogsWindow:Cancel
+	Gui LogsWindow:Destroy
+	WinActivate, 8th Gear FiveM Launcher
+	Return
+
 MessageWindowGuiEscape: ;Backup window escape stuff
 	MessageWindowGuiClose:
 	Gui MessageWindow:Cancel
@@ -776,17 +768,7 @@ LogViewerWindowGuiEscape: ;LogViewer window escape stuff
 	LogViewerWindowGuiClose:
 	Gui LogViewerWindow:Cancel
 	Gui LogViewerWindow:Destroy
-	ifWinExist, Log Backups
-	{
-		WinActivate
-		Return
-	}
-	else
-	{
-		WinActivate, 8th Gear FiveM Launcher
-		Return
-	}
-	return
+	Return
 
 RulesWindowGuiEscape: ;Rules window escape stuff
 	RulesWindowGuiClose:
