@@ -6,6 +6,21 @@ SetBatchLines -1
 StringCaseSense, On
 SetWorkingDir, %A_ScriptDir%
 
+;@Ahk2Exe-SetMainIcon icons\small_8G.ico
+;@Ahk2Exe-AddResource icons\8G_small_logo.ico, 160  ; Replaces 'H on blue'
+;@Ahk2Exe-AddResource icons\8G_small_logo.ico, 206  ; Replaces 'S on green'
+;@Ahk2Exe-AddResource icons\8G_small_logo.ico, 207  ; Replaces 'H on red'
+;@Ahk2Exe-AddResource icons\8G_small_logo.ico, 208  ; Replaces 'S on red'
+;@Ahk2Exe-SetName 8th Gear Launcher
+;@Ahk2Exe-SetVersion 1.3.1
+;@Ahk2Exe-SetCopyright Firecul666@gmail.com
+;@Ahk2Exe-SetDescription https://github.com/Firecul/8th-Gear-Launcher
+;@Ahk2Exe-SetLanguage 0x0809
+;@Ahk2Exe-Obey U_au, = "%A_IsUnicode%" ? 2 : 1    ; Script ANSI or Unicode?
+;@Ahk2Exe-PostExec "BinMod.exe" "%A_WorkFileName%"
+;@Ahk2Exe-Cont  "%U_au%.AutoHotkeyGUI.LauncherGUI"
+;@Ahk2Exe-Cont  "%U_au%2.>AUTOHOTKEY SCRIPT<. 8TH GEAR LAUNCHER "
+
 FileCreateDir, 8thGearLauncher ;Creation stuff
 	Fileinstall, ServerList.ini, 8thGearLauncher/ServerList.ini, 0
 	Menu, Tray, Icon, % "HICON:*" . Create_8G_logo_ico()
