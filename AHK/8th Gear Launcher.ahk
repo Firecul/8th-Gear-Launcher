@@ -140,7 +140,7 @@ BetterDownloadServerList:
 	DownloadedList := DownloadObject.ResponseText
 		If (ErrorLevel = 0)
 		{ ;Download successful
-			If DownloadedList Contains 8th Gear Racing
+			If DownloadedList Contains 8th Gear Racing ;Prob Normal
 			{
 				if FileExist("8thGearLauncher/ServerList.ini")
 					FileDelete, 8thGearLauncher/ServerList.ini
@@ -151,6 +151,11 @@ BetterDownloadServerList:
 					Return
 				}
 			}
+			If DownloadedList Contains [] ;No Servers Online
+			{
+				MsgBox 16,, % "No servers online."
+				Return
+			}
 			Else{
 				MsgBox 16,, % "Website error detected, falling back server list."
 				IniRead, ServerNames, 8thGearLauncher/ServerList.ini
@@ -159,9 +164,9 @@ BetterDownloadServerList:
 
 		}
 		If (ErrorLevel = 1)
-		{ ;;Download unsuccessful
+		{ ;Download unsuccessful
 			if FileExist("8thGearLauncher/ServerList.ini"){
-				MsgBox 16,, % "Possible connection error detected,`nfalling back server list."
+				MsgBox 16,, % "Possible error detected,`nfalling back server list."
 				IniRead, ServerNames, 8thGearLauncher/ServerList.ini
 				}
 			Return
