@@ -7,10 +7,10 @@ StringCaseSense, On
 SetWorkingDir, %A_ScriptDir%
 
 ;@Ahk2Exe-SetMainIcon icons\small_8G.ico
-;@Ahk2Exe-AddResource icons\8G_small_logo.ico, 160  ; Replaces 'H on blue'
-;@Ahk2Exe-AddResource icons\8G_small_logo.ico, 206  ; Replaces 'S on green'
-;@Ahk2Exe-AddResource icons\8G_small_logo.ico, 207  ; Replaces 'H on red'
-;@Ahk2Exe-AddResource icons\8G_small_logo.ico, 208  ; Replaces 'S on red'
+;@Ahk2Exe-AddResource icons\8G_grey_logo.ico, 160  ; Replaces 'H on blue'
+;@Ahk2Exe-AddResource icons\8G_grey_logo.ico, 206  ; Replaces 'S on green'
+;@Ahk2Exe-AddResource icons\8G_grey_logo.ico, 207  ; Replaces 'H on red'
+;@Ahk2Exe-AddResource icons\8G_grey_logo.ico, 208  ; Replaces 'S on red'
 ;@Ahk2Exe-SetName 8th Gear Launcher
 ;@Ahk2Exe-SetVersion 1.3.1
 ;@Ahk2Exe-SetCopyright Firecul666@gmail.com
