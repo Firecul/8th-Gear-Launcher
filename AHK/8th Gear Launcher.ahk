@@ -50,11 +50,11 @@ GenerateMainUI:
 	Gui, Main: New ;Main Window
 		Gui, Main: Add, Picture, w465 h-1, % "HBITMAP:*" . Create_8GLogo_png()
 		Gui, Main: Add, GroupBox, w220 h81, 8th Gear Servers:
-		Gui, Main: add, DropDownList, xp+10 yp+20 w133 vServerNameList,
-		Gui, Main: add, button, xp+139 yp-1 w60 gConnect, Connect
-		Gui, Main: add, button, xp-140 yp+30 w200 gLocalhost, &Localhost
-		Gui, Main: add, Groupbox, xp+220 yp-49 w236 h81, Disclaimer
-		Gui, Main: add, link, xp+10 yp+20 w215, By joining our servers you agree to be bound to the <a href="https://discord.gg/ygWU5ms">#rules</a> of our server.
+		Gui, Main: Add, DropDownList, xp+10 yp+20 w133 vServerNameList,
+		Gui, Main: Add, button, xp+139 yp-1 w60 gConnect, Connect
+		Gui, Main: Add, button, xp-140 yp+30 w200 gLocalhost, &Localhost
+		Gui, Main: Add, Groupbox, xp+220 yp-49 w236 h81, Disclaimer
+		Gui, Main: Add, link, xp+10 yp+20 w215, By joining our servers you agree to be bound to the <a href="https://discord.gg/ygWU5ms">#rules</a> of our server.
 
 		Gui, Main: Add, StatusBar,,
 		SB_SetParts(246,120,120)
@@ -98,10 +98,10 @@ GenerateMainUI:
 
 		Gui, Menu, MenuBar
 
-		menu, submenu, add, Log Viewer, OpenLogViewer ;Context Menu
-		menu, submenu, Default, Log Viewer
-		menu, submenu, add, Default Editor, opendefault
-		menu, submenu, add, Notepad, opennotepad
+		Menu, submenu, Add, Log Viewer, OpenLogViewer ;Context Menu
+		Menu, submenu, Default, Log Viewer
+		Menu, submenu, Add, Default Editor, opendefault
+		Menu, submenu, Add, Notepad, opennotepad
 		Menu, ContextMenu, Add, Open With, :Submenu
 		Menu, ContextMenu, Default, Open With
 		Menu, ContextMenu, Add, Save To..., SaveLogCopy
@@ -142,10 +142,10 @@ BetterDownloadServerList:
 		{ ;Download successful
 			If DownloadedList Contains 8th Gear Racing ;Prob Normal
 			{
-				if FileExist("8thGearLauncher/ServerList.ini")
+				If FileExist("8thGearLauncher/ServerList.ini")
 					FileDelete, 8thGearLauncher/ServerList.ini
 				FileAppend, %DownloadedList%, 8thGearLauncher/ServerList.ini, UTF-16
-				if FileExist("8thGearLauncher/ServerList.ini")
+				If FileExist("8thGearLauncher/ServerList.ini")
 				{
 					IniRead, ServerNames, 8thGearLauncher/ServerList.ini
 					Return
@@ -165,7 +165,7 @@ BetterDownloadServerList:
 		}
 		If (ErrorLevel = 1)
 		{ ;Download unsuccessful
-			if FileExist("8thGearLauncher/ServerList.ini"){
+			If FileExist("8thGearLauncher/ServerList.ini"){
 				MsgBox 16,, % "Possible error detected,`nfalling back server list."
 				IniRead, ServerNames, 8thGearLauncher/ServerList.ini
 				}
@@ -190,7 +190,7 @@ UpdateServerList: ;Updates the list of servers from the ini file
 
 FiveMExist: ;Stuff to run at start up
 	RegRead, FiveMPath, HKEY_CURRENT_USER\Software\CitizenFX\FiveM, Last Run Location
-	if (FiveMPath = ""){
+	If (FiveMPath = ""){
 			MsgBox, FiveM.exe cannot be found.`nPlease locate it.
 			GoSub, LookForFiveM
 			Menu, FileMenu, Enable, &Locate FiveM.exe
@@ -200,12 +200,12 @@ FiveMExist: ;Stuff to run at start up
 			FiveMExeFullPath := FiveMExeFullPath . "FiveM.exe"
 			Menu, FileMenu, Disable, &Locate FiveM.exe
 		}
-	return
+	Return
 
 LookForFiveM: ;Opens dialogue box to allow selecting FiveM.exe location
 	Gui +OwnDialogs
 	FileSelectFile, FiveMExeFullPath, 3, , Locate FiveM.exe, FiveM (FiveM.exe)
-	if (FiveMExeFullPath = ""){
+	If (FiveMExeFullPath = ""){
 			MsgBox, The user didn't select anything.
 			LV_Delete()
 			Menu, FileMenu, Enable, &Locate FiveM.exe
@@ -214,7 +214,7 @@ LookForFiveM: ;Opens dialogue box to allow selecting FiveM.exe location
 		Menu, FileMenu, Disable, &Locate FiveM.exe
 	}
 	GoSub, UpdateFiles
-	return
+	Return
 
 PingAll:
 	Gui, Main: Show,, 8th Gear FiveM Launcher
@@ -300,23 +300,23 @@ GetFileSelected(LogsPath)
 	Loop
 		{
 			RowNumber := LV_GetNext(RowNumber)
-			if not RowNumber ;if no more selected rows
+			If not RowNumber ;If no more selected rows
 			break
 			LV_GetText(Text, RowNumber)
 			SelectedLog := LogsPath . Text
 		}
-	return SelectedLog
+	Return SelectedLog
 	}
 
 MyListView: ;Gets double-clicked file from main gui log listview
-	if (A_GuiEvent = "DoubleClick")
+	If (A_GuiEvent = "DoubleClick")
 		{
 		SelectedLog :=
 		LV_GetText(FileName, A_EventInfo, 1)
 		SelectedLog := FiveMLogsPath . FileName
-		gosub, OpenLogViewer
+		GoSub, OpenLogViewer
 		}
-	if ( A_GuiEvent = "ColClick" And A_EventInfo = 3 )
+	If ( A_GuiEvent = "ColClick" And A_EventInfo = 3 )
 		{
 		If Sort
 		LV_ModifyCol(4, "Sort")
@@ -324,17 +324,17 @@ MyListView: ;Gets double-clicked file from main gui log listview
 		LV_ModifyCol(4, "SortDesc")
 		Sort := not Sort
 		}
-	return
+	Return
 
 MyNewerListView: ;Gets double-clicked file from backedup log listview
-	if (A_GuiEvent = "DoubleClick")
+	If (A_GuiEvent = "DoubleClick")
 		{
 		SelectedLog :=
 		LV_GetText(FileName, A_EventInfo, 1)
 		SelectedLog := FiveMBackupLogsPath . FileName
-		gosub, OpenLogViewer
+		GoSub, OpenLogViewer
 		}
-	if ( A_GuiEvent = "ColClick" And A_EventInfo = 3 )
+	If ( A_GuiEvent = "ColClick" And A_EventInfo = 3 )
 		{
 		If Sort
 		LV_ModifyCol(4, "Sort")
@@ -342,21 +342,21 @@ MyNewerListView: ;Gets double-clicked file from backedup log listview
 		LV_ModifyCol(4, "SortDesc")
 		Sort := not Sort
 		}
-	return
+	Return
 
-LogsWindowGuiContextMenu: ;MainUI context menu control
-	if (A_GuiControl = "MyListView") {
+LogsWindowGuiContextMenu: ;MainUI context Menu control
+	If (A_GuiControl = "MyListView") {
 		SelectedLog := GetFileSelected(FiveMLogsPath)
 		Menu, ContextMenu, Show, %A_GuiX%, %A_GuiY%
 	}
-	return
+	Return
 
-BackupWindowGuiContextMenu: ;BackedupLogUI context menu control
-	if (A_GuiControl != "MyNewerListView")
-		return
+BackupWindowGuiContextMenu: ;BackedupLogUI context Menu control
+	If (A_GuiControl != "MyNewerListView")
+		Return
 	SelectedLog := GetFileSelected(FiveMBackupLogsPath)
 	Menu, ContextMenu, Show, %A_GuiX%, %A_GuiY%
-	return
+	Return
 
 LogViewerWindowGuiSize: ;Makes LogViewer resize correctly
 	Anchor("GB","w")
@@ -365,23 +365,23 @@ LogViewerWindowGuiSize: ;Makes LogViewer resize correctly
 	Anchor("Parse","y")
 	Anchor("SlowOpen","y")
 	Anchor("SaveLog","y")
-	return
+	Return
 
 OpenLogViewer: ;Opens the selected log with the Log Viewer
 	GoSub, LogViewerWindowGuiEscape
 	Sleep 50
 	Gui, LogViewerWindow:+ToolWindow +Resize ;LogViewer Window
-	gui, LogViewerWindow: font, s10 norm
-	gui, LogViewerWindow: add, groupbox, w1000 h50 vGB, Selected log file:
-	gui, LogViewerWindow: add, text, xp+10 yp+20 w980 vSelLog, (Error)
-	gui, LogViewerWindow: font,, Lucida Console
-	gui, LogViewerWindow: add, edit, xp-10 yp+39 w1000 r30 ReadOnly t10 vLogContents, (Loading)
-	gui, LogViewerWindow: font,
-	gui, LogViewerWindow: font, s10
-	gui, LogViewerWindow: add, button, vParse gParseLog, Parse
-	gui, LogViewerWindow: add, button, vSlowOpen gSlowOpen, Thorough Open (Slow)
-	gui, LogViewerWindow: add, button, vSaveLog gSaveLog, Save Log...
-	gui, LogViewerWindow: show, AutoSize Center, Log Viewer
+	Gui, LogViewerWindow: font, s10 norm
+	Gui, LogViewerWindow: Add, groupbox, w1000 h50 vGB, Selected log file:
+	Gui, LogViewerWindow: Add, text, xp+10 yp+20 w980 vSelLog, (Error)
+	Gui, LogViewerWindow: font,, Lucida Console
+	Gui, LogViewerWindow: Add, edit, xp-10 yp+39 w1000 r30 ReadOnly t10 vLogContents, (Loading)
+	Gui, LogViewerWindow: font,
+	Gui, LogViewerWindow: font, s10
+	Gui, LogViewerWindow: Add, button, vParse gParseLog, Parse
+	Gui, LogViewerWindow: Add, button, vSlowOpen gSlowOpen, Thorough Open (Slow)
+	Gui, LogViewerWindow: Add, button, vSaveLog gSaveLog, Save Log...
+	Gui, LogViewerWindow: show, AutoSize Center, Log Viewer
 	Guicontrol, LogViewerWindow: text, SelLog, %SelectedLog%
 	fileread, LogContents, %SelectedLog%
 	Guicontrol, LogViewerWindow: text, LogContents, %LogContents%
@@ -401,7 +401,7 @@ OpenLogsWindow: ;Opens the Log backup management window
 	GoSub, LogsWindowGuiEscape
 	Sleep 50
 	Gui, LogsWindow: +Resize +ToolWindow ;LogBackupManager Window
-	gui, LogsWindow: font, s10 Norm
+	Gui, LogsWindow: font, s10 Norm
 	Gui, LogsWindow: Add, groupbox, w485 h260 vGB2, Logs:
 	Gui, LogsWindow: Add, ListView, xp+10 yp+20 r10 w465 AltSubmit Grid -Multi gMyListView vMyListView, Name|Size (KB)|Modified|SortingDate
 	IfExist, %FiveMLogsPath%
@@ -428,14 +428,14 @@ OpenLogsWindow: ;Opens the Log backup management window
 		}
 	IfNotExist, %FiveMLogsPath%
 		MsgBox, No logs found.
-	return
+	Return
 
 OpenBackupWindow: ;Opens the Log backup management window
 	Gui +OwnDialogs
 	GoSub, BackupWindowGuiEscape
 	Sleep 50
 	Gui, BackupWindow: +Resize +ToolWindow ;LogBackupManager Window
-	gui, BackupWindow: font, s10 Norm
+	Gui, BackupWindow: font, s10 Norm
 	Gui, BackupWindow: Add, groupbox, w485 h260 vGB2, Backed-up Logs:
 	Gui, BackupWindow: Add, ListView, xp+10 yp+20 r10 w465 AltSubmit Grid -Multi gMyNewerListView vMyNewerListView, Name|Size (KB)|Modified|SortingDate
 	IfExist, %FiveMBackupLogsPath%
@@ -462,12 +462,12 @@ OpenBackupWindow: ;Opens the Log backup management window
 		}
 	IfNotExist, %FiveMBackupLogsPath%
 		MsgBox, No logs are currently backed up.
-	return
+	Return
 
 SaveLog:
 	FileSelectFile, SavedLogName, S18, %SelectedLog%, Where to save the Log?, Log Files (*.log)
 	FileAppend, %LogContents%, %SavedLogName%,
-	return
+	Return
 
 SaveLogCopy:
 	FileSelectFile, NewLog, S18, %SelectedLog%, Where to save the Log?, Log Files (*.log)
@@ -476,7 +476,7 @@ SaveLogCopy:
 
 OpenCacheFolder: ;Opens normal cache folder
 	run %FiveMCachePath%
-	return
+	Return
 
 BackupCache: ;Backs up cache priv folder
 	Gui +OwnDialogs
@@ -492,13 +492,13 @@ BackupCache: ;Backs up cache priv folder
 		FileCopy,  %FiveMCachePath%priv\*.*, %FiveMBackupCachePath%priv\*.*
 		FileCopyDir, %FiveMCachePath%priv\db\, %FiveMBackupCachePath%priv\db\, 1
 		FileCopyDir, %FiveMCachePath%priv\unconfirmed\, %FiveMBackupCachePath%priv\unconfirmed\ , 1
-		msgbox, Cache Backed Up
+		MsgBox, Cache Backed Up
 	}
 	Return
 
 OpenBackupCacheFolder: ;Opens the backup Cache folder
 	run %FiveMBackupCachePath%
-	return
+	Return
 
 RestoreCache: ;Restores cache from backups
 	Gui +OwnDialogs
@@ -506,14 +506,14 @@ RestoreCache: ;Restores cache from backups
 	FileCopy, %FiveMBackupCachePath%priv\*.*, %FiveMCachePath%priv\*.*
 	FileCopyDir, %FiveMBackupCachePath%priv\db\, %FiveMCachePath%priv\db\, 1
 	FileCopyDir, %FiveMBackupCachePath%priv\unconfirmed\, %FiveMCachePath%priv\unconfirmed\ , 1
-	msgbox, Cache Restored
-	return
+	MsgBox, Cache Restored
+	Return
 
 BackupWindowGuiSize: ;Makes BackupWindow resize correctly
 	Anchor("GB2","wh")
 	Anchor("MyNewerListView","wh")
 	Anchor("LogContents","wh")
-	return
+	Return
 
 ParseLog: ;Determines the type of log(old-style vs new-style)
 	StringSplit, LogLines, LogContents, `r, `n
@@ -527,12 +527,12 @@ ParseLog: ;Determines the type of log(old-style vs new-style)
 
 	IfInString, SelectedLog, %Needle%
 	{
-		gosub, ParseNewLog ;New-Style log
-		return
+		GoSub, ParseNewLog ;New-Style log
+		Return
 	}
 	else{
-		gosub, ParseOldLog ;Old-Style log
-		return
+		GoSub, ParseOldLog ;Old-Style log
+		Return
 	}
 	Return
 
@@ -540,22 +540,22 @@ ParseNewLog: ;New-Style log parsing
 	Loop, %LogLines0%
 		{
 			logline := LogLines%a_index%
-			if logline contains %LogContains%
-				if logline not contains %LogDoesNotContain%
+			If logline contains %LogContains%
+				If logline not contains %LogDoesNotContain%
 				{
 					stringtrimleft, TrimmedLine, logline, 52
 					TrimmedLinea = %TrimmedLinea%Line #%A_Index%:%A_Tab%%TrimmedLine%`n
 				}
 		}
 	Guicontrol, LogViewerWindow: text, LogContents, %TrimmedLinea%
-	return
+	Return
 
 ParseOldLog: ;Old-Style log parsing
 	Loop, %LogLines0%
 		{
 			logline := LogLines%a_index%
-			if logline contains %LogContains%
-				if logline not contains %LogDoesNotContain%
+			If logline contains %LogContains%
+				If logline not contains %LogDoesNotContain%
 				{
 					stringtrimleft, TrimmedLine, logline, 13
 					TrimmedLinea = %TrimmedLinea%Line #%A_Index%:%A_Tab%%TrimmedLine%`n
@@ -568,11 +568,11 @@ ParseOldLog: ;Old-Style log parsing
 	Gui, MessageWindow: Show
 	Sleep, 2000
 	Gui, MessageWindow: Destroy
-	return
+	Return
 
 SlowOpen: ;Opens the log ignoring any found null characters that normally cause issues
 	Guicontrol, LogViewerWindow: text, LogContents, % Nonulls(SelectedLog)
-	return
+	Return
 
 NoNulls(Filename)
 	{ ;Reads the given file character by charcter
@@ -586,12 +586,12 @@ NoNulls(Filename)
 	}
 
 GetNumberFormatEx(Value, LocaleName := "!x-sys-default-locale"){
-	if (Size := DllCall("GetNumberFormatEx", "str", LocaleName, "uint", 0, "str", Value, "ptr", 0, "ptr", 0, "int", 0)) {
+	If (Size := DllCall("GetNumberFormatEx", "str", LocaleName, "uint", 0, "str", Value, "ptr", 0, "ptr", 0, "int", 0)) {
 		VarSetCapacity(NumberStr, Size << !!A_IsUnicode, 0)
-		if (DllCall("GetNumberFormatEx", "str", LocaleName, "uint", 0, "str", Value, "ptr", 0, "str", NumberStr, "int", Size))
-			return NumberStr
+		If (DllCall("GetNumberFormatEx", "str", LocaleName, "uint", 0, "str", Value, "ptr", 0, "str", NumberStr, "int", Size))
+			Return NumberStr
 	}
-	return false
+	Return false
 	}
 
 RulesBold(text)
@@ -608,44 +608,44 @@ RulesNormal(text)
 
 OpenLogFolder: ;Opens the log folder
 	run %FiveMLogsPath%
-	return
+	Return
 
 OpenLogBackupFolder: ;Opens the log backup folder
 	run %FiveMBackupLogsPath%
-	return
+	Return
 
 BackupLogs: ;Backs up logs to the backup folder for safe keeping
 	Gui +OwnDialogs
 	IfNotExist, %FiveMBackupLogsPath%
 		FileCreateDir, %FiveMBackupLogsPath%
 	FileCopy, %FiveMLogsPath%*.log, %FiveMBackupLogsPath%*.*, 1
-	return
+	Return
 
 MenuOptionBackupLogs: ;Backs up logs to the backup folder for safe keeping
 	Gui +OwnDialogs
 	IfNotExist, %FiveMBackupLogsPath%
 		FileCreateDir, %FiveMBackupLogsPath%
 	FileCopy, %FiveMLogsPath%*.log, %FiveMBackupLogsPath%*.*, 1
-	msgbox, Logs Backed Up
-	return
+	MsgBox, Logs Backed Up
+	Return
 
 opendefault: ;Opens the selected log with the users default editor for .log files
 	Gui +OwnDialogs
 	Run %SelectedLog%,, UseErrorLevel
-	if ErrorLevel
+	If ErrorLevel
 		MsgBox Could not open %SelectedLog%
-	return
+	Return
 
 opennotepad: ;Opens the selected log with Notepad
 	Gui +OwnDialogs
 	Run C:\Windows\Notepad.exe %SelectedLog%,, UseErrorLevel
-	if ErrorLevel
+	If ErrorLevel
 		MsgBox Could not open %SelectedLog%
-	return
+	Return
 
 MenuOption8GDiscord: ;Opens 8G Main discord channel
 	Run https://discord.gg/4Xd2uwy
-	return
+	Return
 
 MenuOptionAbout: ;Opens about window
 	IniRead, NewestVersion, 8thGearLauncher/VERSION_INFO.ini, NewestVersion, Version
@@ -654,19 +654,19 @@ MenuOptionAbout: ;Opens about window
 	Gui, AboutWindow: font, s10 norm
 	Gui AboutWindow:+ToolWindow +AlwaysOnTop
 	Gui, AboutWindow: Add, link, w620, Hello and welcome to the 8th Gear FiveM Launcher.`n`nThis Launcher serves as the hub for everything you need to play on the 8th Gear servers and a few useful tools that will help you along the way. `n`nThis launcher is built using AHK by Firecul and is open-source and can be found on <a href="https://github.com/Firecul/8th-Gear-Launcher">GitHub</a>.`n`nThis launcher is version: %LauncherVersion%`nTo download another version please go to <a href="https://github.com/Firecul/8th-Gear-Launcher/releases">My Github releases page</a>`n`nIf you would like to contribute to this program, you are welcome to contact me there or submit a <a href="https://github.com/Firecul/8th-Gear-Launcher/pulls">pull request</a>.`n`nIf you find any problems please <a href="https://github.com/Firecul/8th-Gear-Launcher/issues/new">let me know</a>.
-	gui, AboutWindow: show, AutoSize Center, About
+	Gui, AboutWindow: show, AutoSize Center, About
 	Return
 
 MenuOptionArbitraryLog:
 	Gui +OwnDialogs
 	FileSelectFile, SelectedLog, 3, , Open a FiveM Log, Log (*.log*)
-	if (SelectedLog = ""){
+	If (SelectedLog = ""){
 			MsgBox, The user didn't select anything.
 	}
 	else{
 		GoSub, OpenLogViewer
 	}
-	return
+	Return
 
 MenuOptionFAQ: ;Opens FAQ Window
 	GoSub, FAQWindowGuiEscape
@@ -679,21 +679,21 @@ MenuOptionFAQ: ;Opens FAQ Window
 
 MenuOptionOpenGTASettingsDefault:
 	Run %A_MyDocuments%\Rockstar Games\GTA V\settings.xml,, UseErrorLevel
-	if ErrorLevel{
+	If ErrorLevel{
 		MsgBox Could not open %SelectedLog%
 	}
 	Return
 
 MenuOptionOpenGTASettingsFolder:
 	Run %A_MyDocuments%\Rockstar Games\GTA V,, UseErrorLevel
-	if ErrorLevel{
+	If ErrorLevel{
 		MsgBox, Could not open %A_MyDocuments%
 	}
 	Return
 
 MenuOptionOpenGTASettingsNotepad:
 	Run C:\Windows\Notepad.exe %A_MyDocuments%\Rockstar Games\GTA V\settings.xml,, UseErrorLevel
-	if ErrorLevel{
+	If ErrorLevel{
 		MsgBox Could not open %SelectedLog%
 	}
 	Return
@@ -729,7 +729,7 @@ MenuOptionRules: ;Opens rules window
 	RulesBold("By taking part in this community you acknowledge that you understand and accept these rules. Ignoring them or not knowing them does not excuse you from them.")
 	Gui, RulesWindow: font, norm
 	Gui, RulesWindow: Add, link, w600, The rules found on the official discord channel superceed the ones found on this launcher, please refer to the <a href="https://discord.gg/ygWU5ms">discord #rules channel</a> for the most up to date list.
-	gui, RulesWindow: show, AutoSize Center, Rules
+	Gui, RulesWindow: show, AutoSize Center, Rules
 	Return
 
 ; ##################################################################################
@@ -907,7 +907,7 @@ FAQWindowGuiEscape: ;FAQ window escape stuff
 	Gui FAQWindow:Cancel
 	Gui FAQWindow:Destroy
 	WinActivate, 8th Gear FiveM Launcher
-	return
+	Return
 
 LogViewerWindowGuiEscape: ;LogViewer window escape stuff
 	LogViewerWindowGuiClose:
@@ -933,6 +933,6 @@ MainGuiEscape: ;Main window escape Stuff
 	MainGuiClose:
 	MainButtonCancel:
 	MenuOptionExit:
-	if FileExist("8thGearLauncher")
+	If FileExist("8thGearLauncher")
 		FileRemoveDir, 8thGearLauncher, 1
 	ExitApp
