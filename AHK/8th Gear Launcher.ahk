@@ -17,10 +17,15 @@ vFAQ =
 	READ THE WHOLE THING.
 	)
 
-GoSub, GenerateMainUI
+	GoSub, GenerateMainUI
 
-GoSub, StartUpStuff
-Return
+	GoSub, BetterDownloadServerList ;DO NOT ENABLE BOTH AT THE SAME TIME!!!!!
+	;GoSub, DontDownloadServerList ;DO NOT ENABLE BOTH AT THE SAME TIME!!!!!
+	GoSub, UpdateServerList
+	GoSub, FiveMExist
+	GoSub, UpdateFiles
+
+	Return
 
 
 GenerateMainUI:
@@ -87,59 +92,73 @@ GenerateMainUI:
 		Gui, Main: Show,, 8th Gear FiveM Launcher
 	Return
 
-UpdateList: ;Updates the list of servers from the ini file
-	Gui +Delimiter`n
-	guicontrol,, ServerNameList, `n
-	IniRead, ServerNames, 8thGearLauncher/ServerList.ini
-	ServerNames := StrReplace(ServerNames, "8th Gear Racing ")
-	guicontrol, Main: , ServerNameList, %ServerNames%
-	GuiControl, ChooseString, ComboBox1, EU
-	Gui, Main: Show, NoActivate
+BetterDownloadServerList:
+	DownloadObject := ComObjCreate("WinHttp.WinHttpRequest.5.1")
+	DownloadObject.Open("GET", "https://8thgear.racing/api/serverlist", true) ; Using 'true' allows the script to remain responsive.
+	DownloadObject.Send()
+
+	DownloadObject.WaitForResponse(1)
+	DownloadedList := DownloadObject.ResponseText
+		If (ErrorLevel = 0)
+		{ ;Download successful
+			If DownloadedList Contains 8th Gear Racing
+			{
+				if FileExist("8thGearLauncher/ServerList.ini")
+					FileDelete, 8thGearLauncher/ServerList.ini
+				FileAppend, %DownloadedList%, 8thGearLauncher/ServerList.ini, UTF-16
+				if FileExist("8thGearLauncher/ServerList.ini")
+				{
+					IniRead, ServerNames, 8thGearLauncher/ServerList.ini
+					Return
+				}
+			}
+			Else{
+				MsgBox 16,, % "Website error detected, falling back server list."
+				IniRead, ServerNames, 8thGearLauncher/ServerList.ini
+				Return
+			}
+
+		}
+		If (ErrorLevel = 1)
+		{ ;;Download unsuccessful
+			if FileExist("8thGearLauncher/ServerList.ini"){
+				MsgBox 16,, % "Possible connection error detected,`nfalling back server list."
+				IniRead, ServerNames, 8thGearLauncher/ServerList.ini
+				}
+			Return
+		}
 	Return
 
-StartUpStuff: ;Stuff to run at start up
-	req := ComObjCreate("Msxml2.XMLHTTP")
-	req.open("GET", "https://8thgear.racing/api/serverlist", true)
-	req.onreadystatechange := Func("Ready") ; Send the request.  Ready() will be called when it's complete.
-	req.send()
-	#Persistent
+DontDownloadServerList:
+	IniRead, ServerNames, 8thGearLauncher/ServerList.ini
+	Return
 
-	Ready() {
-		global req
-		if (req.readyState != 4)  ; Not done yet.
-				return
-		if (req.status == 200) ; OK.
-		{
-			DownloadedList := req.responseText
-			if FileExist("8thGearLauncher/ServerList.ini")
-				FileDelete, 8thGearLauncher/ServerList.ini
-			FileAppend, %DownloadedList%, 8thGearLauncher/ServerList.ini, UTF-16
-			Return
+UpdateServerList: ;Updates the list of servers from the ini file
+	Global ServerNames
+	Gui Main: +Delimiter`n
+	GuiControl,Main: , ServerNameList,`n
+	SlimServerNames := StrReplace(ServerNames, "8th Gear Racing ")
+	GuiControl,Main: , ServerNameList, %SlimServerNames%
+	GuiControlGet, ServerNameList
+	GuiControl, Main: ChooseString, ComboBox1, EU 2
+	Gui, Main: Show,, 8th Gear FiveM Launcher
+	Return
+
+FiveMExist: ;Stuff to run at start up
+	RegRead, FiveMPath, HKEY_CURRENT_USER\Software\CitizenFX\FiveM, Last Run Location
+	if (FiveMPath = ""){
+			MsgBox, FiveM.exe cannot be found.`nPlease locate it.
+			GoSub, LookForFiveM
+			Menu, FileMenu, Enable, &Locate FiveM.exe
 		}
 		else{
-			MsgBox 16,, % "Error " req.status " detected, falling back server list."
-			Return
+			StringTrimRight, FiveMExeFullPath, FiveMPath, 10
+			FiveMExeFullPath := FiveMExeFullPath . "FiveM.exe"
+			Menu, FileMenu, Disable, &Locate FiveM.exe
 		}
-	}
-
-		Menu, MenuBar, Disable, FAQ
-
-		RegRead, FiveMPath, HKEY_CURRENT_USER\Software\CitizenFX\FiveM, Last Run Location
-		if (FiveMPath = ""){
-				MsgBox, FiveM.exe cannot be found.`nPlease locate it.
-				gosub lookforfivem
-				Menu, FileMenu, Enable, &Locate FiveM.exe
-			}
-			else{
-				StringTrimRight, FiveMExeFullPath, FiveMPath, 10
-				FiveMExeFullPath := FiveMExeFullPath . "FiveM.exe"
-				Menu, FileMenu, Disable, &Locate FiveM.exe
-			}
-	GoSub, UpdateFiles
-	GoSub, UpdateList
 	return
 
-lookforfivem: ;Opens dialogue box to allow selecting FiveM.exe location
+LookForFiveM: ;Opens dialogue box to allow selecting FiveM.exe location
 	Gui +OwnDialogs
 	FileSelectFile, FiveMExeFullPath, 3, , Locate FiveM.exe, FiveM (FiveM.exe)
 	if (FiveMExeFullPath = ""){
@@ -151,7 +170,6 @@ lookforfivem: ;Opens dialogue box to allow selecting FiveM.exe location
 		Menu, FileMenu, Disable, &Locate FiveM.exe
 	}
 	GoSub, UpdateFiles
-	GoSub, UpdateLogs
 	return
 
 UpdateFiles: ;Updates the log list for the tools tab and populates related variables
@@ -167,7 +185,6 @@ UpdateFiles: ;Updates the log list for the tools tab and populates related varia
 		Menu, CacheMenu, Disable, Open Back-up Folder
 		Menu, CacheMenu, Disable, &Restore Cache from Back-ups
 	}
-	Gui, Main: Show, NoActivate
 	Return
 
 GetFileProperties:
