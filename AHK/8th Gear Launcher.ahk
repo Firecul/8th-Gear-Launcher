@@ -57,7 +57,7 @@ GenerateMainUI:
 		Gui, Main: add, link, xp+10 yp+20 w215, By joining our servers you agree to be bound to the <a href="https://discord.gg/ygWU5ms">#rules</a> of our server.
 
 		Gui, Main: Add, StatusBar,,
-		SB_SetParts(271,120,120)
+		SB_SetParts(246,120,120)
 
 
 		Menu, FileMenu, Add, &Locate FiveM.exe, lookforfivem  ;Top Menu
