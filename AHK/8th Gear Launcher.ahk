@@ -17,84 +17,84 @@ vFAQ =
 	READ THE WHOLE THING.
 	)
 
-Gui, New ;Main Window
-	Gui, Add, Tab3,, Connect|Misc
-
-	Gui, Tab, 1 ;Connect
-		Gui, Add, Picture, , % "HBITMAP:*" . Create_8GLogo_png()
-		Gui, Add, GroupBox, w220 h81, 8th Gear Servers:
-		Gui, add, DropDownList, xp+10 yp+20 w133 vServerNameList,
-		Gui, add, button, xp+139 yp-1 w60 gConnect, Connect
-		Gui, add, button, xp-140 yp+30 w200 gLocalhost, &Localhost
-		Gui, add, Groupbox, xp+220 yp-49 w236 h81, Disclaimer
-		Gui, add, link, xp+10 yp+20 w215, By joining our servers you agree to be bound to the <a href="https://discord.gg/ygWU5ms">#rules</a> of our server.
-
-	Gui, Tab, 2 ;Misc
-		Gui, font, s10 norm
-		Gui, Add, groupbox, xp-239 yp-496 w465 h290, Current Logs:
-		Gui, Add, ListView, xp+10 yp+20 r10 w445 AltSubmit Grid -LV0x10 -Multi gMyListView vMyListView, Name|Size (KB)|Modified|SortingDate
-		Gui, add, button, xp+339 yp+234 gUpdateFiles, Refresh Log list
-
-	Gui, Tab ;All Tabs
-		Gui, font, norm
-		Gui, Add, StatusBar,,
-		SB_SetParts(271,120,120)
-		Gui, Show, Center h645, 8th Gear FiveM Launcher
-
-Menu, FileMenu, Add, &Locate FiveM.exe, lookforfivem  ;Top Menu
-	Menu, FileMenu, Add, E&xit, MenuOptionExit
-
-	Menu, CacheMenu, Add, &Open Cache Folder, OpenCacheFolder
-	Menu, CacheMenu, Add, &Back-up Cache, BackupCache
-	Menu, CacheMenu, Add, Open Back-up Folder, OpenBackupCacheFolder
-	Menu, CacheMenu, Add, &Restore Cache from Back-ups, RestoreCache
-
-	Menu, LogMenu, Add, &Open Log Folder, OpenLogFolder
-	Menu, LogMenu, Add, &Back-up Logs, MenuOptionBackupLogs
-	Menu, LogMenu, Add, &Manage Backed-up Logs, OpenBackupWindow
-	Menu, LogMenu, Add, Open Back-up Folder, OpenLogBackupFolder
-	Menu, LogMenu, Add, Open &Arbitrary log..., MenuOptionArbitraryLog
-
-	Menu, GTASettingsMenu, Add, Open in &Default editor, MenuOptionOpenGTASettingsDefault
-	Menu, GTASettingsMenu, Add, Open in &Notepad, MenuOptionOpenGTASettingsNotepad
-	Menu, GTASettingsMenu, Add, Open &Containing Folder, MenuOptionOpenGTASettingsFolder
-
-	Menu, ToolsMenu, Add, &Cache, :CacheMenu
-	Menu, ToolsMenu, Add, &Logs, :LogMenu
-	Menu, ToolsMenu, Add, &GTAV Settings, :GTASettingsMenu
-
-	Menu, MenuBar, Add, &File, :FileMenu
-	Menu, MenuBar, Add, &Tools, :ToolsMenu
-	Menu, MenuBar, Add, &Rules, MenuOptionRules
-	Menu, MenuBar, Add, FAQ, MenuOptionFAQ
-	Menu, MenuBar, Add, &Discord, MenuOption8GDiscord
-	Menu, MenuBar, Add, &About, MenuOptionAbout
-
-	Gui, Menu, MenuBar
-
-menu, submenu, add, Log Viewer, OpenLogViewer ;Context Menu
-	menu, submenu, Default, Log Viewer
-	menu, submenu, add, Default Editor, opendefault
-	menu, submenu, add, Notepad, opennotepad
-	Menu, ContextMenu, Add, Open With, :Submenu
-	Menu, ContextMenu, Default, Open With
-	Menu, ContextMenu, Add, Save To..., SaveLogCopy
-	Menu, ContextMenu, Add, Delete, DeleteLog
-	Menu, ContextMenu, Add, Properties, GetFileProperties
+GoSub, GenerateMainUI
 
 GoSub, StartUpStuff
 Return
 
 
+GenerateMainUI:
+	Gui, Main: New ;Main Window
+		Gui, Main: Add, Picture, w465 h-1, % "HBITMAP:*" . Create_8GLogo_png()
+		Gui, Main: Add, GroupBox, w220 h81, 8th Gear Servers:
+		Gui, Main: add, DropDownList, xp+10 yp+20 w133 vServerNameList,
+		Gui, Main: add, button, xp+139 yp-1 w60 gConnect, Connect
+		Gui, Main: add, button, xp-140 yp+30 w200 gLocalhost, &Localhost
+		Gui, Main: add, Groupbox, xp+220 yp-49 w236 h81, Disclaimer
+		Gui, Main: add, link, xp+10 yp+20 w215, By joining our servers you agree to be bound to the <a href="https://discord.gg/ygWU5ms">#rules</a> of our server.
+
+		Gui, Main: Add, StatusBar,,
+		SB_SetParts(271,120,120)
+
+
+		Menu, FileMenu, Add, &Locate FiveM.exe, lookforfivem  ;Top Menu
+		Menu, FileMenu, Add, E&xit, MenuOptionExit
+
+		Menu, CacheMenu, Add, &Open Cache Folder, OpenCacheFolder
+		Menu, CacheMenu, Add, &Back-up Cache, BackupCache
+		Menu, CacheMenu, Add, Open Back-up Folder, OpenBackupCacheFolder
+		Menu, CacheMenu, Add, &Restore Cache from Back-ups, RestoreCache
+
+
+		Menu, LogMenu, Add, &Manage Logs, OpenLogsWindow
+		Menu, LogMenu, Add, &Open Log Folder, OpenLogFolder
+		Menu, LogMenu, Add, &Back-up Logs, MenuOptionBackupLogs
+		Menu, LogMenu, Add, &Manage Backed-up Logs, OpenBackupWindow
+		Menu, LogMenu, Add, Open Back-up Folder, OpenLogBackupFolder
+		Menu, LogMenu, Add, Open &Arbitrary log..., MenuOptionArbitraryLog
+		Menu, LogMenu, Default, &Manage Logs
+
+		Menu, GTASettingsMenu, Add, Open in &Default editor, MenuOptionOpenGTASettingsDefault
+		Menu, GTASettingsMenu, Add, Open in &Notepad, MenuOptionOpenGTASettingsNotepad
+		Menu, GTASettingsMenu, Add, Open &Containing Folder, MenuOptionOpenGTASettingsFolder
+
+		Menu, ToolsMenu, Add, &Cache, :CacheMenu
+		Menu, ToolsMenu, Add, &Logs, :LogMenu
+		Menu, ToolsMenu, Add, &GTAV Settings, :GTASettingsMenu
+
+		Menu, MenuBar, Add, &File, :FileMenu
+		Menu, MenuBar, Add, &Tools, :ToolsMenu
+		Menu, MenuBar, Add, &Rules, MenuOptionRules
+		Menu, MenuBar, Add, FAQ, MenuOptionFAQ
+		Menu, MenuBar, Add, &Discord, MenuOption8GDiscord
+		Menu, MenuBar, Add, &About, MenuOptionAbout
+
+		Gui, Menu, MenuBar
+
+		menu, submenu, add, Log Viewer, OpenLogViewer ;Context Menu
+		menu, submenu, Default, Log Viewer
+		menu, submenu, add, Default Editor, opendefault
+		menu, submenu, add, Notepad, opennotepad
+		Menu, ContextMenu, Add, Open With, :Submenu
+		Menu, ContextMenu, Default, Open With
+		Menu, ContextMenu, Add, Save To..., SaveLogCopy
+		Menu, ContextMenu, Add, Delete, DeleteLog
+		Menu, ContextMenu, Add, Properties, GetFileProperties
+
+
+		Menu, MenuBar, Disable, FAQ
+
+		Gui, Main: Show,, 8th Gear FiveM Launcher
+	Return
 
 UpdateList: ;Updates the list of servers from the ini file
 	Gui +Delimiter`n
 	guicontrol,, ServerNameList, `n
 	IniRead, ServerNames, 8thGearLauncher/ServerList.ini
 	ServerNames := StrReplace(ServerNames, "8th Gear Racing ")
-	guicontrol, , ServerNameList, %ServerNames%
+	guicontrol, Main: , ServerNameList, %ServerNames%
 	GuiControl, ChooseString, ComboBox1, EU
-	Gui, Show, NoActivate
+	Gui, Main: Show, NoActivate
 	Return
 
 StartUpStuff: ;Stuff to run at start up
@@ -135,10 +135,9 @@ StartUpStuff: ;Stuff to run at start up
 				FiveMExeFullPath := FiveMExeFullPath . "FiveM.exe"
 				Menu, FileMenu, Disable, &Locate FiveM.exe
 			}
-		GoSub, UpdateFiles
-		GoSub, UpdateList
-		GoSub, UpdateLogs
-		return
+	GoSub, UpdateFiles
+	GoSub, UpdateList
+	return
 
 lookforfivem: ;Opens dialogue box to allow selecting FiveM.exe location
 	Gui +OwnDialogs
@@ -168,7 +167,7 @@ UpdateFiles: ;Updates the log list for the tools tab and populates related varia
 		Menu, CacheMenu, Disable, Open Back-up Folder
 		Menu, CacheMenu, Disable, &Restore Cache from Back-ups
 	}
-	Gui, Show, NoActivate
+	Gui, Main: Show, NoActivate
 	Return
 
 GetFileProperties:
@@ -192,8 +191,6 @@ Connect: ;Connects to the selected server in the list
 	iniread, ServerPort, 8thGearLauncher/ServerList.ini, %ServerName%, Port
 	GoSub, BackupLogs
 	Run, cmd.exe /C %FiveMExeFullPath% +connect %ServerIP%:%ServerPort%,,hide
-	Sleep 5000
-	GoSub, UpdateLogs
 	Return
 
 Localhost: ;Launches FiveM and connects to Localhost
@@ -268,7 +265,7 @@ MyNewerListView: ;Gets double-clicked file from backedup log listview
 		}
 	return
 
-GuiContextMenu: ;MainUI context menu control
+LogsWindowGuiContextMenu: ;MainUI context menu control
 	if (A_GuiControl = "MyListView") {
 		SelectedLog := GetFileSelected(FiveMLogsPath)
 		Menu, ContextMenu, Show, %A_GuiX%, %A_GuiY%
@@ -319,6 +316,40 @@ F5::
 		Guicontrol, LogViewerWindow: text, LogContents, %LogContents%
 	}
 	Return
+
+OpenLogsWindow: ;Opens the Log backup management window
+	Gui +OwnDialogs
+	GoSub, LogsWindowGuiEscape
+	Sleep 50
+	Gui, LogsWindow: +Resize +ToolWindow ;LogBackupManager Window
+	gui, LogsWindow: font, s10 Norm
+	Gui, LogsWindow: Add, groupbox, w485 h260 vGB2, Logs:
+	Gui, LogsWindow: Add, ListView, xp+10 yp+20 r10 w465 AltSubmit Grid -Multi gMyListView vMyListView, Name|Size (KB)|Modified|SortingDate
+	IfExist, %FiveMLogsPath%
+		{
+			Gui, MessageWindow:+ToolWindow
+			Gui, MessageWindow: Font, s11 Norm
+			Gui, MessageWindow: Add, Text,, Scanning for logs, Please Wait.
+			Gui, MessageWindow: Show
+			Gui, LogsWindow:Default
+			LV_Delete()
+			Loop, %FiveMLogsPath%*.log
+			{
+				FileSize := regExReplace(GetNumberFormatEx(A_LoopFileSizeKB), "[,.]?0+$")
+				FormatTime, LogTimeAndDate, %A_LoopFileTimeModified%
+				LV_Add("", A_LoopFileName, FileSize, LogTimeAndDate, A_LoopFileTimeModified, A_LoopFileFullPath)
+				LV_ModifyCol() ;Auto-size each column
+				LV_ModifyCol(1, "AutoHdr Text")
+				LV_ModifyCol(2, "AutoHdr Integer")
+				LV_ModifyCol(3, "Text NoSort")
+				LV_ModifyCol(4, "AutoHdr Digit SortDesc 0")
+			}
+			Gui, MessageWindow: Destroy
+			Gui, LogsWindow: Show, AutoSize Center, FiveM Logs
+		}
+	IfNotExist, %FiveMLogsPath%
+		MsgBox, No logs found.
+	return
 
 OpenBackupWindow: ;Opens the Log backup management window
 	Gui +OwnDialogs
@@ -754,9 +785,9 @@ AboutWindowGuiEscape: ;About window escape stuff
 	WinActivate, 8th Gear FiveM Launcher
 	Return
 
-GuiEscape: ;Main window escape Stuff
-	GuiClose:
-	ButtonCancel:
+MainGuiEscape: ;Main window escape Stuff
+	MainGuiClose:
+	MainButtonCancel:
 	MenuOptionExit:
 	if FileExist("8thGearLauncher")
 		FileRemoveDir, 8thGearLauncher, 1
