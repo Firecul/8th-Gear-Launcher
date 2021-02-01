@@ -61,9 +61,11 @@ GenerateMainUI:
 
 
 		Menu, FileMenu, Add, &Locate FiveM.exe, lookforfivem  ;Top Menu
+		Menu, FileMenu, Add,
 		Menu, FileMenu, Add, E&xit, MenuOptionExit
 
 		Menu, CacheMenu, Add, &Open Cache Folder, OpenCacheFolder
+		Menu, CacheMenu, Add,
 		Menu, CacheMenu, Add, &Back-up Cache, BackupCache
 		Menu, CacheMenu, Add, Open Back-up Folder, OpenBackupCacheFolder
 		Menu, CacheMenu, Add, &Restore Cache from Back-ups, RestoreCache
@@ -71,9 +73,11 @@ GenerateMainUI:
 
 		Menu, LogMenu, Add, &Manage Logs, OpenLogsWindow
 		Menu, LogMenu, Add, &Open Log Folder, OpenLogFolder
+		Menu, LogMenu, Add,
 		Menu, LogMenu, Add, &Back-up Logs, MenuOptionBackupLogs
 		Menu, LogMenu, Add, &Manage Backed-up Logs, OpenBackupWindow
 		Menu, LogMenu, Add, Open Back-up Folder, OpenLogBackupFolder
+		Menu, LogMenu, Add,
 		Menu, LogMenu, Add, Open &Arbitrary log..., MenuOptionArbitraryLog
 		Menu, LogMenu, Default, &Manage Logs
 
@@ -105,9 +109,26 @@ GenerateMainUI:
 		Menu, ContextMenu, Add, Properties, GetFileProperties
 
 
+
+		Menu, Tray, NoStandard
+		Menu, Tray, Add, Open Launcher, ReOpenLauncher
+		Menu, Tray, Add, Manage Logs, OpenLogsWindow
+		Menu, Tray, Add,
+		Menu, Tray, Add, Open Cache Folder, OpenCacheFolder
+		Menu, Tray, Add,
+		Menu, Tray, Add, Exit, MenuOptionExit
+		Menu, Tray, Default, Open Launcher
+		Menu, Tray, Tip, 8th Gear Launcher
+		Menu, Tray, Click, 2
+
+
 		Menu, MenuBar, Disable, FAQ
 
 		Gui, Main: Show,, 8th Gear FiveM Launcher
+	Return
+
+ReOpenLauncher:
+	WinActivate, 8th Gear FiveM Launcher
 	Return
 
 BetterDownloadServerList:
