@@ -57,7 +57,7 @@ GenerateMainUI:
 		Gui, Main: Add, link, xp+10 yp+20 w215, By joining our servers you agree to be bound to the <a href="https://discord.gg/ygWU5ms">#rules</a> of our server.
 
 		Gui, Main: Add, StatusBar,,
-		SB_SetParts(246,120,120)
+		SB_SetParts(206,140,140)
 
 
 		Menu, FileMenu, Add, &Locate FiveM.exe, lookforfivem  ;Top Menu
@@ -223,22 +223,25 @@ PingAll:
 	Loop, %ServerArray0%
 	{
 		If (ServerArray%A_Index% = "8th Gear Racing EU 2"){
-			IniRead, ServerIP, 8thGearLauncher/ServerList.ini, % ServerArray%A_Index%, IP
-			Ping(ServerArray%A_Index%, ServerIP, Create_EU_ico(), 2) ;Pings EU 2
+			Ping(ServerArray%A_Index%, Create_EU_ico(), 2) ;Pings EU 2
 			Continue
 		}
 		If (ServerArray%A_Index% = "8th Gear Racing Central 1"){
-			IniRead, ServerIP, 8thGearLauncher/ServerList.ini, % ServerArray%A_Index%, IP
-			Ping(ServerArray%A_Index%, ServerIP, Create_US_ico(), 3) ;Pings Central 1
+			Ping(ServerArray%A_Index%, Create_US_ico(), 3) ;Pings Central 1
 			Continue
 		}
 	}
 	Return
 
-Ping(ServerName, PingIP, Image, Section)
+Ping(ServerName, Image, Section)
 	{
 		LogFile := "8thGearLauncher\" "Ping_" A_Now ".log"
-		Runwait, %comspec% /c ping -n 1 -w 1000 %PingIP% > %LogFile%, , Hide
+
+		IniRead, ServerIP, 8thGearLauncher/ServerList.ini, %ServerName%, IP
+		IniRead, ActivePlayers, 8thGearLauncher/ServerList.ini, %ServerName%, Players
+		IniRead, MaxPlayers, 8thGearLauncher/ServerList.ini, %ServerName%, MaxPlayers
+
+		Runwait, %comspec% /c ping -n 1 -w 1000 %ServerIP% > %LogFile%, , Hide
 		FileRead, Contents, %LogFile%
 		RegExMatch(Contents, "O) = (\d+ms)[^,]", MatchGroup) ;Get average ping
 		RegExMatch(Contents, "O)\((\d{1,3}% \w+)\)", PacketLossGroup) ;Get packet loss
@@ -255,7 +258,7 @@ Ping(ServerName, PingIP, Image, Section)
 
 			If (MatchGroup.1) ;If there is still an average ping
 				{
-					SB_SetText("*" MatchGroup.1 "*", Section)
+					SB_SetText("*" MatchGroup.1 "* " ActivePlayers "/" MaxPlayers " Players", Section)
 				}
 				Else ;If there isn't an average ping
 				{
@@ -267,7 +270,7 @@ Ping(ServerName, PingIP, Image, Section)
 		Else ;if there isn't packet loss
 		{
 			FileDelete, %LogFile%
-			SB_SetText(MatchGroup.1, Section)
+			SB_SetText(MatchGroup.1 " " ActivePlayers "/" MaxPlayers " Players", Section)
 			Return
 		}
 	}
