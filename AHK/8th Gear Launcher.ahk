@@ -12,7 +12,7 @@ SetWorkingDir, %A_ScriptDir%
 ;@Ahk2Exe-AddResource icons\8G_grey_logo.ico, 207  ; Replaces 'H on red'
 ;@Ahk2Exe-AddResource icons\8G_grey_logo.ico, 208  ; Replaces 'S on red'
 ;@Ahk2Exe-SetName 8th Gear Launcher
-;@Ahk2Exe-SetVersion 1.3.1
+;@Ahk2Exe-SetVersion 1.3.2
 ;@Ahk2Exe-SetCopyright Firecul666@gmail.com
 ;@Ahk2Exe-SetDescription https://github.com/Firecul/8th-Gear-Launcher
 ;@Ahk2Exe-SetLanguage 0x0809
@@ -25,7 +25,7 @@ FileCreateDir, 8thGearLauncher ;Creation stuff
 	Fileinstall, ServerList.ini, 8thGearLauncher/ServerList.ini, 0
 	Menu, Tray, Icon, % "HICON:*" . Create_8G_logo_ico()
 
-LauncherVersion = v1.3.1
+LauncherVersion = v1.3.2
 
 vFAQ =
 	(
@@ -226,27 +226,50 @@ PingAll:
 			;MsgBox 02:ServerArray%A_Index%
 			IniRead, ServerIP, 8thGearLauncher/ServerList.ini, % ServerArray%A_Index%, IP
 			;MsgBox 03:%ServerIP%
-			Ping(ServerIP, Create_EU_ico(), 2) ;Pings EU 2
+			Ping(ServerArray%A_Index%, ServerIP, Create_EU_ico(), 2) ;Pings EU 2
 			Continue
 		}
 		If (ServerArray%A_Index% = "8th Gear Racing Central 1"){
 			IniRead, ServerIP, 8thGearLauncher/ServerList.ini, % ServerArray%A_Index%, IP
-			Ping(ServerIP, Create_US_ico(), 3) ;Pings Central 1
+			Ping(ServerArray%A_Index%, ServerIP, Create_US_ico(), 3) ;Pings Central 1
 			Continue
 		}
 	}
 	Return
 
-Ping(pingip, image, section)
+Ping(ServerName, PingIP, Image, Section)
 	{
-	LogFile := "8thGearLauncher\" "Ping_" A_Now ".log"
-	Runwait, %comspec% /c ping -n 1 -w 1000 %pingip% > %LogFile%, , hide
-	FileRead, Contents, %LogFile%
-	FileDelete, %LogFile%
-	RegExMatch(Contents, "O)(Average = )(\d+)(ms)", OutputVar)
-	SB_SetIcon("HICON:" image,, section)
-	SB_SetText(SubStr(OutputVar.value, 11), section)
-	Return
+		LogFile := "8thGearLauncher\" "Ping_" A_Now ".log"
+		Runwait, %comspec% /c ping -n 1 -w 1000 %PingIP% > %LogFile%, , Hide
+		FileRead, Contents, %LogFile%
+		RegExMatch(Contents, "O) = (\d+ms)[^,]", MatchGroup) ;Get average ping
+		RegExMatch(Contents, "O)\((\d{1,3}% \w+)\)", PacketLossGroup) ;Get packet loss
+		RegExMatch(PacketLossGroup.1, "O)(\d{1,3})%", PacketLossNumber) ;seperate number from packet loss
+
+		SB_SetIcon("HICON:" Image,, Section)
+
+		If (PacketLossNumber.1 > 0) ;If there is packet loss
+		{
+			RegExMatch(Contents, "O)(.*\)d{1,3}.\d{1,3}.\d{1,3}.\d{1,3}:[^ ]", PacketLossMessage) ;get ping statistics message
+			MsgBox, 0x40, % PacketLossMessage.1 ServerName, % PacketLossGroup.1 "`n`nPlease check " LogFile " for details."
+
+			If (MatchGroup.1) ;If there is still an average ping
+				{
+					SB_SetText("*" MatchGroup.1 "*", Section)
+				}
+				Else ;If there isn't an average ping
+				{
+					SB_SetText("(Error)", Section)
+				}
+			Return
+
+		}
+		Else ;if there isn't packet loss
+		{
+			FileDelete, %LogFile%
+			SB_SetText(MatchGroup.1, Section)
+			Return
+		}
 	}
 
 UpdateFiles: ;Updates the log list for the tools tab and populates related variables
