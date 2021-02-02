@@ -34,14 +34,14 @@ vFAQ =
 MyProgress = ""
 Global ServerNames
 
-	GoSub, GenerateMainUI
+GoSub, GenerateMainUI
 
-	GoSub, BetterDownloadServerList ;DO NOT ENABLE BOTH AT THE SAME TIME!!!!!
-	;GoSub, DontDownloadServerList ;DO NOT ENABLE BOTH AT THE SAME TIME!!!!!
-	GoSub, UpdateServerList
-	GoSub, FiveMExist
-	GoSub, PingAll
-	GoSub, UpdateFiles
+GoSub, BetterDownloadServerList ;DO NOT ENABLE BOTH AT THE SAME TIME!!!!!
+;GoSub, DontDownloadServerList ;DO NOT ENABLE BOTH AT THE SAME TIME!!!!!
+GoSub, UpdateServerList
+GoSub, FiveMExist
+GoSub, PingAll
+GoSub, UpdateFiles
 
 Return
 
@@ -72,11 +72,11 @@ GenerateMainUI:
 		Menu, CacheMenu, Add, &Restore Cache from Back-ups, RestoreCache
 
 
-		Menu, LogMenu, Add, &Manage Logs `tCtrl+L, OpenLogsWindow
+
+		Menu, LogMenu, Add, &Manage Logs `tCtrl+L, OpenLogManagementWindow
 		Menu, LogMenu, Add, &Open Log Folder, OpenLogFolder
 		Menu, LogMenu, Add,
 		Menu, LogMenu, Add, &Back-up Logs, MenuOptionBackupLogs
-		Menu, LogMenu, Add, &Manage Backed-up Logs, OpenBackupWindow
 		Menu, LogMenu, Add, Open Back-up Folder, OpenLogBackupFolder
 		Menu, LogMenu, Add,
 		Menu, LogMenu, Add, Open &Arbitrary log... `tCtrl+O, MenuOptionArbitraryLog
@@ -109,11 +109,9 @@ GenerateMainUI:
 		Menu, ContextMenu, Add, Delete, DeleteLog
 		Menu, ContextMenu, Add, Properties, GetFileProperties
 
-
-
 		Menu, Tray, NoStandard
 		Menu, Tray, Add, Open Launcher, ReOpenLauncher
-		Menu, Tray, Add, Manage Logs, OpenLogsWindow
+		Menu, Tray, Add, Manage Logs, OpenLogManagementWindow
 		Menu, Tray, Add,
 		Menu, Tray, Add, Open Cache Folder, OpenCacheFolder
 		Menu, Tray, Add,
@@ -335,70 +333,12 @@ GetFileSelected(LogsPath)
 	Return SelectedLog
 	}
 
-MyListView: ;Gets double-clicked file from main gui log listview
-	If (A_GuiEvent = "DoubleClick")
-		{
-		SelectedLog :=
-		LV_GetText(FileName, A_EventInfo, 1)
-		SelectedLog := FiveMLogsPath . FileName
-		GoSub, OpenLogViewer
-		}
-	If ( A_GuiEvent = "ColClick" And A_EventInfo = 2 )
-		{
-		If Sort
-		LV_ModifyCol(3, "Sort")
-		else
-		LV_ModifyCol(3, "SortDesc")
-		Sort := not Sort
-		}
-	If ( A_GuiEvent = "ColClick" And A_EventInfo = 4 )
-		{
-		If Sort
-		LV_ModifyCol(5, "Sort")
-		else
-		LV_ModifyCol(5, "SortDesc")
-		Sort := not Sort
-		}
-	Return
-
-MyNewerListView: ;Gets double-clicked file from backedup log listview
-	If (A_GuiEvent = "DoubleClick")
-		{
-		SelectedLog :=
-		LV_GetText(FileName, A_EventInfo, 1)
-		SelectedLog := FiveMBackupLogsPath . FileName
-		GoSub, OpenLogViewer
-		}
-	If ( A_GuiEvent = "ColClick" And A_EventInfo = 2 )
-		{
-		If Sort
-		LV_ModifyCol(3, "Sort")
-		else
-		LV_ModifyCol(3, "SortDesc")
-		Sort := not Sort
-		}
-	If ( A_GuiEvent = "ColClick" And A_EventInfo = 4 )
-		{
-		If Sort
-		LV_ModifyCol(5, "Sort")
-		else
-		LV_ModifyCol(5, "SortDesc")
-		Sort := not Sort
-		}
-	Return
-
-LogsWindowGuiContextMenu: ;MainUI context Menu control
-	If (A_GuiControl = "MyListView") {
+LogManagementWindowGuiContextMenu: ;MainUI context Menu control
+	MouseGetPos, , , , control
+	If (A_GuiControl = "MyListView" && control != "SysHeader321") {
 		SelectedLog := GetFileSelected(FiveMLogsPath)
 		Menu, ContextMenu, Show, %A_GuiX%, %A_GuiY%
 	}
-	Return
-
-BackupWindowGuiContextMenu: ;BackedupLogUI context Menu control
-	If (A_GuiControl != "MyNewerListView")
-		Return
-	SelectedLog := GetFileSelected(FiveMBackupLogsPath)
-	Menu, ContextMenu, Show, %A_GuiX%, %A_GuiY%
 	Return
 
 LogViewerWindowGuiSize: ;Makes LogViewer resize correctly
@@ -439,82 +379,110 @@ F5::
 	}
 	Return
 
-OpenLogsWindow: ;Opens the Log backup management window
-	Global MyProgress
-	Gui +OwnDialogs
-	GoSub, LogsWindowGuiEscape
-	count := MakeMessageWindow("Scanning for logs, Please Wait.", FiveMLogsPath)
-	Gui, LogsWindow: -Resize ;LogBackupManager Window
-	Gui, LogsWindow: font, s10 Norm
-	Gui, LogsWindow: Add, groupbox, w485 h260 vGB2, Logs:
-	Gui, LogsWindow: Add, ListView, xp+10 yp+20 r10 w465 AltSubmit Grid -Multi gMyListView vMyListView Count%count%, Name|Size (KB)|SortingSize|Modified|SortingDate
-	IfExist, %FiveMLogsPath%
-		{
-			Gui, LogsWindow: Show, AutoSize Center, FiveM Logs
-			GuiControl, LogsWindow: -Redraw, MyListView
-			Gui, LogsWindow:Default
-			LV_Delete()
-			Loop, %FiveMLogsPath%*.log
-			{
-				FileSize := regExReplace(GetNumberFormatEx(A_LoopFileSizeKB), "[,.]?0+$")
-				FormatTime, LogTimeAndDate, %A_LoopFileTimeModified%
-				LV_Add("", A_LoopFileName, FileSize, A_LoopFileSizeKB, LogTimeAndDate, A_LoopFileTimeModified, A_LoopFileFullPath)
-				LV_ModifyCol() ;Auto-size each column
-				LV_ModifyCol(1, "AutoHdr Text")
-				LV_ModifyCol(2, "AutoHdr Integer")
-				LV_ModifyCol(3, "AutoHdr Integer 0")
-				LV_ModifyCol(4, "Text NoSort")
-				LV_ModifyCol(5, "AutoHdr Digit SortDesc 0")
+OpenLogManagementWindow: ; LogManagementWindow:
+	Gui, LogManagementWindow:Default
 
-				GuiControl, MessageWindow: , MyProgress, %A_Index%
-			}
-			GuiControl, LogsWindow: +Redraw, MyListView
-			Gui, MessageWindow: Destroy
-			Return
-		}
-	IfNotExist, %FiveMLogsPath%
-		MsgBox 0x30,, No logs found.
+	TreeRoot := FiveMPath
+	TreeViewWidth := 150
+	ListViewWidth := 600 - TreeViewWidth
+
+	Gui LogManagementWindow: +Resize
+	ImageListID := IL_Create(5)
+	Loop 5
+		IL_Add(ImageListID, "shell32.dll", A_Index)
+	Gui, LogManagementWindow: Add, TreeView, vMyTreeView r9 w%TreeViewWidth% gMyTreeView ImageList%ImageListID%
+	Gui, LogManagementWindow: Add, ListView, x+10 r9 Grid -Multi w%ListViewWidth% gMyListView vMyListView, Name|Size (KB)|SortingSize|Modified|SortingDate
+
+	Gui, LogManagementWindow: Add, StatusBar
+	SB_SetParts(60, 85)
+
+	AddSubFoldersToTree(TreeRoot)
+
+	Gui, LogManagementWindow: Show,, Log Manager
 	Return
 
-OpenBackupWindow: ;Opens the Log backup management window
-	Global MyProgress
-	Gui +OwnDialogs
-	GoSub, BackupWindowGuiEscape
-	count := MakeMessageWindow("Scanning for backed up logs`n`nThis may take some time if you have a lot of logs`,`nPlease Wait.", FiveMBackupLogsPath)
+AddSubFoldersToTree(Folder, ParentItemID = 0)
+	{
+	Loop, Files, %Folder%*logs*.*, DF  ; Retrieve all of Folder's sub-folders.
+	AddSubFoldersToTree(A_LoopFileFullPath, TV_Add(A_LoopFileName, ParentItemID, "Icon4"))
+	}
 
-	Gui, BackupWindow: -Resize ;LogBackupManager Window
-	Gui, BackupWindow: font, s10 Norm
-	Gui, BackupWindow: Add, groupbox, w485 h260 vGB2, Backed-up Logs:
-	Gui, BackupWindow: Add, ListView, xp+10 yp+20 r10 w465 AltSubmit Grid -Multi gMyNewerListView vMyNewerListView Count%count%, Name|Size (KB)|SortingSize|Modified|SortingDate
-	IfExist, %FiveMBackupLogsPath%
+MyTreeView:
+	Gui, LogManagementWindow:Default
+	if (A_GuiEvent != "S")  ;an event other than "select new tree item".
+		return
+	; Otherwise, populate the ListView with the contents of the selected folder.
+	; First determine the full path of the selected folder:
+	TV_GetText(SelectedItemText, A_EventInfo)
+	ParentID := A_EventInfo
+	Loop  ; Build the full path to the selected folder.
 		{
-			Gui, BackupWindow: Show, AutoSize Center, Log Backups
-			GuiControl, BackupWindow: -Redraw, MyNewerListView
-			Gui, BackupWindow:Default
-			LV_Delete()
-			Loop, %FiveMBackupLogsPath%*.log
-			{
-				FileSize := regExReplace(GetNumberFormatEx(A_LoopFileSizeKB), "[,.]?0+$")
-				FormatTime, LogTimeAndDate, %A_LoopFileTimeModified%
-				LV_Add("", A_LoopFileName, FileSize, A_LoopFileSizeKB, LogTimeAndDate, A_LoopFileTimeModified, A_LoopFileFullPath)
-				LV_ModifyCol() ;Auto-size each column
-				LV_ModifyCol(1, "AutoHdr Text")
-				LV_ModifyCol(2, "AutoHdr Integer")
-				LV_ModifyCol(3, "AutoHdr Integer 0")
-				LV_ModifyCol(4, "Text NoSort")
-				LV_ModifyCol(5, "AutoHdr Digit SortDesc 0")
-
-				GuiControl, MessageWindow: , MyProgress, %A_Index%
-			}
-
-			GuiControl, BackupWindow: +Redraw, MyNewerListView
-			Gui, MessageWindow: Destroy
+			ParentID := TV_GetParent(ParentID)
+			if not ParentID  ; No more ancestors.
+				break
+			TV_GetText(ParentText, ParentID)
+			SelectedItemText := ParentText SelectedItemText
 		}
-	IfNotExist, %FiveMBackupLogsPath%
+	SelectedFullPath := TreeRoot SelectedItemText
+
+	LV_Delete()
+	GuiControl, LogManagementWindow: -Redraw, MyListView
+	FileCount := 0
+	TotalSize := 0
+	Loop %SelectedFullPath%\*.*
 		{
-			MsgBox 0x40,, No logs are currently backed up.`n`nWould you like to back them up now?
-			IfMsgBox Yes
-				GoSub, MenuOptionBackupLogs
+			FileSize := regExReplace(GetNumberFormatEx(A_LoopFileSizeKB), "[,.]?0+$")
+			FormatTime, LogTimeAndDate, %A_LoopFileTimeModified%
+			LV_Add("", A_LoopFileName, FileSize, A_LoopFileSizeKB, LogTimeAndDate, A_LoopFileTimeModified, A_LoopFileFullPath)
+
+			FileCount += 1
+			TotalSize += A_LoopFileSize
+		}
+	LV_ModifyCol() ;Auto-size each column
+	LV_ModifyCol(1, "AutoHdr Text")
+	LV_ModifyCol(2, "AutoHdr Integer")
+	LV_ModifyCol(3, "AutoHdr Integer 0")
+	LV_ModifyCol(4, "Text NoSort")
+	LV_ModifyCol(5, "AutoHdr Digit SortDesc 0")
+	GuiControl, LogManagementWindow: +Redraw, MyListView
+
+	; Update the three parts of the status bar to show info about the currently selected folder:
+	SB_SetText(FileCount . " files", 1)
+	SB_SetText(Round(TotalSize / (1024*1024), 1) . " MB", 2)
+	SB_SetText(SelectedFullPath, 3)
+	return
+
+LogManagementWindowGuiSize:  ; Expand/shrink the ListView and TreeView in response to user's resizing of window.
+	if (A_EventInfo = 1)  ; The window has been minimized. No action needed.
+		return
+	; Otherwise, the window has been resized or maximized. Resize the controls to match.
+	GuiControl, LogManagementWindow: Move, MyTreeView, % "H" . (A_GuiHeight - 30)  ; -30 for StatusBar and margins.
+	GuiControl, LogManagementWindow: Move, MyListView, % "H" . (A_GuiHeight - 30) . " W" . (A_GuiWidth - TreeViewWidth - 30)
+	return
+
+MyListView: ;Gets double-clicked file from LogManagementWindow listview
+	If (A_GuiEvent = "DoubleClick")
+		{
+		SelectedLog :=
+		LV_GetText(FileName, A_EventInfo, 1)
+		SelectedLog := FiveMLogsPath . FileName
+		GoSub, OpenLogViewer
+		}
+	If ( A_GuiEvent = "ColClick" And A_EventInfo = 2 )
+		{
+		If Sort
+		LV_ModifyCol(3, "Sort")
+		else
+		LV_ModifyCol(3, "SortDesc")
+		Sort := not Sort
+		}
+	If ( A_GuiEvent = "ColClick" And A_EventInfo = 4 )
+		{
+		If Sort
+		LV_ModifyCol(5, "Sort")
+		else
+		LV_ModifyCol(5, "SortDesc")
+		Sort := not Sort
 		}
 	Return
 
@@ -946,20 +914,6 @@ Static hBitmap := Create_US_ico()
 	Return hBitmap
 	}
 
-BackupWindowGuiEscape: ;Backup window escape stuff
-	BackupWindowGuiClose:
-	Gui BackupWindow:Cancel
-	Gui BackupWindow:Destroy
-	WinActivate, 8th Gear FiveM Launcher
-	Return
-
-LogsWindowGuiEscape: ;Backup window escape stuff
-	LogsWindowGuiClose:
-	Gui LogsWindow:Cancel
-	Gui LogsWindow:Destroy
-	WinActivate, 8th Gear FiveM Launcher
-	Return
-
 MessageWindowGuiEscape: ;Backup window escape stuff
 	MessageWindowGuiClose:
 	Gui MessageWindow:Cancel
@@ -972,6 +926,12 @@ FAQWindowGuiEscape: ;FAQ window escape stuff
 	Gui FAQWindow:Cancel
 	Gui FAQWindow:Destroy
 	WinActivate, 8th Gear FiveM Launcher
+	Return
+
+LogManagementWindowGuiEscape: ;LogViewer window escape stuff
+	LogManagementWindowGuiClose:
+	Gui LogManagementWindow:Cancel
+	Gui LogManagementWindow:Destroy
 	Return
 
 LogViewerWindowGuiEscape: ;LogViewer window escape stuff
