@@ -48,10 +48,11 @@ Return
 
 GenerateMainUI:
 	Gui, Main: New ;Main Window
+		;Gui, Main: +Caption -Border  ;Enable with alt Gui, add drag from anywhere, alter width?
 		Gui, Main: Add, Picture, w465 h-1, % "HBITMAP:*" . Create_8GLogo_png()
 		Gui, Main: Add, GroupBox, w220 h81, 8th Gear Servers:
 		Gui, Main: Add, DropDownList, xp+10 yp+20 w133 vServerNameList,
-		Gui, Main: Add, button, xp+139 yp-1 w60 gConnect, Connect
+		Gui, Main: Add, button, xp+139 yp-1 w60 gConnect Default, Connect
 		Gui, Main: Add, button, xp-140 yp+30 w200 gLocalhost, &Localhost
 		Gui, Main: Add, Groupbox, xp+220 yp-49 w236 h81, Disclaimer
 		Gui, Main: Add, link, xp+10 yp+20 w215, By joining our servers you agree to be bound to the <a href="https://discord.gg/ygWU5ms">#rules</a> of our server.
@@ -62,24 +63,24 @@ GenerateMainUI:
 
 		Menu, FileMenu, Add, &Locate FiveM.exe, lookforfivem  ;Top Menu
 		Menu, FileMenu, Add,
-		Menu, FileMenu, Add, E&xit, MenuOptionExit
+		Menu, FileMenu, Add, E&xit `tEsc, MenuOptionExit
 
-		Menu, CacheMenu, Add, &Open Cache Folder, OpenCacheFolder
+		Menu, CacheMenu, Add, &Open Cache Folder `tCtrl+C, OpenCacheFolder
 		Menu, CacheMenu, Add,
 		Menu, CacheMenu, Add, &Back-up Cache, BackupCache
 		Menu, CacheMenu, Add, Open Back-up Folder, OpenBackupCacheFolder
 		Menu, CacheMenu, Add, &Restore Cache from Back-ups, RestoreCache
 
 
-		Menu, LogMenu, Add, &Manage Logs, OpenLogsWindow
+		Menu, LogMenu, Add, &Manage Logs `tCtrl+L, OpenLogsWindow
 		Menu, LogMenu, Add, &Open Log Folder, OpenLogFolder
 		Menu, LogMenu, Add,
 		Menu, LogMenu, Add, &Back-up Logs, MenuOptionBackupLogs
 		Menu, LogMenu, Add, &Manage Backed-up Logs, OpenBackupWindow
 		Menu, LogMenu, Add, Open Back-up Folder, OpenLogBackupFolder
 		Menu, LogMenu, Add,
-		Menu, LogMenu, Add, Open &Arbitrary log..., MenuOptionArbitraryLog
-		Menu, LogMenu, Default, &Manage Logs
+		Menu, LogMenu, Add, Open &Arbitrary log... `tCtrl+O, MenuOptionArbitraryLog
+		Menu, LogMenu, Default, &Manage Logs `tCtrl+L
 
 		Menu, GTASettingsMenu, Add, Open in &Default editor, MenuOptionOpenGTASettingsDefault
 		Menu, GTASettingsMenu, Add, Open in &Notepad, MenuOptionOpenGTASettingsNotepad
