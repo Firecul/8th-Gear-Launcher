@@ -12,7 +12,7 @@ SetWorkingDir, %A_ScriptDir%
 ;@Ahk2Exe-AddResource icons\8G_grey_logo.ico, 207  ; Replaces 'H on red'
 ;@Ahk2Exe-AddResource icons\8G_grey_logo.ico, 208  ; Replaces 'S on red'
 ;@Ahk2Exe-SetName 8th Gear Launcher
-;@Ahk2Exe-SetVersion 1.3.2
+;@Ahk2Exe-SetVersion 1.4
 ;@Ahk2Exe-SetCopyright Firecul666@gmail.com
 ;@Ahk2Exe-SetDescription https://github.com/Firecul/8th-Gear-Launcher
 ;@Ahk2Exe-SetLanguage 0x0809
@@ -25,7 +25,7 @@ FileCreateDir, 8thGearLauncher ;Creation stuff
 	Fileinstall, ServerList.ini, 8thGearLauncher/ServerList.ini, 0
 	Menu, Tray, Icon, % "HICON:*" . Create_8G_logo_ico()
 
-LauncherVersion = v1.3.2
+LauncherVersion = v1.4
 
 vFAQ =
 	(
@@ -153,11 +153,11 @@ BetterDownloadServerList:
 			}
 			If DownloadedList Contains [] ;No Servers Online
 			{
-				MsgBox 16,, % "No servers online."
+				MsgBox 0x30,, % "No servers online.", 2
 				Return
 			}
 			Else{
-				MsgBox 16,, % "Website error detected, falling back server list."
+				MsgBox 0x30,, % "Website error detected!`n`nFalling back server list to back up.", 2
 				IniRead, ServerNames, 8thGearLauncher/ServerList.ini
 				Return
 			}
@@ -166,7 +166,7 @@ BetterDownloadServerList:
 		If (ErrorLevel = 1)
 		{ ;Download unsuccessful
 			If FileExist("8thGearLauncher/ServerList.ini"){
-				MsgBox 16,, % "Possible error detected,`nfalling back server list."
+				MsgBox 0x30,, % "Possible error detected!`n`nFalling back server list to back up.", 2
 				IniRead, ServerNames, 8thGearLauncher/ServerList.ini
 				}
 			Return
@@ -191,7 +191,7 @@ UpdateServerList: ;Updates the list of servers from the ini file
 FiveMExist: ;Stuff to run at start up
 	RegRead, FiveMPath, HKEY_CURRENT_USER\Software\CitizenFX\FiveM, Last Run Location
 	If (FiveMPath = ""){
-			MsgBox, FiveM.exe cannot be found.`nPlease locate it.
+			MsgBox 	0x30,, FiveM.exe cannot be found.`nPlease locate it.
 			GoSub, LookForFiveM
 			Menu, FileMenu, Enable, &Locate FiveM.exe
 		}
@@ -206,7 +206,7 @@ LookForFiveM: ;Opens dialogue box to allow selecting FiveM.exe location
 	Gui +OwnDialogs
 	FileSelectFile, FiveMExeFullPath, 3, , Locate FiveM.exe, FiveM (FiveM.exe)
 	If (FiveMExeFullPath = ""){
-			MsgBox, The user didn't select anything.
+			MsgBox 0x30,, The user didn't select anything.
 			LV_Delete()
 			Menu, FileMenu, Enable, &Locate FiveM.exe
 	}
@@ -223,9 +223,7 @@ PingAll:
 	Loop, %ServerArray0%
 	{
 		If (ServerArray%A_Index% = "8th Gear Racing EU 2"){
-			;MsgBox 02:ServerArray%A_Index%
 			IniRead, ServerIP, 8thGearLauncher/ServerList.ini, % ServerArray%A_Index%, IP
-			;MsgBox 03:%ServerIP%
 			Ping(ServerArray%A_Index%, ServerIP, Create_EU_ico(), 2) ;Pings EU 2
 			Continue
 		}
@@ -251,7 +249,9 @@ Ping(ServerName, PingIP, Image, Section)
 		If (PacketLossNumber.1 > 0) ;If there is packet loss
 		{
 			RegExMatch(Contents, "O)(.*\)d{1,3}.\d{1,3}.\d{1,3}.\d{1,3}:[^ ]", PacketLossMessage) ;get ping statistics message
-			MsgBox, 0x40, % PacketLossMessage.1 ServerName, % PacketLossGroup.1 "`n`nPlease check " LogFile " for details."
+			MsgBox, 0x44, % PacketLossMessage.1 ServerName, % PacketLossGroup.1 "`n`nPlease check " LogFile " for details.`n`nWould you like to open this now?"
+			IfMsgBox Yes
+					Run C:\Windows\Notepad.exe %A_ScriptDir%\%LogFile%,, UseErrorLevel
 
 			If (MatchGroup.1) ;If there is still an average ping
 				{
@@ -422,6 +422,7 @@ F5::
 OpenLogsWindow: ;Opens the Log backup management window
 	Gui +OwnDialogs
 	GoSub, LogsWindowGuiEscape
+	MakeMessageWindow("Scanning for logs, Please Wait.")
 	Sleep 50
 	Gui, LogsWindow: +Resize +ToolWindow ;LogBackupManager Window
 	Gui, LogsWindow: font, s10 Norm
@@ -429,10 +430,6 @@ OpenLogsWindow: ;Opens the Log backup management window
 	Gui, LogsWindow: Add, ListView, xp+10 yp+20 r10 w465 AltSubmit Grid -Multi gMyListView vMyListView, Name|Size (KB)|Modified|SortingDate
 	IfExist, %FiveMLogsPath%
 		{
-			Gui, MessageWindow:+ToolWindow
-			Gui, MessageWindow: Font, s11 Norm
-			Gui, MessageWindow: Add, Text,, Scanning for logs, Please Wait.
-			Gui, MessageWindow: Show
 			Gui, LogsWindow:Default
 			LV_Delete()
 			Loop, %FiveMLogsPath%*.log
@@ -448,14 +445,16 @@ OpenLogsWindow: ;Opens the Log backup management window
 			}
 			Gui, MessageWindow: Destroy
 			Gui, LogsWindow: Show, AutoSize Center, FiveM Logs
+			Return
 		}
 	IfNotExist, %FiveMLogsPath%
-		MsgBox, No logs found.
+		MsgBox 0x30,, No logs found.
 	Return
 
 OpenBackupWindow: ;Opens the Log backup management window
 	Gui +OwnDialogs
 	GoSub, BackupWindowGuiEscape
+	MakeMessageWindow("Scanning for backed up logs`n`nThis may take some time if you have a lot of logs`,`nPlease Wait.")
 	Sleep 50
 	Gui, BackupWindow: +Resize +ToolWindow ;LogBackupManager Window
 	Gui, BackupWindow: font, s10 Norm
@@ -463,10 +462,6 @@ OpenBackupWindow: ;Opens the Log backup management window
 	Gui, BackupWindow: Add, ListView, xp+10 yp+20 r10 w465 AltSubmit Grid -Multi gMyNewerListView vMyNewerListView, Name|Size (KB)|Modified|SortingDate
 	IfExist, %FiveMBackupLogsPath%
 		{
-			Gui, MessageWindow:+ToolWindow
-			Gui, MessageWindow: Font, s11 Norm
-			Gui, MessageWindow: Add, Text,, Scanning for backed up logs, Please Wait.
-			Gui, MessageWindow: Show
 			Gui, BackupWindow:Default
 			LV_Delete()
 			Loop, %FiveMBackupLogsPath%*.log
@@ -484,8 +479,20 @@ OpenBackupWindow: ;Opens the Log backup management window
 			Gui, BackupWindow: Show, AutoSize Center, Log Backups
 		}
 	IfNotExist, %FiveMBackupLogsPath%
-		MsgBox, No logs are currently backed up.
+		{
+			MsgBox 0x40,, No logs are currently backed up.`n`nWould you like to back them up now?
+			IfMsgBox Yes
+				GoSub, MenuOptionBackupLogs
+		}
 	Return
+
+MakeMessageWindow(Text)
+	{
+		Gui, MessageWindow: +AlwaysOnTop +Disabled -SysMenu +Owner
+		Gui, MessageWindow: Font, s11 Norm
+		Gui, MessageWindow: Add, Text,, % Text
+		Gui, MessageWindow: Show, NoActivate, Loading...
+	}
 
 SaveLog:
 	FileSelectFile, SavedLogName, S18, %SelectedLog%, Where to save the Log?, Log Files (*.log)
@@ -505,17 +512,17 @@ BackupCache: ;Backs up cache priv folder
 	Gui +OwnDialogs
 	IfNotExist, %FiveMBackupCachePath%
 	{
-		MsgBox, The target folder does not exist. Creating it.
+		MsgBox 0x40,, The target folder does not exist.`n`nCreating it., 2
 		FileCreateDir, %FiveMBackupCachePath%
 	}
 	IfExist, %FiveMBackupCachePath%
 	{
-		MsgBox, The target folder exists. Copying files.
+		MsgBox 0x40,, The target folder exists.`n`nCopying files.
 		FileCopyDir, %FiveMCachePath%db\, %FiveMBackupCachePath%db\, 1
 		FileCopy,  %FiveMCachePath%priv\*.*, %FiveMBackupCachePath%priv\*.*
 		FileCopyDir, %FiveMCachePath%priv\db\, %FiveMBackupCachePath%priv\db\, 1
 		FileCopyDir, %FiveMCachePath%priv\unconfirmed\, %FiveMBackupCachePath%priv\unconfirmed\ , 1
-		MsgBox, Cache Backed Up
+		MsgBox 0x40,, Cache Backed Up, 2
 	}
 	Return
 
@@ -529,7 +536,7 @@ RestoreCache: ;Restores cache from backups
 	FileCopy, %FiveMBackupCachePath%priv\*.*, %FiveMCachePath%priv\*.*
 	FileCopyDir, %FiveMBackupCachePath%priv\db\, %FiveMCachePath%priv\db\, 1
 	FileCopyDir, %FiveMBackupCachePath%priv\unconfirmed\, %FiveMCachePath%priv\unconfirmed\ , 1
-	MsgBox, Cache Restored
+	MsgBox 0x40,, Cache Restored, 2
 	Return
 
 BackupWindowGuiSize: ;Makes BackupWindow resize correctly
@@ -585,12 +592,8 @@ ParseOldLog: ;Old-Style log parsing
 				}
 		}
 	Guicontrol, LogViewerWindow: text, LogContents, %TrimmedLinea%
-	Gui, MessageWindow:+ToolWindow
-	Gui, MessageWindow: Font, s12 Norm
-	Gui, MessageWindow: Add, Text,, Old-Style log suspected.
-	Gui, MessageWindow: Show
-	Sleep, 2000
-	Gui, MessageWindow: Destroy
+
+	MsgBox, 0x40, Log Format, Old-Style log suspected, 2
 	Return
 
 SlowOpen: ;Opens the log ignoring any found null characters that normally cause issues
@@ -649,21 +652,21 @@ MenuOptionBackupLogs: ;Backs up logs to the backup folder for safe keeping
 	IfNotExist, %FiveMBackupLogsPath%
 		FileCreateDir, %FiveMBackupLogsPath%
 	FileCopy, %FiveMLogsPath%*.log, %FiveMBackupLogsPath%*.*, 1
-	MsgBox, Logs Backed Up
+	MsgBox, 0x40,, Logs Backed Up, 2
 	Return
 
 opendefault: ;Opens the selected log with the users default editor for .log files
 	Gui +OwnDialogs
 	Run %SelectedLog%,, UseErrorLevel
 	If ErrorLevel
-		MsgBox Could not open %SelectedLog%
+		MsgBox, 0x30,, Could not open %SelectedLog%
 	Return
 
 opennotepad: ;Opens the selected log with Notepad
 	Gui +OwnDialogs
 	Run C:\Windows\Notepad.exe %SelectedLog%,, UseErrorLevel
 	If ErrorLevel
-		MsgBox Could not open %SelectedLog%
+		MsgBox, 0x30,, Could not open %SelectedLog%
 	Return
 
 MenuOption8GDiscord: ;Opens 8G Main discord channel
@@ -684,7 +687,7 @@ MenuOptionArbitraryLog:
 	Gui +OwnDialogs
 	FileSelectFile, SelectedLog, 3, , Open a FiveM Log, Log (*.log*)
 	If (SelectedLog = ""){
-			MsgBox, The user didn't select anything.
+			MsgBox 0x40,, The user didn't select anything., 2
 	}
 	else{
 		GoSub, OpenLogViewer
@@ -703,21 +706,21 @@ MenuOptionFAQ: ;Opens FAQ Window
 MenuOptionOpenGTASettingsDefault:
 	Run %A_MyDocuments%\Rockstar Games\GTA V\settings.xml,, UseErrorLevel
 	If ErrorLevel{
-		MsgBox Could not open %SelectedLog%
+		MsgBox 0x30,, Could not open %A_MyDocuments%\Rockstar Games\GTA V\settings.xml
 	}
 	Return
 
 MenuOptionOpenGTASettingsFolder:
 	Run %A_MyDocuments%\Rockstar Games\GTA V,, UseErrorLevel
 	If ErrorLevel{
-		MsgBox, Could not open %A_MyDocuments%
+		MsgBox 0x30,, %A_MyDocuments%\Rockstar Games\GTA V
 	}
 	Return
 
 MenuOptionOpenGTASettingsNotepad:
 	Run C:\Windows\Notepad.exe %A_MyDocuments%\Rockstar Games\GTA V\settings.xml,, UseErrorLevel
 	If ErrorLevel{
-		MsgBox Could not open %SelectedLog%
+		MsgBox 0x30,, Could not open %A_MyDocuments%\Rockstar Games\GTA V\settings.xml
 	}
 	Return
 
