@@ -343,12 +343,20 @@ MyListView: ;Gets double-clicked file from main gui log listview
 		SelectedLog := FiveMLogsPath . FileName
 		GoSub, OpenLogViewer
 		}
-	If ( A_GuiEvent = "ColClick" And A_EventInfo = 3 )
+	If ( A_GuiEvent = "ColClick" And A_EventInfo = 2 )
 		{
 		If Sort
-		LV_ModifyCol(4, "Sort")
+		LV_ModifyCol(3, "Sort")
 		else
-		LV_ModifyCol(4, "SortDesc")
+		LV_ModifyCol(3, "SortDesc")
+		Sort := not Sort
+		}
+	If ( A_GuiEvent = "ColClick" And A_EventInfo = 4 )
+		{
+		If Sort
+		LV_ModifyCol(5, "Sort")
+		else
+		LV_ModifyCol(5, "SortDesc")
 		Sort := not Sort
 		}
 	Return
@@ -361,12 +369,20 @@ MyNewerListView: ;Gets double-clicked file from backedup log listview
 		SelectedLog := FiveMBackupLogsPath . FileName
 		GoSub, OpenLogViewer
 		}
-	If ( A_GuiEvent = "ColClick" And A_EventInfo = 3 )
+	If ( A_GuiEvent = "ColClick" And A_EventInfo = 2 )
 		{
 		If Sort
-		LV_ModifyCol(4, "Sort")
+		LV_ModifyCol(3, "Sort")
 		else
-		LV_ModifyCol(4, "SortDesc")
+		LV_ModifyCol(3, "SortDesc")
+		Sort := not Sort
+		}
+	If ( A_GuiEvent = "ColClick" And A_EventInfo = 4 )
+		{
+		If Sort
+		LV_ModifyCol(5, "Sort")
+		else
+		LV_ModifyCol(5, "SortDesc")
 		Sort := not Sort
 		}
 	Return
@@ -427,31 +443,33 @@ OpenLogsWindow: ;Opens the Log backup management window
 	Global MyProgress
 	Gui +OwnDialogs
 	GoSub, LogsWindowGuiEscape
-	MakeMessageWindow("Scanning for logs, Please Wait.", FiveMLogsPath)
-	Sleep 50
-	Gui, LogsWindow: -Resize +ToolWindow ;LogBackupManager Window
+	count := MakeMessageWindow("Scanning for logs, Please Wait.", FiveMLogsPath)
+	Gui, LogsWindow: -Resize ;LogBackupManager Window
 	Gui, LogsWindow: font, s10 Norm
 	Gui, LogsWindow: Add, groupbox, w485 h260 vGB2, Logs:
-	Gui, LogsWindow: Add, ListView, xp+10 yp+20 r10 w465 AltSubmit Grid -Multi gMyListView vMyListView, Name|Size (KB)|Modified|SortingDate
+	Gui, LogsWindow: Add, ListView, xp+10 yp+20 r10 w465 AltSubmit Grid -Multi gMyListView vMyListView Count%count%, Name|Size (KB)|SortingSize|Modified|SortingDate
 	IfExist, %FiveMLogsPath%
 		{
+			Gui, LogsWindow: Show, AutoSize Center, FiveM Logs
+			GuiControl, LogsWindow: -Redraw, MyListView
 			Gui, LogsWindow:Default
 			LV_Delete()
 			Loop, %FiveMLogsPath%*.log
 			{
 				FileSize := regExReplace(GetNumberFormatEx(A_LoopFileSizeKB), "[,.]?0+$")
 				FormatTime, LogTimeAndDate, %A_LoopFileTimeModified%
-				LV_Add("", A_LoopFileName, FileSize, LogTimeAndDate, A_LoopFileTimeModified, A_LoopFileFullPath)
+				LV_Add("", A_LoopFileName, FileSize, A_LoopFileSizeKB, LogTimeAndDate, A_LoopFileTimeModified, A_LoopFileFullPath)
 				LV_ModifyCol() ;Auto-size each column
 				LV_ModifyCol(1, "AutoHdr Text")
 				LV_ModifyCol(2, "AutoHdr Integer")
-				LV_ModifyCol(3, "Text NoSort")
-				LV_ModifyCol(4, "AutoHdr Digit SortDesc 0")
+				LV_ModifyCol(3, "AutoHdr Integer 0")
+				LV_ModifyCol(4, "Text NoSort")
+				LV_ModifyCol(5, "AutoHdr Digit SortDesc 0")
 
 				GuiControl, MessageWindow: , MyProgress, %A_Index%
 			}
+			GuiControl, LogsWindow: +Redraw, MyListView
 			Gui, MessageWindow: Destroy
-			Gui, LogsWindow: Show, AutoSize Center, FiveM Logs
 			Return
 		}
 	IfNotExist, %FiveMLogsPath%
@@ -462,31 +480,35 @@ OpenBackupWindow: ;Opens the Log backup management window
 	Global MyProgress
 	Gui +OwnDialogs
 	GoSub, BackupWindowGuiEscape
-	MakeMessageWindow("Scanning for backed up logs`n`nThis may take some time if you have a lot of logs`,`nPlease Wait.", FiveMBackupLogsPath)
-	Sleep 50
-	Gui, BackupWindow: -Resize +ToolWindow ;LogBackupManager Window
+	count := MakeMessageWindow("Scanning for backed up logs`n`nThis may take some time if you have a lot of logs`,`nPlease Wait.", FiveMBackupLogsPath)
+
+	Gui, BackupWindow: -Resize ;LogBackupManager Window
 	Gui, BackupWindow: font, s10 Norm
 	Gui, BackupWindow: Add, groupbox, w485 h260 vGB2, Backed-up Logs:
-	Gui, BackupWindow: Add, ListView, xp+10 yp+20 r10 w465 AltSubmit Grid -Multi gMyNewerListView vMyNewerListView, Name|Size (KB)|Modified|SortingDate
+	Gui, BackupWindow: Add, ListView, xp+10 yp+20 r10 w465 AltSubmit Grid -Multi gMyNewerListView vMyNewerListView Count%count%, Name|Size (KB)|SortingSize|Modified|SortingDate
 	IfExist, %FiveMBackupLogsPath%
 		{
+			Gui, BackupWindow: Show, AutoSize Center, Log Backups
+			GuiControl, BackupWindow: -Redraw, MyNewerListView
 			Gui, BackupWindow:Default
 			LV_Delete()
 			Loop, %FiveMBackupLogsPath%*.log
 			{
 				FileSize := regExReplace(GetNumberFormatEx(A_LoopFileSizeKB), "[,.]?0+$")
 				FormatTime, LogTimeAndDate, %A_LoopFileTimeModified%
-				LV_Add("", A_LoopFileName, FileSize, LogTimeAndDate, A_LoopFileTimeModified, A_LoopFileFullPath)
+				LV_Add("", A_LoopFileName, FileSize, A_LoopFileSizeKB, LogTimeAndDate, A_LoopFileTimeModified, A_LoopFileFullPath)
 				LV_ModifyCol() ;Auto-size each column
 				LV_ModifyCol(1, "AutoHdr Text")
 				LV_ModifyCol(2, "AutoHdr Integer")
-				LV_ModifyCol(3, "Text NoSort")
-				LV_ModifyCol(4, "AutoHdr Digit SortDesc 0")
+				LV_ModifyCol(3, "AutoHdr Integer 0")
+				LV_ModifyCol(4, "Text NoSort")
+				LV_ModifyCol(5, "AutoHdr Digit SortDesc 0")
 
 				GuiControl, MessageWindow: , MyProgress, %A_Index%
 			}
+
+			GuiControl, BackupWindow: +Redraw, MyNewerListView
 			Gui, MessageWindow: Destroy
-			Gui, BackupWindow: Show, AutoSize Center, Log Backups
 		}
 	IfNotExist, %FiveMBackupLogsPath%
 		{
@@ -508,6 +530,7 @@ MakeMessageWindow(Text,Dir)
 		Gui, MessageWindow: Add, Text,, % Text
 		Gui, MessageWindow: Add, Progress, w420 vMyProgress Range0-%count% -Smooth
 		Gui, MessageWindow: Show, NoActivate, Loading...
+		Return count
 	}
 
 SaveLog:
