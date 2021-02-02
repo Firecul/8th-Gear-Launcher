@@ -31,7 +31,7 @@ vFAQ =
 	(
 	READ THE WHOLE THING.
 	)
-
+MyProgress = ""
 Global ServerNames
 
 	GoSub, GenerateMainUI
@@ -420,11 +420,12 @@ F5::
 	Return
 
 OpenLogsWindow: ;Opens the Log backup management window
+	Global MyProgress
 	Gui +OwnDialogs
 	GoSub, LogsWindowGuiEscape
-	MakeMessageWindow("Scanning for logs, Please Wait.")
+	MakeMessageWindow("Scanning for logs, Please Wait.", FiveMLogsPath)
 	Sleep 50
-	Gui, LogsWindow: +Resize +ToolWindow ;LogBackupManager Window
+	Gui, LogsWindow: -Resize +ToolWindow ;LogBackupManager Window
 	Gui, LogsWindow: font, s10 Norm
 	Gui, LogsWindow: Add, groupbox, w485 h260 vGB2, Logs:
 	Gui, LogsWindow: Add, ListView, xp+10 yp+20 r10 w465 AltSubmit Grid -Multi gMyListView vMyListView, Name|Size (KB)|Modified|SortingDate
@@ -442,6 +443,8 @@ OpenLogsWindow: ;Opens the Log backup management window
 				LV_ModifyCol(2, "AutoHdr Integer")
 				LV_ModifyCol(3, "Text NoSort")
 				LV_ModifyCol(4, "AutoHdr Digit SortDesc 0")
+
+				GuiControl, MessageWindow: , MyProgress, %A_Index%
 			}
 			Gui, MessageWindow: Destroy
 			Gui, LogsWindow: Show, AutoSize Center, FiveM Logs
@@ -452,11 +455,12 @@ OpenLogsWindow: ;Opens the Log backup management window
 	Return
 
 OpenBackupWindow: ;Opens the Log backup management window
+	Global MyProgress
 	Gui +OwnDialogs
 	GoSub, BackupWindowGuiEscape
-	MakeMessageWindow("Scanning for backed up logs`n`nThis may take some time if you have a lot of logs`,`nPlease Wait.")
+	MakeMessageWindow("Scanning for backed up logs`n`nThis may take some time if you have a lot of logs`,`nPlease Wait.", FiveMBackupLogsPath)
 	Sleep 50
-	Gui, BackupWindow: +Resize +ToolWindow ;LogBackupManager Window
+	Gui, BackupWindow: -Resize +ToolWindow ;LogBackupManager Window
 	Gui, BackupWindow: font, s10 Norm
 	Gui, BackupWindow: Add, groupbox, w485 h260 vGB2, Backed-up Logs:
 	Gui, BackupWindow: Add, ListView, xp+10 yp+20 r10 w465 AltSubmit Grid -Multi gMyNewerListView vMyNewerListView, Name|Size (KB)|Modified|SortingDate
@@ -474,6 +478,8 @@ OpenBackupWindow: ;Opens the Log backup management window
 				LV_ModifyCol(2, "AutoHdr Integer")
 				LV_ModifyCol(3, "Text NoSort")
 				LV_ModifyCol(4, "AutoHdr Digit SortDesc 0")
+
+				GuiControl, MessageWindow: , MyProgress, %A_Index%
 			}
 			Gui, MessageWindow: Destroy
 			Gui, BackupWindow: Show, AutoSize Center, Log Backups
@@ -486,11 +492,17 @@ OpenBackupWindow: ;Opens the Log backup management window
 		}
 	Return
 
-MakeMessageWindow(Text)
+MakeMessageWindow(Text,Dir)
 	{
+		count = 0
+		Loop, Files, %Dir%\*.log
+			count++
+
+		Global MyProgress
 		Gui, MessageWindow: +AlwaysOnTop +Disabled -SysMenu +Owner
 		Gui, MessageWindow: Font, s11 Norm
 		Gui, MessageWindow: Add, Text,, % Text
+		Gui, MessageWindow: Add, Progress, w420 vMyProgress Range0-%count% -Smooth
 		Gui, MessageWindow: Show, NoActivate, Loading...
 	}
 
