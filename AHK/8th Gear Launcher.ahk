@@ -99,7 +99,7 @@ GenerateMainUI:
 
 		Gui, Menu, MenuBar
 
-		Menu, submenu, Add, Log Viewer, OpenLogViewer ;Context Menu
+		Menu, submenu, Add, Log Viewer, openviewer ;Context Menu
 		Menu, submenu, Default, Log Viewer
 		Menu, submenu, Add, Default Editor, opendefault
 		Menu, submenu, Add, Notepad, opennotepad
@@ -389,7 +389,9 @@ MyNewListView: ;Gets double-clicked file from FolderExplorerWindow listview
 		}
 	Return
 
-FolderExplorerWindowGuiContextMenu: ;MainUI context Menu control
+FolderExplorerWindowGuiContextMenu: ;FolderExplorerWindow
+	Global FileName
+	Global FilePath
 	MouseGetPos, , , , control
 	If (A_GuiControl = "MyNewListView" && control != "SysHeader321") {
 			LV_GetText(FileName, A_EventInfo, 1)
@@ -411,7 +413,7 @@ OpenLogViewer(FileName, FilePath) ;Opens the selected log with the Log Viewer
 	{
 
 		GoSub, LogViewerWindowGuiEscape
-		Static LogContents
+		Global LogContents
 		Static Parse
 		Static SlowOpen
 		Static SaveLog
@@ -495,6 +497,7 @@ RestoreCache: ;Restores cache from backups
 	Return
 
 ParseLog: ;Determines the type of log(old-style vs new-style)
+	Global LogContents
 	Global FilePath
 	StringSplit, LogLines, LogContents, `r, `n
 	logline :=
@@ -504,19 +507,17 @@ ParseLog: ;Determines the type of log(old-style vs new-style)
 	LogDoesNotContain := "DumpServer is active and waiting.,fix the exporter,f7c13cb204bc9aecf40b,handling entries from dlc,ignore-certificate-errors,is not a platform image,It leads to vertex,NurburgringNordschleife/_manifest.ymf,Physics validation failed,script.js:214,script.js:458,script.js:461,terrorbyte,warmenu,WarningScreen INIT_CORE, 1 handling entries"
 
 	Needle := "CitizenFX_log_"
+	;IfInString, FilePath, %Needle%
 
-	IfInString, FilePath, %Needle%
-	{
+	If InStr(FilePath, Needle)
 		GoSub, ParseNewLog ;New-Style log
-		Return
-	}
-	else{
+	Else
 		GoSub, ParseOldLog ;Old-Style log
-		Return
-	}
+
 	Return
 
 ParseNewLog: ;New-Style log parsing
+	Global LogContents
 	Loop, %LogLines0%
 		{
 			logline := LogLines%a_index%
@@ -531,6 +532,7 @@ ParseNewLog: ;New-Style log parsing
 	Return
 
 ParseOldLog: ;Old-Style log parsing
+	Global LogContents
 	Loop, %LogLines0%
 		{
 			logline := LogLines%a_index%
@@ -547,6 +549,7 @@ ParseOldLog: ;Old-Style log parsing
 	Return
 
 SlowOpen: ;Opens the log ignoring any found null characters that normally cause issues
+	Global LogContents
 	Global FilePath
 	Guicontrol, LogViewerWindow: text, LogContents, % Nonulls(FilePath)
 	Return
@@ -604,6 +607,12 @@ MenuOptionBackupLogs: ;Backs up logs to the backup folder for safe keeping
 		FileCreateDir, %FiveMBackupLogsPath%
 	FileCopy, %FiveMLogsPath%*.log, %FiveMBackupLogsPath%*.*, 1
 	MsgBox, 0x40,, Logs Backed Up, 2
+	Return
+
+openviewer:
+	Global FileName
+	Global FilePath
+	OpenLogViewer(FileName, FilePath)
 	Return
 
 opendefault: ;Opens the selected log with the users default editor for .log files
