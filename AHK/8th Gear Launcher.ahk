@@ -72,15 +72,15 @@ GenerateMainUI:
 		Menu, CacheMenu, Add, &Restore Cache from Back-ups, RestoreCache
 
 
-
-		Menu, LogMenu, Add, &Manage Logs `tCtrl+L, OpenLogManagementWindow
+		Menu, LogMenu, Add, Open &Current Logs `tCtrl+L, OpenLogManager
 		Menu, LogMenu, Add, &Open Log Folder, OpenLogFolder
 		Menu, LogMenu, Add,
+		Menu, LogMenu, Add, Open Backed Up Logs, OpenBackedupLogManager
 		Menu, LogMenu, Add, &Back-up Logs, MenuOptionBackupLogs
 		Menu, LogMenu, Add, Open Back-up Folder, OpenLogBackupFolder
 		Menu, LogMenu, Add,
 		Menu, LogMenu, Add, Open &Arbitrary log... `tCtrl+O, MenuOptionArbitraryLog
-		Menu, LogMenu, Default, &Manage Logs `tCtrl+L
+		Menu, LogMenu, Default, Open &Current Logs `tCtrl+L
 
 		Menu, GTASettingsMenu, Add, Open in &Default editor, MenuOptionOpenGTASettingsDefault
 		Menu, GTASettingsMenu, Add, Open in &Notepad, MenuOptionOpenGTASettingsNotepad
@@ -111,7 +111,7 @@ GenerateMainUI:
 
 		Menu, Tray, NoStandard
 		Menu, Tray, Add, Open Launcher, ReOpenLauncher
-		Menu, Tray, Add, Manage Logs, OpenLogManagementWindow
+		Menu, Tray, Add, Manage Logs, OpenLogManager
 		Menu, Tray, Add,
 		Menu, Tray, Add, Open Cache Folder, OpenCacheFolder
 		Menu, Tray, Add,
@@ -290,14 +290,16 @@ UpdateFiles: ;Updates the log list for the tools tab and populates related varia
 	Return
 
 GetFileProperties:
-	run, Properties "%SelectedLog%"
+	Global FilePath
+	run, Properties "%FilePath%"
 	Return
 
 DeleteLog:
-	MsgBox, 0x40124, Delete Log?, Are you sure you want to delete this file? `n%SelectedLog%
+	Global FilePath
+	MsgBox, 0x40124, Delete Log?, Are you sure you want to delete this file? `n%FilePath%
 	IfMsgBox, Yes
 		{
-			FileDelete, %SelectedLog%
+			FileDelete, %FilePath%
 			Return
 		}
 	IfMsgBox, No
@@ -319,117 +321,23 @@ Localhost: ;Launches FiveM and connects to Localhost
 	Run, cmd.exe /C %FiveMExeFullPath% +connect 127.0.0.1,,hide
 	Return
 
-GetFileSelected(LogsPath)
-	{
-	RowNumber := 0 ;start at the top
-	Loop
-		{
-			RowNumber := LV_GetNext(RowNumber)
-			If not RowNumber ;If no more selected rows
-			break
-			LV_GetText(Text, RowNumber)
-			SelectedLog := LogsPath . Text
-		}
-	Return SelectedLog
-	}
-
-LogManagementWindowGuiContextMenu: ;MainUI context Menu control
-	MouseGetPos, , , , control
-	If (A_GuiControl = "MyListView" && control != "SysHeader321") {
-		SelectedLog := GetFileSelected(FiveMLogsPath)
-		Menu, ContextMenu, Show, %A_GuiX%, %A_GuiY%
-	}
+OpenLogManager:
+	OpenFolderExplorerWindow(FiveMLogsPath, "FiveM Logs")
 	Return
 
-LogViewerWindowGuiSize: ;Makes LogViewer resize correctly
-	Anchor("GB","w")
-	Anchor("SelLog","w")
-	Anchor("LogContents","wh")
-	Anchor("Parse","y")
-	Anchor("SlowOpen","y")
-	Anchor("SaveLog","y")
+OpenBackedupLogManager:
+	OpenFolderExplorerWindow(FiveMBackupLogsPath, "Backed Up Logs")
 	Return
 
-OpenLogViewer: ;Opens the selected log with the Log Viewer
-	GoSub, LogViewerWindowGuiEscape
-	Sleep 50
-	Gui, LogViewerWindow:+ToolWindow +Resize ;LogViewer Window
-	Gui, LogViewerWindow: font, s10 norm
-	Gui, LogViewerWindow: Add, groupbox, w1000 h50 vGB, Selected log file:
-	Gui, LogViewerWindow: Add, text, xp+10 yp+20 w980 vSelLog, (Error)
-	Gui, LogViewerWindow: font,, Lucida Console
-	Gui, LogViewerWindow: Add, edit, xp-10 yp+39 w1000 r30 ReadOnly t10 vLogContents, (Loading)
-	Gui, LogViewerWindow: font,
-	Gui, LogViewerWindow: font, s10
-	Gui, LogViewerWindow: Add, button, vParse gParseLog, Parse
-	Gui, LogViewerWindow: Add, button, vSlowOpen gSlowOpen, Thorough Open (Slow)
-	Gui, LogViewerWindow: Add, button, vSaveLog gSaveLog, Save Log...
-	Gui, LogViewerWindow: show, AutoSize Center, Log Viewer
-	Guicontrol, LogViewerWindow: text, SelLog, %SelectedLog%
-	fileread, LogContents, %SelectedLog%
-	Guicontrol, LogViewerWindow: text, LogContents, %LogContents%
-	Return
+OpenFolderExplorerWindow(Path, Title){
+	Global MyNewListView
+	Gui, FolderExplorerWindow: Default
+	Gui, FolderExplorerWindow: Add, ListView, r9 Grid -Multi w450 gMyNewListView vMyNewListView, Name|Size (KB)|SortingSize|Modified|SortingDate|Path
+	Gui, FolderExplorerWindow: Add, StatusBar
 
-F5::
-	SetTitleMatchMode, 3
-	IfWinActive, Log Viewer
-	{
-		fileread, LogContents, %SelectedLog%
-		Guicontrol, LogViewerWindow: text, LogContents, %LogContents%
-	}
-	Return
+	SB_SetParts(472/7, 472/7)
 
-OpenLogManagementWindow: ; LogManagementWindow:
-	Gui, LogManagementWindow:Default
-
-	TreeRoot := FiveMPath
-	TreeViewWidth := 150
-	ListViewWidth := 600 - TreeViewWidth
-
-	Gui LogManagementWindow: +Resize
-	ImageListID := IL_Create(5)
-	Loop 5
-		IL_Add(ImageListID, "shell32.dll", A_Index)
-	Gui, LogManagementWindow: Add, TreeView, vMyTreeView r9 w%TreeViewWidth% gMyTreeView ImageList%ImageListID%
-	Gui, LogManagementWindow: Add, ListView, x+10 r9 Grid -Multi w%ListViewWidth% gMyListView vMyListView, Name|Size (KB)|SortingSize|Modified|SortingDate
-
-	Gui, LogManagementWindow: Add, StatusBar
-	SB_SetParts(60, 85)
-
-	AddSubFoldersToTree(TreeRoot)
-
-	Gui, LogManagementWindow: Show,, Log Manager
-	Return
-
-AddSubFoldersToTree(Folder, ParentItemID = 0)
-	{
-	Loop, Files, %Folder%*logs*.*, DF  ; Retrieve all of Folder's sub-folders.
-	AddSubFoldersToTree(A_LoopFileFullPath, TV_Add(A_LoopFileName, ParentItemID, "Icon4"))
-	}
-
-MyTreeView:
-	Gui, LogManagementWindow:Default
-	if (A_GuiEvent != "S")  ;an event other than "select new tree item".
-		return
-	; Otherwise, populate the ListView with the contents of the selected folder.
-	; First determine the full path of the selected folder:
-	TV_GetText(SelectedItemText, A_EventInfo)
-	ParentID := A_EventInfo
-	Loop  ; Build the full path to the selected folder.
-		{
-			ParentID := TV_GetParent(ParentID)
-			if not ParentID  ; No more ancestors.
-				break
-			TV_GetText(ParentText, ParentID)
-			SelectedItemText := ParentText SelectedItemText
-		}
-	SelectedFullPath := TreeRoot SelectedItemText
-
-	LV_Delete()
-	GuiControl, LogManagementWindow: -Redraw, MyListView
-	FileCount := 0
-	TotalSize := 0
-	Loop %SelectedFullPath%\*.*
+	Loop %Path%*.*
 		{
 			FileSize := regExReplace(GetNumberFormatEx(A_LoopFileSizeKB), "[,.]?0+$")
 			FormatTime, LogTimeAndDate, %A_LoopFileTimeModified%
@@ -444,29 +352,24 @@ MyTreeView:
 	LV_ModifyCol(3, "AutoHdr Integer 0")
 	LV_ModifyCol(4, "Text NoSort")
 	LV_ModifyCol(5, "AutoHdr Digit SortDesc 0")
-	GuiControl, LogManagementWindow: +Redraw, MyListView
+	LV_ModifyCol(6, "AutoHdr Text 0")
+	GuiControl, FolderExplorerWindow: +Redraw, MyListView
 
 	; Update the three parts of the status bar to show info about the currently selected folder:
 	SB_SetText(FileCount . " files", 1)
 	SB_SetText(Round(TotalSize / (1024*1024), 1) . " MB", 2)
-	SB_SetText(SelectedFullPath, 3)
-	return
+	SB_SetText(Path, 3)
 
-LogManagementWindowGuiSize:  ; Expand/shrink the ListView and TreeView in response to user's resizing of window.
-	if (A_EventInfo = 1)  ; The window has been minimized. No action needed.
-		return
-	; Otherwise, the window has been resized or maximized. Resize the controls to match.
-	GuiControl, LogManagementWindow: Move, MyTreeView, % "H" . (A_GuiHeight - 30)  ; -30 for StatusBar and margins.
-	GuiControl, LogManagementWindow: Move, MyListView, % "H" . (A_GuiHeight - 30) . " W" . (A_GuiWidth - TreeViewWidth - 30)
-	return
+	Gui, FolderExplorerWindow: Show, AutoSize, %Title%
+	Return
+}
 
-MyListView: ;Gets double-clicked file from LogManagementWindow listview
+MyNewListView: ;Gets double-clicked file from FolderExplorerWindow listview
 	If (A_GuiEvent = "DoubleClick")
 		{
-		SelectedLog :=
-		LV_GetText(FileName, A_EventInfo, 1)
-		SelectedLog := FiveMLogsPath . FileName
-		GoSub, OpenLogViewer
+			LV_GetText(FileName, A_EventInfo, 1)
+			LV_GetText(FilePath, A_EventInfo, 6)
+			OpenLogViewer(FileName, FilePath)
 		}
 	If ( A_GuiEvent = "ColClick" And A_EventInfo = 2 )
 		{
@@ -486,6 +389,49 @@ MyListView: ;Gets double-clicked file from LogManagementWindow listview
 		}
 	Return
 
+FolderExplorerWindowGuiContextMenu: ;MainUI context Menu control
+	MouseGetPos, , , , control
+	If (A_GuiControl = "MyNewListView" && control != "SysHeader321") {
+			LV_GetText(FileName, A_EventInfo, 1)
+			LV_GetText(FilePath, A_EventInfo, 6)
+		Menu, ContextMenu, Show, %A_GuiX%, %A_GuiY%
+	}
+	Return
+
+; LogViewerWindowGuiSize: ;Makes LogViewer resize correctly
+	; 	Anchor("GB","w")
+	; 	Anchor("SelLog","w")
+	; 	Anchor("LogContents","wh")
+	; 	Anchor("Parse","y")
+	; 	Anchor("SlowOpen","y")
+	; 	Anchor("SaveLog","y")
+	; 	Return
+
+OpenLogViewer(FileName, FilePath) ;Opens the selected log with the Log Viewer
+	{
+
+		GoSub, LogViewerWindowGuiEscape
+		Static LogContents
+		Static Parse
+		Static SlowOpen
+		Static SaveLog
+
+		Sleep 50
+		Gui, LogViewerWindow:+Resize ;LogViewer Window
+		Gui, LogViewerWindow: font, s10 norm
+		Gui, LogViewerWindow: font,, Lucida Console
+		Gui, LogViewerWindow: Add, edit, w1000 r30 ReadOnly t10 vLogContents, (Loading)
+		Gui, LogViewerWindow: font,
+		Gui, LogViewerWindow: font, s10
+		Gui, LogViewerWindow: Add, button, vParse gParseLog, Parse
+		Gui, LogViewerWindow: Add, button, vSlowOpen gSlowOpen, Thorough Open (Slow)
+		Gui, LogViewerWindow: Add, button, vSaveLog gSaveLog, Save Log...
+		Gui, LogViewerWindow: show, AutoSize Center, %FileName%
+		fileread, LogContents, %FilePath%
+		Guicontrol, LogViewerWindow: text, LogContents, %LogContents%
+		Return
+	}
+
 MakeMessageWindow(Text,Dir)
 	{
 		count = 0
@@ -502,13 +448,15 @@ MakeMessageWindow(Text,Dir)
 	}
 
 SaveLog:
-	FileSelectFile, SavedLogName, S18, %SelectedLog%, Where to save the Log?, Log Files (*.log)
+	Global FilePath
+	FileSelectFile, SavedLogName, S18, %FilePath%, Where to save the Log?, Log Files (*.log)
 	FileAppend, %LogContents%, %SavedLogName%,
 	Return
 
 SaveLogCopy:
-	FileSelectFile, NewLog, S18, %SelectedLog%, Where to save the Log?, Log Files (*.log)
-	FileCopy, %SelectedLog%, %NewLog% ;TODO improve, prob using dllcall.
+	Global FilePath
+	FileSelectFile, NewLog, S18, %FilePath%, Where to save the Log?, Log Files (*.log)
+	FileCopy, %FilePath%, %NewLog% ;TODO improve, prob using dllcall.
 	Return
 
 OpenCacheFolder: ;Opens normal cache folder
@@ -546,13 +494,8 @@ RestoreCache: ;Restores cache from backups
 	MsgBox 0x40,, Cache Restored, 2
 	Return
 
-BackupWindowGuiSize: ;Makes BackupWindow resize correctly
-	Anchor("GB2","wh")
-	Anchor("MyNewerListView","wh")
-	Anchor("LogContents","wh")
-	Return
-
 ParseLog: ;Determines the type of log(old-style vs new-style)
+	Global FilePath
 	StringSplit, LogLines, LogContents, `r, `n
 	logline :=
 	TrimmedLinea :=
@@ -562,7 +505,7 @@ ParseLog: ;Determines the type of log(old-style vs new-style)
 
 	Needle := "CitizenFX_log_"
 
-	IfInString, SelectedLog, %Needle%
+	IfInString, FilePath, %Needle%
 	{
 		GoSub, ParseNewLog ;New-Style log
 		Return
@@ -604,7 +547,8 @@ ParseOldLog: ;Old-Style log parsing
 	Return
 
 SlowOpen: ;Opens the log ignoring any found null characters that normally cause issues
-	Guicontrol, LogViewerWindow: text, LogContents, % Nonulls(SelectedLog)
+	Global FilePath
+	Guicontrol, LogViewerWindow: text, LogContents, % Nonulls(FilePath)
 	Return
 
 NoNulls(Filename)
@@ -663,17 +607,19 @@ MenuOptionBackupLogs: ;Backs up logs to the backup folder for safe keeping
 	Return
 
 opendefault: ;Opens the selected log with the users default editor for .log files
+	Global FilePath
 	Gui +OwnDialogs
-	Run %SelectedLog%,, UseErrorLevel
+	Run %FilePath%,, UseErrorLevel
 	If ErrorLevel
-		MsgBox, 0x30,, Could not open %SelectedLog%
+		MsgBox, 0x30,, Could not open %FilePath%
 	Return
 
 opennotepad: ;Opens the selected log with Notepad
+	Global FilePath
 	Gui +OwnDialogs
-	Run C:\Windows\Notepad.exe %SelectedLog%,, UseErrorLevel
+	Run C:\Windows\Notepad.exe %FilePath%,, UseErrorLevel
 	If ErrorLevel
-		MsgBox, 0x30,, Could not open %SelectedLog%
+		MsgBox, 0x30,, Could not open %FilePath%
 	Return
 
 MenuOption8GDiscord: ;Opens 8G Main discord channel
@@ -692,12 +638,12 @@ MenuOptionAbout: ;Opens about window
 
 MenuOptionArbitraryLog:
 	Gui +OwnDialogs
-	FileSelectFile, SelectedLog, 3, , Open a FiveM Log, Log (*.log*)
-	If (SelectedLog = ""){
+	FileSelectFile, FilePath, 3, , Open a FiveM Log, Log (*.log*)
+	If (FilePath = ""){
 			MsgBox 0x40,, The user didn't select anything., 2
 	}
 	else{
-		GoSub, OpenLogViewer
+		OpenLogViewer(FilePath, FilePath)
 	}
 	Return
 
@@ -883,7 +829,7 @@ Create_EU_ico(NewHandle := False) {
 ; # This #Include file was generated by Image2Include.ahk, you must not change it! #
 ; ##################################################################################
 Create_US_ico(NewHandle := False) {
-Static hBitmap := Create_US_ico()
+	Static hBitmap := Create_US_ico()
 	If (NewHandle)
 		hBitmap := 0
 	If (hBitmap)
@@ -928,10 +874,10 @@ FAQWindowGuiEscape: ;FAQ window escape stuff
 	WinActivate, 8th Gear FiveM Launcher
 	Return
 
-LogManagementWindowGuiEscape: ;LogViewer window escape stuff
-	LogManagementWindowGuiClose:
-	Gui LogManagementWindow:Cancel
-	Gui LogManagementWindow:Destroy
+FolderExplorerWindowGuiEscape: ;LogViewer window escape stuff
+	FolderExplorerWindowGuiClose:
+	Gui FolderExplorerWindow:Cancel
+	Gui FolderExplorerWindow:Destroy
 	Return
 
 LogViewerWindowGuiEscape: ;LogViewer window escape stuff
