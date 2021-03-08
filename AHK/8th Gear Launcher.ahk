@@ -125,18 +125,17 @@ GenerateMainUI:
 		Gui, Main: Show,, 8th Gear FiveM Launcher
 
 
-		Menu, FileMenu2, Add, Save To..., SaveLogCopy
-		Menu, FileMenu2, Add,
-		Menu, FileMenu2, Add, E&xit `tEsc, LogViewerWindowGuiEscape
+		Menu, LogViewerFileMenu, Add, Save To... `tCtrl+S, SaveLogCopy
+		Menu, LogViewerFileMenu, Add,
+		Menu, LogViewerFileMenu, Add, E&xit `tEsc, LogViewerWindowGuiEscape
 
-		Menu, ToolsMenu2, Add, &Parse, ParseLog
+		Menu, LogViewerToolsMenu, Add, &Parse `tCtrl+P, ParseLog
+		Menu, LogViewerToolsMenu, Default, &Parse `tCtrl+P
+		Menu, LogViewerToolsMenu, Add,
+		Menu, LogViewerToolsMenu, Add, &Thorough Open (Slow), SlowOpen
 
-		Menu, ToolsMenu2, Default, &Parse
-		Menu, ToolsMenu2, Add,
-		Menu, ToolsMenu2, Add, &Thorough Open (Slow), SlowOpen
-
-		Menu, MenuBar2, Add, &File, :FileMenu2
-		Menu, MenuBar2, Add, &Tools, :ToolsMenu2
+		Menu, LogViewerMenuBar, Add, &File, :LogViewerFileMenu
+		Menu, LogViewerMenuBar, Add, &Tools, :LogViewerToolsMenu
 
 	Return
 
@@ -426,7 +425,7 @@ OpenLogViewer(FileName, FilePath) ;Opens the selected log with the Log Viewer
 
 		Sleep 50
 		Gui, LogViewerWindow:+Resize ;LogViewer Window
-		Gui, LogViewerWindow: Menu, MenuBar2
+		Gui, LogViewerWindow: Menu, LogViewerMenuBar
 		Gui, LogViewerWindow: font, s10 norm
 		Gui, LogViewerWindow: font,, Lucida Console
 		Gui, LogViewerWindow: Add, edit, w1000 r30 ReadOnly t10 vLogContents, (Loading)
