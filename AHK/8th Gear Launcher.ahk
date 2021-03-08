@@ -2,7 +2,6 @@
 #NoEnv
 ;#Warn
 SetBatchLines -1
-#Include Anchor.ahk
 StringCaseSense, On
 SetWorkingDir, %A_ScriptDir%
 
@@ -124,6 +123,21 @@ GenerateMainUI:
 		Menu, MenuBar, Disable, FAQ
 
 		Gui, Main: Show,, 8th Gear FiveM Launcher
+
+
+		Menu, FileMenu2, Add, Save To..., SaveLogCopy
+		Menu, FileMenu2, Add,
+		Menu, FileMenu2, Add, E&xit `tEsc, LogViewerWindowGuiEscape
+
+		Menu, ToolsMenu2, Add, &Parse, ParseLog
+
+		Menu, ToolsMenu2, Default, &Parse
+		Menu, ToolsMenu2, Add,
+		Menu, ToolsMenu2, Add, &Thorough Open (Slow), SlowOpen
+
+		Menu, MenuBar2, Add, &File, :FileMenu2
+		Menu, MenuBar2, Add, &Tools, :ToolsMenu2
+
 	Return
 
 ReOpenLauncher:
@@ -332,7 +346,8 @@ OpenBackedupLogManager:
 OpenFolderExplorerWindow(Path, Title){
 	Global MyNewListView
 	Gui, FolderExplorerWindow: Default
-	Gui, FolderExplorerWindow: Add, ListView, r9 Grid -Multi w450 gMyNewListView vMyNewListView, Name|Size (KB)|SortingSize|Modified|SortingDate|Path
+	Gui, +Resize +Minsize460x120
+	Gui, FolderExplorerWindow: Add, ListView, r9 Grid -Multi w460 gMyNewListView vMyNewListView, Name|Size (KB)|SortingSize|Modified|SortingDate|Path
 	Gui, FolderExplorerWindow: Add, StatusBar
 
 	SB_SetParts(472/7, 472/7)
@@ -400,15 +415,6 @@ FolderExplorerWindowGuiContextMenu: ;FolderExplorerWindow
 	}
 	Return
 
-; LogViewerWindowGuiSize: ;Makes LogViewer resize correctly
-	; 	Anchor("GB","w")
-	; 	Anchor("SelLog","w")
-	; 	Anchor("LogContents","wh")
-	; 	Anchor("Parse","y")
-	; 	Anchor("SlowOpen","y")
-	; 	Anchor("SaveLog","y")
-	; 	Return
-
 OpenLogViewer(FileName, FilePath) ;Opens the selected log with the Log Viewer
 	{
 
@@ -420,19 +426,31 @@ OpenLogViewer(FileName, FilePath) ;Opens the selected log with the Log Viewer
 
 		Sleep 50
 		Gui, LogViewerWindow:+Resize ;LogViewer Window
+		Gui, LogViewerWindow: Menu, MenuBar2
 		Gui, LogViewerWindow: font, s10 norm
 		Gui, LogViewerWindow: font,, Lucida Console
 		Gui, LogViewerWindow: Add, edit, w1000 r30 ReadOnly t10 vLogContents, (Loading)
 		Gui, LogViewerWindow: font,
 		Gui, LogViewerWindow: font, s10
-		Gui, LogViewerWindow: Add, button, vParse gParseLog, Parse
-		Gui, LogViewerWindow: Add, button, vSlowOpen gSlowOpen, Thorough Open (Slow)
-		Gui, LogViewerWindow: Add, button, vSaveLog gSaveLog, Save Log...
 		Gui, LogViewerWindow: show, AutoSize Center, %FileName%
 		fileread, LogContents, %FilePath%
 		Guicontrol, LogViewerWindow: text, LogContents, %LogContents%
 		Return
 	}
+
+FolderExplorerWindowGuiSize:
+  If A_EventInfo = 1  ; The window has been minimized.  No action needed.
+    Return
+  ; Otherwise, the window has been resized or maximized. Resize the controls to match.
+  GuiControl Move, MyNewListView, % "H" . (A_GuiHeight-35) . " W" . (A_GuiWidth-20)
+Return
+
+LogViewerWindowGuiSize:
+  If A_EventInfo = 1  ; The window has been minimized.  No action needed.
+    Return
+  ; Otherwise, the window has been resized or maximized. Resize the controls to match.
+  GuiControl Move, LogContents, % "H" . (A_GuiHeight-20) . " W" . (A_GuiWidth-20)
+Return
 
 MakeMessageWindow(Text,Dir)
 	{
@@ -507,8 +525,6 @@ ParseLog: ;Determines the type of log(old-style vs new-style)
 	LogDoesNotContain := "DumpServer is active and waiting.,fix the exporter,f7c13cb204bc9aecf40b,handling entries from dlc,ignore-certificate-errors,is not a platform image,It leads to vertex,NurburgringNordschleife/_manifest.ymf,Physics validation failed,script.js:214,script.js:458,script.js:461,terrorbyte,warmenu,WarningScreen INIT_CORE, 1 handling entries"
 
 	Needle := "CitizenFX_log_"
-	;IfInString, FilePath, %Needle%
-
 	If InStr(FilePath, Needle)
 		GoSub, ParseNewLog ;New-Style log
 	Else
