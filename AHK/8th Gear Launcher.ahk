@@ -143,6 +143,14 @@ ReOpenLauncher:
 	WinActivate, 8th Gear FiveM Launcher
 	Return
 
+MainGuiDropFiles:
+	LogViewerWindowGuiDropFiles:
+
+	Global FilePath
+	FilePath := A_GuiEvent
+	OpenLogViewer("Dropped File", FilePath)
+	Return
+
 BetterDownloadServerList:
 	DownloadObject := ComObjCreate("WinHttp.WinHttpRequest.5.1")
 	DownloadObject.Open("GET", "https://8thgear.racing/api/serverlist", true) ; Using 'true' allows the script to remain responsive.
@@ -416,7 +424,6 @@ FolderExplorerWindowGuiContextMenu: ;FolderExplorerWindow
 
 OpenLogViewer(FileName, FilePath) ;Opens the selected log with the Log Viewer
 	{
-
 		GoSub, LogViewerWindowGuiEscape
 		Global LogContents
 		Static Parse
@@ -442,14 +449,14 @@ FolderExplorerWindowGuiSize:
     Return
   ; Otherwise, the window has been resized or maximized. Resize the controls to match.
   GuiControl Move, MyNewListView, % "H" . (A_GuiHeight-35) . " W" . (A_GuiWidth-20)
-Return
+	Return
 
 LogViewerWindowGuiSize:
   If A_EventInfo = 1  ; The window has been minimized.  No action needed.
     Return
   ; Otherwise, the window has been resized or maximized. Resize the controls to match.
   GuiControl Move, LogContents, % "H" . (A_GuiHeight-20) . " W" . (A_GuiWidth-20)
-Return
+	Return
 
 MakeMessageWindow(Text,Dir)
 	{
