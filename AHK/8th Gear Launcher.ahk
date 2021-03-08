@@ -2,65 +2,84 @@
 #NoEnv
 ;#Warn
 SetBatchLines -1
-#Include Anchor.ahk
 StringCaseSense, On
 SetWorkingDir, %A_ScriptDir%
 
+;@Ahk2Exe-SetMainIcon icons\small_8G.ico
+;@Ahk2Exe-AddResource icons\8G_grey_logo.ico, 160  ; Replaces 'H on blue'
+;@Ahk2Exe-AddResource icons\8G_grey_logo.ico, 206  ; Replaces 'S on green'
+;@Ahk2Exe-AddResource icons\8G_grey_logo.ico, 207  ; Replaces 'H on red'
+;@Ahk2Exe-AddResource icons\8G_grey_logo.ico, 208  ; Replaces 'S on red'
+;@Ahk2Exe-SetName 8th Gear Launcher
+;@Ahk2Exe-SetVersion 1.4
+;@Ahk2Exe-SetCopyright Firecul666@gmail.com
+;@Ahk2Exe-SetDescription https://github.com/Firecul/8th-Gear-Launcher
+;@Ahk2Exe-SetLanguage 0x0809
+;@Ahk2Exe-Obey U_au, = "%A_IsUnicode%" ? 2 : 1    ; Script ANSI or Unicode?
+;@Ahk2Exe-PostExec "BinMod.exe" "%A_WorkFileName%"
+;@Ahk2Exe-Cont  "%U_au%.AutoHotkeyGUI.LauncherGUI"
+;@Ahk2Exe-Cont  "%U_au%2.>AUTOHOTKEY SCRIPT<. 8TH GEAR LAUNCHER "
+
 FileCreateDir, 8thGearLauncher ;Creation stuff
 	Fileinstall, ServerList.ini, 8thGearLauncher/ServerList.ini, 0
-	Menu, Tray, Icon, % "HICON:*" . Create_8G_Icon_png()
+	Menu, Tray, Icon, % "HICON:*" . Create_8G_logo_ico()
 
-LauncherVersion = v1.3
+LauncherVersion = v1.4
 
 vFAQ =
 	(
 	READ THE WHOLE THING.
 	)
-
+MyProgress = ""
 Global ServerNames
 
-	GoSub, GenerateMainUI
+GoSub, GenerateMainUI
 
-	GoSub, BetterDownloadServerList ;DO NOT ENABLE BOTH AT THE SAME TIME!!!!!
-	;GoSub, DontDownloadServerList ;DO NOT ENABLE BOTH AT THE SAME TIME!!!!!
-	GoSub, UpdateServerList
-	GoSub, FiveMExist
-	GoSub, PingAll
-	GoSub, UpdateFiles
+GoSub, BetterDownloadServerList ;DO NOT ENABLE BOTH AT THE SAME TIME!!!!!
+;GoSub, DontDownloadServerList ;DO NOT ENABLE BOTH AT THE SAME TIME!!!!!
+GoSub, UpdateServerList
+GoSub, FiveMExist
+GoSub, PingAll
+GoSub, UpdateFiles
 
 Return
 
 
 GenerateMainUI:
 	Gui, Main: New ;Main Window
+		;Gui, Main: +Caption -Border  ;Enable with alt Gui, add drag from anywhere, alter width?
 		Gui, Main: Add, Picture, w465 h-1, % "HBITMAP:*" . Create_8GLogo_png()
 		Gui, Main: Add, GroupBox, w220 h81, 8th Gear Servers:
-		Gui, Main: add, DropDownList, xp+10 yp+20 w133 vServerNameList,
-		Gui, Main: add, button, xp+139 yp-1 w60 gConnect, Connect
-		Gui, Main: add, button, xp-140 yp+30 w200 gLocalhost, &Localhost
-		Gui, Main: add, Groupbox, xp+220 yp-49 w236 h81, Disclaimer
-		Gui, Main: add, link, xp+10 yp+20 w215, By joining our servers you agree to be bound to the <a href="https://discord.gg/ygWU5ms">#rules</a> of our server.
+		Gui, Main: Add, DropDownList, xp+10 yp+20 w133 vServerNameList,
+		Gui, Main: Add, button, xp+139 yp-1 w60 gConnect Default, Connect
+		Gui, Main: Add, button, xp-140 yp+30 w200 gLocalhost, &Localhost
+		Gui, Main: Add, Groupbox, xp+220 yp-49 w236 h81, Disclaimer
+		Gui, Main: Add, link, xp+10 yp+20 w215, By joining our servers you agree to be bound to the <a href="https://discord.gg/ygWU5ms">#rules</a> of our server.
 
 		Gui, Main: Add, StatusBar,,
-		SB_SetParts(271,120,120)
+		SB_SetParts(206,140,140)
 
 
 		Menu, FileMenu, Add, &Locate FiveM.exe, lookforfivem  ;Top Menu
-		Menu, FileMenu, Add, E&xit, MenuOptionExit
+		Menu, FileMenu, Add,
+		Menu, FileMenu, Add, E&xit `tEsc, MenuOptionExit
 
-		Menu, CacheMenu, Add, &Open Cache Folder, OpenCacheFolder
+		Menu, CacheMenu, Add, &Open Cache Folder `tCtrl+C, OpenCacheFolder
+		Menu, CacheMenu, Add,
 		Menu, CacheMenu, Add, &Back-up Cache, BackupCache
 		Menu, CacheMenu, Add, Open Back-up Folder, OpenBackupCacheFolder
 		Menu, CacheMenu, Add, &Restore Cache from Back-ups, RestoreCache
 
 
-		Menu, LogMenu, Add, &Manage Logs, OpenLogsWindow
+		Menu, LogMenu, Add, Open &Current Logs `tCtrl+L, OpenLogManager
 		Menu, LogMenu, Add, &Open Log Folder, OpenLogFolder
+		Menu, LogMenu, Add,
+		Menu, LogMenu, Add, Open Backed Up Logs, OpenBackedupLogManager
 		Menu, LogMenu, Add, &Back-up Logs, MenuOptionBackupLogs
-		Menu, LogMenu, Add, &Manage Backed-up Logs, OpenBackupWindow
 		Menu, LogMenu, Add, Open Back-up Folder, OpenLogBackupFolder
-		Menu, LogMenu, Add, Open &Arbitrary log..., MenuOptionArbitraryLog
-		Menu, LogMenu, Default, &Manage Logs
+		Menu, LogMenu, Add,
+		Menu, LogMenu, Add, Open &Arbitrary log... `tCtrl+O, MenuOptionArbitraryLog
+		Menu, LogMenu, Default, Open &Current Logs `tCtrl+L
 
 		Menu, GTASettingsMenu, Add, Open in &Default editor, MenuOptionOpenGTASettingsDefault
 		Menu, GTASettingsMenu, Add, Open in &Notepad, MenuOptionOpenGTASettingsNotepad
@@ -79,20 +98,62 @@ GenerateMainUI:
 
 		Gui, Menu, MenuBar
 
-		menu, submenu, add, Log Viewer, OpenLogViewer ;Context Menu
-		menu, submenu, Default, Log Viewer
-		menu, submenu, add, Default Editor, opendefault
-		menu, submenu, add, Notepad, opennotepad
+		Menu, submenu, Add, Log Viewer, openviewer ;Context Menu
+		Menu, submenu, Default, Log Viewer
+		Menu, submenu, Add, Default Editor, opendefault
+		Menu, submenu, Add, Notepad, opennotepad
 		Menu, ContextMenu, Add, Open With, :Submenu
 		Menu, ContextMenu, Default, Open With
 		Menu, ContextMenu, Add, Save To..., SaveLogCopy
 		Menu, ContextMenu, Add, Delete, DeleteLog
 		Menu, ContextMenu, Add, Properties, GetFileProperties
 
+		Menu, Tray, NoStandard
+		Menu, Tray, Add, Open Launcher, ReOpenLauncher
+		Menu, Tray, Add, Manage Logs, OpenLogManager
+		Menu, Tray, Add,
+		Menu, Tray, Add, Open Cache Folder, OpenCacheFolder
+		Menu, Tray, Add,
+		Menu, Tray, Add, Exit, MenuOptionExit
+		Menu, Tray, Default, Open Launcher
+		Menu, Tray, Tip, 8th Gear Launcher
+		Menu, Tray, Click, 2
+
 
 		Menu, MenuBar, Disable, FAQ
 
 		Gui, Main: Show,, 8th Gear FiveM Launcher
+
+
+		Menu, LogViewerFileMenu, Add, Save To... `tCtrl+S, SaveLogCopy
+		Menu, LogViewerFileMenu, Add,
+		Menu, LogViewerFileMenu, Add, E&xit `tEsc, LogViewerWindowGuiEscape
+
+		Menu, LogViewerToolsMenu, Add, &Parse `tCtrl+P, ParseLog
+		Menu, LogViewerToolsMenu, Default, &Parse `tCtrl+P
+		Menu, LogViewerToolsMenu, Add,
+		Menu, LogViewerToolsMenu, Add, &Thorough Open (Slow), SlowOpen
+
+		Menu, LogViewerMenuBar, Add, &File, :LogViewerFileMenu
+		Menu, LogViewerMenuBar, Add, &Tools, :LogViewerToolsMenu
+
+	Return
+
+ReOpenLauncher:
+	WinActivate, 8th Gear FiveM Launcher
+	Return
+
+MainGuiDropFiles:
+	LogViewerWindowGuiDropFiles:
+
+	Loop, Parse, A_GuiEvent, `n
+	{
+		FirstFile := A_LoopField
+		break
+	}
+	Global FilePath
+	FilePath := FirstFile
+	OpenLogViewer("Dropped File", FilePath)
 	Return
 
 BetterDownloadServerList:
@@ -104,28 +165,33 @@ BetterDownloadServerList:
 	DownloadedList := DownloadObject.ResponseText
 		If (ErrorLevel = 0)
 		{ ;Download successful
-			If DownloadedList Contains 8th Gear Racing
+			If DownloadedList Contains 8th Gear Racing ;Prob Normal
 			{
-				if FileExist("8thGearLauncher/ServerList.ini")
+				If FileExist("8thGearLauncher/ServerList.ini")
 					FileDelete, 8thGearLauncher/ServerList.ini
 				FileAppend, %DownloadedList%, 8thGearLauncher/ServerList.ini, UTF-16
-				if FileExist("8thGearLauncher/ServerList.ini")
+				If FileExist("8thGearLauncher/ServerList.ini")
 				{
 					IniRead, ServerNames, 8thGearLauncher/ServerList.ini
 					Return
 				}
 			}
+			If DownloadedList Contains [] ;No Servers Online
+			{
+				MsgBox 0x30,, % "No servers online.", 2
+				Return
+			}
 			Else{
-				MsgBox 16,, % "Website error detected, falling back server list."
+				MsgBox 0x30,, % "Website error detected!`n`nFalling back server list to back up.", 2
 				IniRead, ServerNames, 8thGearLauncher/ServerList.ini
 				Return
 			}
 
 		}
 		If (ErrorLevel = 1)
-		{ ;;Download unsuccessful
-			if FileExist("8thGearLauncher/ServerList.ini"){
-				MsgBox 16,, % "Possible connection error detected,`nfalling back server list."
+		{ ;Download unsuccessful
+			If FileExist("8thGearLauncher/ServerList.ini"){
+				MsgBox 0x30,, % "Possible error detected!`n`nFalling back server list to back up.", 2
 				IniRead, ServerNames, 8thGearLauncher/ServerList.ini
 				}
 			Return
@@ -149,8 +215,8 @@ UpdateServerList: ;Updates the list of servers from the ini file
 
 FiveMExist: ;Stuff to run at start up
 	RegRead, FiveMPath, HKEY_CURRENT_USER\Software\CitizenFX\FiveM, Last Run Location
-	if (FiveMPath = ""){
-			MsgBox, FiveM.exe cannot be found.`nPlease locate it.
+	If (FiveMPath = ""){
+			MsgBox 	0x30,, FiveM.exe cannot be found.`nPlease locate it.
 			GoSub, LookForFiveM
 			Menu, FileMenu, Enable, &Locate FiveM.exe
 		}
@@ -159,13 +225,13 @@ FiveMExist: ;Stuff to run at start up
 			FiveMExeFullPath := FiveMExeFullPath . "FiveM.exe"
 			Menu, FileMenu, Disable, &Locate FiveM.exe
 		}
-	return
+	Return
 
 LookForFiveM: ;Opens dialogue box to allow selecting FiveM.exe location
 	Gui +OwnDialogs
 	FileSelectFile, FiveMExeFullPath, 3, , Locate FiveM.exe, FiveM (FiveM.exe)
-	if (FiveMExeFullPath = ""){
-			MsgBox, The user didn't select anything.
+	If (FiveMExeFullPath = ""){
+			MsgBox 0x30,, The user didn't select anything.
 			LV_Delete()
 			Menu, FileMenu, Enable, &Locate FiveM.exe
 	}
@@ -173,7 +239,7 @@ LookForFiveM: ;Opens dialogue box to allow selecting FiveM.exe location
 		Menu, FileMenu, Disable, &Locate FiveM.exe
 	}
 	GoSub, UpdateFiles
-	return
+	Return
 
 PingAll:
 	Gui, Main: Show,, 8th Gear FiveM Launcher
@@ -182,30 +248,56 @@ PingAll:
 	Loop, %ServerArray0%
 	{
 		If (ServerArray%A_Index% = "8th Gear Racing EU 2"){
-			;MsgBox 02:ServerArray%A_Index%
-			IniRead, ServerIP, 8thGearLauncher/ServerList.ini, % ServerArray%A_Index%, IP
-			;MsgBox 03:%ServerIP%
-			Ping(ServerIP, Create_EU_png(), 2) ;Pings EU 2
+			Ping(ServerArray%A_Index%, Create_EU_ico(), 2) ;Pings EU 2
 			Continue
 		}
 		If (ServerArray%A_Index% = "8th Gear Racing Central 1"){
-			IniRead, ServerIP, 8thGearLauncher/ServerList.ini, % ServerArray%A_Index%, IP
-			Ping(ServerIP, Create_US_png(), 3) ;Pings Central 1
+			Ping(ServerArray%A_Index%, Create_US_ico(), 3) ;Pings Central 1
 			Continue
 		}
 	}
 	Return
 
-Ping(pingip, image, section)
+Ping(ServerName, Image, Section)
 	{
-	LogFile := "8thGearLauncher\" "Ping_" A_Now ".log"
-	Runwait, %comspec% /c ping -n 1 -w 1000 %pingip% > %LogFile%, , hide
-	FileRead, Contents, %LogFile%
-	FileDelete, %LogFile%
-	RegExMatch(Contents, "O)(Average = )(\d+)(ms)", OutputVar)
-	SB_SetIcon("HICON:" image,, section)
-	SB_SetText(SubStr(OutputVar.value, 11), section)
-	Return
+		LogFile := "8thGearLauncher\" "Ping_" A_Now ".log"
+
+		IniRead, ServerIP, 8thGearLauncher/ServerList.ini, %ServerName%, IP
+		IniRead, ActivePlayers, 8thGearLauncher/ServerList.ini, %ServerName%, Players
+		IniRead, MaxPlayers, 8thGearLauncher/ServerList.ini, %ServerName%, MaxPlayers
+
+		Runwait, %comspec% /c ping -n 1 -w 1000 %ServerIP% > %LogFile%, , Hide
+		FileRead, Contents, %LogFile%
+		RegExMatch(Contents, "O) = (\d+ms)[^,]", MatchGroup) ;Get average ping
+		RegExMatch(Contents, "O)\((\d{1,3}% \w+)\)", PacketLossGroup) ;Get packet loss
+		RegExMatch(PacketLossGroup.1, "O)(\d{1,3})%", PacketLossNumber) ;seperate number from packet loss
+
+		SB_SetIcon("HICON:" Image,, Section)
+
+		If (PacketLossNumber.1 > 0) ;If there is packet loss
+		{
+			RegExMatch(Contents, "O)(.*\)d{1,3}.\d{1,3}.\d{1,3}.\d{1,3}:[^ ]", PacketLossMessage) ;get ping statistics message
+			MsgBox, 0x44, % PacketLossMessage.1 ServerName, % PacketLossGroup.1 "`n`nPlease check " LogFile " for details.`n`nWould you like to open this now?"
+			IfMsgBox Yes
+					Run C:\Windows\Notepad.exe %A_ScriptDir%\%LogFile%,, UseErrorLevel
+
+			If (MatchGroup.1) ;If there is still an average ping
+				{
+					SB_SetText("*" MatchGroup.1 "* " ActivePlayers "/" MaxPlayers " Players", Section)
+				}
+				Else ;If there isn't an average ping
+				{
+					SB_SetText("(Error)", Section)
+				}
+			Return
+
+		}
+		Else ;if there isn't packet loss
+		{
+			FileDelete, %LogFile%
+			SB_SetText(MatchGroup.1 " " ActivePlayers "/" MaxPlayers " Players", Section)
+			Return
+		}
 	}
 
 UpdateFiles: ;Updates the log list for the tools tab and populates related variables
@@ -224,14 +316,16 @@ UpdateFiles: ;Updates the log list for the tools tab and populates related varia
 	Return
 
 GetFileProperties:
-	run, Properties "%SelectedLog%"
+	Global FilePath
+	run, Properties "%FilePath%"
 	Return
 
 DeleteLog:
-	MsgBox, 0x40124, Delete Log?, Are you sure you want to delete this file? `n%SelectedLog%
+	Global FilePath
+	MsgBox, 0x40124, Delete Log?, Are you sure you want to delete this file? `n%FilePath%
 	IfMsgBox, Yes
 		{
-			FileDelete, %SelectedLog%
+			FileDelete, %FilePath%
 			Return
 		}
 	IfMsgBox, No
@@ -253,211 +347,178 @@ Localhost: ;Launches FiveM and connects to Localhost
 	Run, cmd.exe /C %FiveMExeFullPath% +connect 127.0.0.1,,hide
 	Return
 
-GetFileSelected(LogsPath)
-	{
-	RowNumber := 0 ;start at the top
-	Loop
-		{
-			RowNumber := LV_GetNext(RowNumber)
-			if not RowNumber ;if no more selected rows
-			break
-			LV_GetText(Text, RowNumber)
-			SelectedLog := LogsPath . Text
-		}
-	return SelectedLog
-	}
+OpenLogManager:
+	OpenFolderExplorerWindow(FiveMLogsPath, "FiveM Logs")
+	Return
 
-MyListView: ;Gets double-clicked file from main gui log listview
-	if (A_GuiEvent = "DoubleClick")
+OpenBackedupLogManager:
+	OpenFolderExplorerWindow(FiveMBackupLogsPath, "Backed Up Logs")
+	Return
+
+OpenFolderExplorerWindow(Path, Title){
+	Global MyNewListView
+	Gui, FolderExplorerWindow: Default
+	Gui, +Resize +Minsize460x120
+	Gui, FolderExplorerWindow: Add, ListView, r9 Grid -Multi w460 gMyNewListView vMyNewListView, Name|Size (KB)|SortingSize|Modified|SortingDate|Path
+	Gui, FolderExplorerWindow: Add, StatusBar
+
+	SB_SetParts(472/7, 472/7)
+
+	Loop %Path%*.*
 		{
-		SelectedLog :=
-		LV_GetText(FileName, A_EventInfo, 1)
-		SelectedLog := FiveMLogsPath . FileName
-		gosub, OpenLogViewer
+			FileSize := regExReplace(GetNumberFormatEx(A_LoopFileSizeKB), "[,.]?0+$")
+			FormatTime, LogTimeAndDate, %A_LoopFileTimeModified%
+			LV_Add("", A_LoopFileName, FileSize, A_LoopFileSizeKB, LogTimeAndDate, A_LoopFileTimeModified, A_LoopFileFullPath)
+
+			FileCount += 1
+			TotalSize += A_LoopFileSize
 		}
-	if ( A_GuiEvent = "ColClick" And A_EventInfo = 3 )
+	LV_ModifyCol() ;Auto-size each column
+	LV_ModifyCol(1, "AutoHdr Text")
+	LV_ModifyCol(2, "AutoHdr Integer")
+	LV_ModifyCol(3, "AutoHdr Integer 0")
+	LV_ModifyCol(4, "Text NoSort")
+	LV_ModifyCol(5, "AutoHdr Digit SortDesc 0")
+	LV_ModifyCol(6, "AutoHdr Text 0")
+	GuiControl, FolderExplorerWindow: +Redraw, MyListView
+
+	; Update the three parts of the status bar to show info about the currently selected folder:
+	SB_SetText(FileCount . " files", 1)
+	SB_SetText(Round(TotalSize / (1024*1024), 1) . " MB", 2)
+	SB_SetText(Path, 3)
+
+	Gui, FolderExplorerWindow: Show, AutoSize, %Title%
+	Return
+}
+
+MyNewListView: ;Gets double-clicked file from FolderExplorerWindow listview
+	If (A_GuiEvent = "DoubleClick")
+		{
+			LV_GetText(FileName, A_EventInfo, 1)
+			LV_GetText(FilePath, A_EventInfo, 6)
+			OpenLogViewer(FileName, FilePath)
+		}
+	If ( A_GuiEvent = "ColClick" And A_EventInfo = 2 )
 		{
 		If Sort
-		LV_ModifyCol(4, "Sort")
+		LV_ModifyCol(3, "Sort")
 		else
-		LV_ModifyCol(4, "SortDesc")
+		LV_ModifyCol(3, "SortDesc")
 		Sort := not Sort
 		}
-	return
-
-MyNewerListView: ;Gets double-clicked file from backedup log listview
-	if (A_GuiEvent = "DoubleClick")
-		{
-		SelectedLog :=
-		LV_GetText(FileName, A_EventInfo, 1)
-		SelectedLog := FiveMBackupLogsPath . FileName
-		gosub, OpenLogViewer
-		}
-	if ( A_GuiEvent = "ColClick" And A_EventInfo = 3 )
+	If ( A_GuiEvent = "ColClick" And A_EventInfo = 4 )
 		{
 		If Sort
-		LV_ModifyCol(4, "Sort")
+		LV_ModifyCol(5, "Sort")
 		else
-		LV_ModifyCol(4, "SortDesc")
+		LV_ModifyCol(5, "SortDesc")
 		Sort := not Sort
 		}
-	return
+	Return
 
-LogsWindowGuiContextMenu: ;MainUI context menu control
-	if (A_GuiControl = "MyListView") {
-		SelectedLog := GetFileSelected(FiveMLogsPath)
+FolderExplorerWindowGuiContextMenu: ;FolderExplorerWindow
+	Global FileName
+	Global FilePath
+	MouseGetPos, , , , control
+	If (A_GuiControl = "MyNewListView" && control != "SysHeader321") {
+			LV_GetText(FileName, A_EventInfo, 1)
+			LV_GetText(FilePath, A_EventInfo, 6)
 		Menu, ContextMenu, Show, %A_GuiX%, %A_GuiY%
 	}
-	return
-
-BackupWindowGuiContextMenu: ;BackedupLogUI context menu control
-	if (A_GuiControl != "MyNewerListView")
-		return
-	SelectedLog := GetFileSelected(FiveMBackupLogsPath)
-	Menu, ContextMenu, Show, %A_GuiX%, %A_GuiY%
-	return
-
-LogViewerWindowGuiSize: ;Makes LogViewer resize correctly
-	Anchor("GB","w")
-	Anchor("SelLog","w")
-	Anchor("LogContents","wh")
-	Anchor("Parse","y")
-	Anchor("SlowOpen","y")
-	Anchor("SaveLog","y")
-	return
-
-OpenLogViewer: ;Opens the selected log with the Log Viewer
-	GoSub, LogViewerWindowGuiEscape
-	Sleep 50
-	Gui, LogViewerWindow:+ToolWindow +Resize ;LogViewer Window
-	gui, LogViewerWindow: font, s10 norm
-	gui, LogViewerWindow: add, groupbox, w1000 h50 vGB, Selected log file:
-	gui, LogViewerWindow: add, text, xp+10 yp+20 w980 vSelLog, (Error)
-	gui, LogViewerWindow: font,, Lucida Console
-	gui, LogViewerWindow: add, edit, xp-10 yp+39 w1000 r30 ReadOnly t10 vLogContents, (Loading)
-	gui, LogViewerWindow: font,
-	gui, LogViewerWindow: font, s10
-	gui, LogViewerWindow: add, button, vParse gParseLog, Parse
-	gui, LogViewerWindow: add, button, vSlowOpen gSlowOpen, Thorough Open (Slow)
-	gui, LogViewerWindow: add, button, vSaveLog gSaveLog, Save Log...
-	gui, LogViewerWindow: show, AutoSize Center, Log Viewer
-	Guicontrol, LogViewerWindow: text, SelLog, %SelectedLog%
-	fileread, LogContents, %SelectedLog%
-	Guicontrol, LogViewerWindow: text, LogContents, %LogContents%
 	Return
 
-F5::
-	SetTitleMatchMode, 3
-	IfWinActive, Log Viewer
+OpenLogViewer(FileName, FilePath) ;Opens the selected log with the Log Viewer
 	{
-		fileread, LogContents, %SelectedLog%
+		GoSub, LogViewerWindowGuiEscape
+		Global LogContents
+		Static Parse
+		Static SlowOpen
+		Static SaveLog
+
+		Sleep 50
+		Gui, LogViewerWindow:+Resize ;LogViewer Window
+		Gui, LogViewerWindow: Menu, LogViewerMenuBar
+		Gui, LogViewerWindow: font, s10 norm
+		Gui, LogViewerWindow: font,, Lucida Console
+		Gui, LogViewerWindow: Add, edit, w1000 r30 ReadOnly t10 vLogContents, (Loading)
+		Gui, LogViewerWindow: font,
+		Gui, LogViewerWindow: font, s10
+		Gui, LogViewerWindow: show, AutoSize Center, %FileName%
+		fileread, LogContents, %FilePath%
 		Guicontrol, LogViewerWindow: text, LogContents, %LogContents%
+		Return
 	}
+
+FolderExplorerWindowGuiSize:
+  If A_EventInfo = 1  ; The window has been minimized.  No action needed.
+    Return
+  ; Otherwise, the window has been resized or maximized. Resize the controls to match.
+  GuiControl Move, MyNewListView, % "H" . (A_GuiHeight-35) . " W" . (A_GuiWidth-20)
 	Return
 
-OpenLogsWindow: ;Opens the Log backup management window
-	Gui +OwnDialogs
-	GoSub, LogsWindowGuiEscape
-	Sleep 50
-	Gui, LogsWindow: +Resize +ToolWindow ;LogBackupManager Window
-	gui, LogsWindow: font, s10 Norm
-	Gui, LogsWindow: Add, groupbox, w485 h260 vGB2, Logs:
-	Gui, LogsWindow: Add, ListView, xp+10 yp+20 r10 w465 AltSubmit Grid -Multi gMyListView vMyListView, Name|Size (KB)|Modified|SortingDate
-	IfExist, %FiveMLogsPath%
-		{
-			Gui, MessageWindow:+ToolWindow
-			Gui, MessageWindow: Font, s11 Norm
-			Gui, MessageWindow: Add, Text,, Scanning for logs, Please Wait.
-			Gui, MessageWindow: Show
-			Gui, LogsWindow:Default
-			LV_Delete()
-			Loop, %FiveMLogsPath%*.log
-			{
-				FileSize := regExReplace(GetNumberFormatEx(A_LoopFileSizeKB), "[,.]?0+$")
-				FormatTime, LogTimeAndDate, %A_LoopFileTimeModified%
-				LV_Add("", A_LoopFileName, FileSize, LogTimeAndDate, A_LoopFileTimeModified, A_LoopFileFullPath)
-				LV_ModifyCol() ;Auto-size each column
-				LV_ModifyCol(1, "AutoHdr Text")
-				LV_ModifyCol(2, "AutoHdr Integer")
-				LV_ModifyCol(3, "Text NoSort")
-				LV_ModifyCol(4, "AutoHdr Digit SortDesc 0")
-			}
-			Gui, MessageWindow: Destroy
-			Gui, LogsWindow: Show, AutoSize Center, FiveM Logs
-		}
-	IfNotExist, %FiveMLogsPath%
-		MsgBox, No logs found.
-	return
+LogViewerWindowGuiSize:
+  If A_EventInfo = 1  ; The window has been minimized.  No action needed.
+    Return
+  ; Otherwise, the window has been resized or maximized. Resize the controls to match.
+  GuiControl Move, LogContents, % "H" . (A_GuiHeight-20) . " W" . (A_GuiWidth-20)
+	Return
 
-OpenBackupWindow: ;Opens the Log backup management window
-	Gui +OwnDialogs
-	GoSub, BackupWindowGuiEscape
-	Sleep 50
-	Gui, BackupWindow: +Resize +ToolWindow ;LogBackupManager Window
-	gui, BackupWindow: font, s10 Norm
-	Gui, BackupWindow: Add, groupbox, w485 h260 vGB2, Backed-up Logs:
-	Gui, BackupWindow: Add, ListView, xp+10 yp+20 r10 w465 AltSubmit Grid -Multi gMyNewerListView vMyNewerListView, Name|Size (KB)|Modified|SortingDate
-	IfExist, %FiveMBackupLogsPath%
-		{
-			Gui, MessageWindow:+ToolWindow
-			Gui, MessageWindow: Font, s11 Norm
-			Gui, MessageWindow: Add, Text,, Scanning for backed up logs, Please Wait.
-			Gui, MessageWindow: Show
-			Gui, BackupWindow:Default
-			LV_Delete()
-			Loop, %FiveMBackupLogsPath%*.log
-			{
-				FileSize := regExReplace(GetNumberFormatEx(A_LoopFileSizeKB), "[,.]?0+$")
-				FormatTime, LogTimeAndDate, %A_LoopFileTimeModified%
-				LV_Add("", A_LoopFileName, FileSize, LogTimeAndDate, A_LoopFileTimeModified, A_LoopFileFullPath)
-				LV_ModifyCol() ;Auto-size each column
-				LV_ModifyCol(1, "AutoHdr Text")
-				LV_ModifyCol(2, "AutoHdr Integer")
-				LV_ModifyCol(3, "Text NoSort")
-				LV_ModifyCol(4, "AutoHdr Digit SortDesc 0")
-			}
-			Gui, MessageWindow: Destroy
-			Gui, BackupWindow: Show, AutoSize Center, Log Backups
-		}
-	IfNotExist, %FiveMBackupLogsPath%
-		MsgBox, No logs are currently backed up.
-	return
+MakeMessageWindow(Text,Dir)
+	{
+		count = 0
+		Loop, Files, %Dir%\*.log
+			count++
+
+		Global MyProgress
+		Gui, MessageWindow: +AlwaysOnTop +Disabled -SysMenu +Owner
+		Gui, MessageWindow: Font, s11 Norm
+		Gui, MessageWindow: Add, Text,, % Text
+		Gui, MessageWindow: Add, Progress, w420 vMyProgress Range0-%count% -Smooth
+		Gui, MessageWindow: Show, NoActivate, Loading...
+		Return count
+	}
 
 SaveLog:
-	FileSelectFile, SavedLogName, S18, %SelectedLog%, Where to save the Log?, Log Files (*.log)
+	Global FilePath
+	FileSelectFile, SavedLogName, S18, %FilePath%, Where to save the Log?, Log Files (*.log)
 	FileAppend, %LogContents%, %SavedLogName%,
-	return
+	Return
 
 SaveLogCopy:
-	FileSelectFile, NewLog, S18, %SelectedLog%, Where to save the Log?, Log Files (*.log)
-	FileCopy, %SelectedLog%, %NewLog% ;TODO improve, prob using dllcall.
+	Global FilePath
+	FileSelectFile, NewLog, S18, %FilePath%, Where to save the Log?, Log Files (*.log)
+		If (NewLog = ""){
+			MsgBox 0x30,, The user didn't select a location.
+	}else{
+			FileCopy, %FilePath%, %NewLog% ;TODO improve, prob using dllcall.
+		}
 	Return
 
 OpenCacheFolder: ;Opens normal cache folder
 	run %FiveMCachePath%
-	return
+	Return
 
 BackupCache: ;Backs up cache priv folder
 	Gui +OwnDialogs
 	IfNotExist, %FiveMBackupCachePath%
 	{
-		MsgBox, The target folder does not exist. Creating it.
+		MsgBox 0x40,, The target folder does not exist.`n`nCreating it., 2
 		FileCreateDir, %FiveMBackupCachePath%
 	}
 	IfExist, %FiveMBackupCachePath%
 	{
-		MsgBox, The target folder exists. Copying files.
+		MsgBox 0x40,, The target folder exists.`n`nCopying files.
 		FileCopyDir, %FiveMCachePath%db\, %FiveMBackupCachePath%db\, 1
 		FileCopy,  %FiveMCachePath%priv\*.*, %FiveMBackupCachePath%priv\*.*
 		FileCopyDir, %FiveMCachePath%priv\db\, %FiveMBackupCachePath%priv\db\, 1
 		FileCopyDir, %FiveMCachePath%priv\unconfirmed\, %FiveMBackupCachePath%priv\unconfirmed\ , 1
-		msgbox, Cache Backed Up
+		MsgBox 0x40,, Cache Backed Up, 2
 	}
 	Return
 
 OpenBackupCacheFolder: ;Opens the backup Cache folder
 	run %FiveMBackupCachePath%
-	return
+	Return
 
 RestoreCache: ;Restores cache from backups
 	Gui +OwnDialogs
@@ -465,16 +526,12 @@ RestoreCache: ;Restores cache from backups
 	FileCopy, %FiveMBackupCachePath%priv\*.*, %FiveMCachePath%priv\*.*
 	FileCopyDir, %FiveMBackupCachePath%priv\db\, %FiveMCachePath%priv\db\, 1
 	FileCopyDir, %FiveMBackupCachePath%priv\unconfirmed\, %FiveMCachePath%priv\unconfirmed\ , 1
-	msgbox, Cache Restored
-	return
-
-BackupWindowGuiSize: ;Makes BackupWindow resize correctly
-	Anchor("GB2","wh")
-	Anchor("MyNewerListView","wh")
-	Anchor("LogContents","wh")
-	return
+	MsgBox 0x40,, Cache Restored, 2
+	Return
 
 ParseLog: ;Determines the type of log(old-style vs new-style)
+	Global LogContents
+	Global FilePath
 	StringSplit, LogLines, LogContents, `r, `n
 	logline :=
 	TrimmedLinea :=
@@ -483,55 +540,50 @@ ParseLog: ;Determines the type of log(old-style vs new-style)
 	LogDoesNotContain := "DumpServer is active and waiting.,fix the exporter,f7c13cb204bc9aecf40b,handling entries from dlc,ignore-certificate-errors,is not a platform image,It leads to vertex,NurburgringNordschleife/_manifest.ymf,Physics validation failed,script.js:214,script.js:458,script.js:461,terrorbyte,warmenu,WarningScreen INIT_CORE, 1 handling entries"
 
 	Needle := "CitizenFX_log_"
+	If InStr(FilePath, Needle)
+		GoSub, ParseNewLog ;New-Style log
+	Else
+		GoSub, ParseOldLog ;Old-Style log
 
-	IfInString, SelectedLog, %Needle%
-	{
-		gosub, ParseNewLog ;New-Style log
-		return
-	}
-	else{
-		gosub, ParseOldLog ;Old-Style log
-		return
-	}
 	Return
 
 ParseNewLog: ;New-Style log parsing
+	Global LogContents
 	Loop, %LogLines0%
 		{
 			logline := LogLines%a_index%
-			if logline contains %LogContains%
-				if logline not contains %LogDoesNotContain%
+			If logline contains %LogContains%
+				If logline not contains %LogDoesNotContain%
 				{
 					stringtrimleft, TrimmedLine, logline, 52
 					TrimmedLinea = %TrimmedLinea%Line #%A_Index%:%A_Tab%%TrimmedLine%`n
 				}
 		}
 	Guicontrol, LogViewerWindow: text, LogContents, %TrimmedLinea%
-	return
+	Return
 
 ParseOldLog: ;Old-Style log parsing
+	Global LogContents
 	Loop, %LogLines0%
 		{
 			logline := LogLines%a_index%
-			if logline contains %LogContains%
-				if logline not contains %LogDoesNotContain%
+			If logline contains %LogContains%
+				If logline not contains %LogDoesNotContain%
 				{
 					stringtrimleft, TrimmedLine, logline, 13
 					TrimmedLinea = %TrimmedLinea%Line #%A_Index%:%A_Tab%%TrimmedLine%`n
 				}
 		}
 	Guicontrol, LogViewerWindow: text, LogContents, %TrimmedLinea%
-	Gui, MessageWindow:+ToolWindow
-	Gui, MessageWindow: Font, s12 Norm
-	Gui, MessageWindow: Add, Text,, Old-Style log suspected.
-	Gui, MessageWindow: Show
-	Sleep, 2000
-	Gui, MessageWindow: Destroy
-	return
+
+	MsgBox, 0x40, Log Format, Old-Style log suspected, 2
+	Return
 
 SlowOpen: ;Opens the log ignoring any found null characters that normally cause issues
-	Guicontrol, LogViewerWindow: text, LogContents, % Nonulls(SelectedLog)
-	return
+	Global LogContents
+	Global FilePath
+	Guicontrol, LogViewerWindow: text, LogContents, % Nonulls(FilePath)
+	Return
 
 NoNulls(Filename)
 	{ ;Reads the given file character by charcter
@@ -545,12 +597,12 @@ NoNulls(Filename)
 	}
 
 GetNumberFormatEx(Value, LocaleName := "!x-sys-default-locale"){
-	if (Size := DllCall("GetNumberFormatEx", "str", LocaleName, "uint", 0, "str", Value, "ptr", 0, "ptr", 0, "int", 0)) {
+	If (Size := DllCall("GetNumberFormatEx", "str", LocaleName, "uint", 0, "str", Value, "ptr", 0, "ptr", 0, "int", 0)) {
 		VarSetCapacity(NumberStr, Size << !!A_IsUnicode, 0)
-		if (DllCall("GetNumberFormatEx", "str", LocaleName, "uint", 0, "str", Value, "ptr", 0, "str", NumberStr, "int", Size))
-			return NumberStr
+		If (DllCall("GetNumberFormatEx", "str", LocaleName, "uint", 0, "str", Value, "ptr", 0, "str", NumberStr, "int", Size))
+			Return NumberStr
 	}
-	return false
+	Return false
 	}
 
 RulesBold(text)
@@ -567,44 +619,52 @@ RulesNormal(text)
 
 OpenLogFolder: ;Opens the log folder
 	run %FiveMLogsPath%
-	return
+	Return
 
 OpenLogBackupFolder: ;Opens the log backup folder
 	run %FiveMBackupLogsPath%
-	return
+	Return
 
 BackupLogs: ;Backs up logs to the backup folder for safe keeping
 	Gui +OwnDialogs
 	IfNotExist, %FiveMBackupLogsPath%
 		FileCreateDir, %FiveMBackupLogsPath%
 	FileCopy, %FiveMLogsPath%*.log, %FiveMBackupLogsPath%*.*, 1
-	return
+	Return
 
 MenuOptionBackupLogs: ;Backs up logs to the backup folder for safe keeping
 	Gui +OwnDialogs
 	IfNotExist, %FiveMBackupLogsPath%
 		FileCreateDir, %FiveMBackupLogsPath%
 	FileCopy, %FiveMLogsPath%*.log, %FiveMBackupLogsPath%*.*, 1
-	msgbox, Logs Backed Up
-	return
+	MsgBox, 0x40,, Logs Backed Up, 2
+	Return
+
+openviewer:
+	Global FileName
+	Global FilePath
+	OpenLogViewer(FileName, FilePath)
+	Return
 
 opendefault: ;Opens the selected log with the users default editor for .log files
+	Global FilePath
 	Gui +OwnDialogs
-	Run %SelectedLog%,, UseErrorLevel
-	if ErrorLevel
-		MsgBox Could not open %SelectedLog%
-	return
+	Run %FilePath%,, UseErrorLevel
+	If ErrorLevel
+		MsgBox, 0x30,, Could not open %FilePath%
+	Return
 
 opennotepad: ;Opens the selected log with Notepad
+	Global FilePath
 	Gui +OwnDialogs
-	Run C:\Windows\Notepad.exe %SelectedLog%,, UseErrorLevel
-	if ErrorLevel
-		MsgBox Could not open %SelectedLog%
-	return
+	Run C:\Windows\Notepad.exe %FilePath%,, UseErrorLevel
+	If ErrorLevel
+		MsgBox, 0x30,, Could not open %FilePath%
+	Return
 
 MenuOption8GDiscord: ;Opens 8G Main discord channel
 	Run https://discord.gg/4Xd2uwy
-	return
+	Return
 
 MenuOptionAbout: ;Opens about window
 	IniRead, NewestVersion, 8thGearLauncher/VERSION_INFO.ini, NewestVersion, Version
@@ -613,19 +673,19 @@ MenuOptionAbout: ;Opens about window
 	Gui, AboutWindow: font, s10 norm
 	Gui AboutWindow:+ToolWindow +AlwaysOnTop
 	Gui, AboutWindow: Add, link, w620, Hello and welcome to the 8th Gear FiveM Launcher.`n`nThis Launcher serves as the hub for everything you need to play on the 8th Gear servers and a few useful tools that will help you along the way. `n`nThis launcher is built using AHK by Firecul and is open-source and can be found on <a href="https://github.com/Firecul/8th-Gear-Launcher">GitHub</a>.`n`nThis launcher is version: %LauncherVersion%`nTo download another version please go to <a href="https://github.com/Firecul/8th-Gear-Launcher/releases">My Github releases page</a>`n`nIf you would like to contribute to this program, you are welcome to contact me there or submit a <a href="https://github.com/Firecul/8th-Gear-Launcher/pulls">pull request</a>.`n`nIf you find any problems please <a href="https://github.com/Firecul/8th-Gear-Launcher/issues/new">let me know</a>.
-	gui, AboutWindow: show, AutoSize Center, About
+	Gui, AboutWindow: show, AutoSize Center, About
 	Return
 
 MenuOptionArbitraryLog:
 	Gui +OwnDialogs
-	FileSelectFile, SelectedLog, 3, , Open a FiveM Log, Log (*.log*)
-	if (SelectedLog = ""){
-			MsgBox, The user didn't select anything.
+	FileSelectFile, FilePath, 3, , Open a FiveM Log, Log (*.log*)
+	If (FilePath = ""){
+			MsgBox 0x40,, The user didn't select anything., 2
 	}
 	else{
-		GoSub, OpenLogViewer
+		OpenLogViewer(FilePath, FilePath)
 	}
-	return
+	Return
 
 MenuOptionFAQ: ;Opens FAQ Window
 	GoSub, FAQWindowGuiEscape
@@ -638,22 +698,22 @@ MenuOptionFAQ: ;Opens FAQ Window
 
 MenuOptionOpenGTASettingsDefault:
 	Run %A_MyDocuments%\Rockstar Games\GTA V\settings.xml,, UseErrorLevel
-	if ErrorLevel{
-		MsgBox Could not open %SelectedLog%
+	If ErrorLevel{
+		MsgBox 0x30,, Could not open %A_MyDocuments%\Rockstar Games\GTA V\settings.xml
 	}
 	Return
 
 MenuOptionOpenGTASettingsFolder:
 	Run %A_MyDocuments%\Rockstar Games\GTA V,, UseErrorLevel
-	if ErrorLevel{
-		MsgBox, Could not open %A_MyDocuments%
+	If ErrorLevel{
+		MsgBox 0x30,, %A_MyDocuments%\Rockstar Games\GTA V
 	}
 	Return
 
 MenuOptionOpenGTASettingsNotepad:
 	Run C:\Windows\Notepad.exe %A_MyDocuments%\Rockstar Games\GTA V\settings.xml,, UseErrorLevel
-	if ErrorLevel{
-		MsgBox Could not open %SelectedLog%
+	If ErrorLevel{
+		MsgBox 0x30,, Could not open %A_MyDocuments%\Rockstar Games\GTA V\settings.xml
 	}
 	Return
 
@@ -688,20 +748,20 @@ MenuOptionRules: ;Opens rules window
 	RulesBold("By taking part in this community you acknowledge that you understand and accept these rules. Ignoring them or not knowing them does not excuse you from them.")
 	Gui, RulesWindow: font, norm
 	Gui, RulesWindow: Add, link, w600, The rules found on the official discord channel superceed the ones found on this launcher, please refer to the <a href="https://discord.gg/ygWU5ms">discord #rules channel</a> for the most up to date list.
-	gui, RulesWindow: show, AutoSize Center, Rules
+	Gui, RulesWindow: show, AutoSize Center, Rules
 	Return
 
 ; ##################################################################################
 ; # This #Include file was generated by Image2Include.ahk, you must not change it! #
 ; ##################################################################################
-Create_8G_Icon_png(NewHandle := False) {
-	Static hBitmap := Create_8G_Icon_png()
+Create_8G_logo_ico(NewHandle := False) {
+	Static hBitmap := Create_8G_logo_ico()
 	If (NewHandle)
 		hBitmap := 0
 	If (hBitmap)
 		Return hBitmap
-	VarSetCapacity(B64, 2764 << !!A_IsUnicode)
-	B64 := "iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAC4jAAAuIwF4pT92AAAGSmlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNi4wLWMwMDIgNzkuMTY0MzUyLCAyMDIwLzAxLzMwLTE1OjUwOjM4ICAgICAgICAiPiA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPiA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtbG5zOmRjPSJodHRwOi8vcHVybC5vcmcvZGMvZWxlbWVudHMvMS4xLyIgeG1sbnM6cGhvdG9zaG9wPSJodHRwOi8vbnMuYWRvYmUuY29tL3Bob3Rvc2hvcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RFdnQ9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZUV2ZW50IyIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgMjEuMSAoV2luZG93cykiIHhtcDpDcmVhdGVEYXRlPSIyMDE5LTA4LTEwVDAzOjA2OjU2KzAxOjAwIiB4bXA6TW9kaWZ5RGF0ZT0iMjAyMS0wMS0zMFQyMzoyOToyM1oiIHhtcDpNZXRhZGF0YURhdGU9IjIwMjEtMDEtMzBUMjM6Mjk6MjNaIiBkYzpmb3JtYXQ9ImltYWdlL3BuZyIgcGhvdG9zaG9wOkNvbG9yTW9kZT0iMyIgcGhvdG9zaG9wOklDQ1Byb2ZpbGU9InNSR0IgSUVDNjE5NjYtMi4xIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOjc0YzEwZmNlLTI2M2ItMDQ0Ny05MWY4LTFjNGNiNmRhMDM5MiIgeG1wTU06RG9jdW1lbnRJRD0iYWRvYmU6ZG9jaWQ6cGhvdG9zaG9wOmEzOGM3YmNmLWY5ZTQtM2U0ZC04ZmY3LTNkZjNhZWZiNDA3MyIgeG1wTU06T3JpZ2luYWxEb2N1bWVudElEPSJ4bXAuZGlkOjJiN2IyODI1LTkyYjctYTA0ZC1iZjRmLWI0MmYwNTQ4YWVkNSI+IDx4bXBNTTpIaXN0b3J5PiA8cmRmOlNlcT4gPHJkZjpsaSBzdEV2dDphY3Rpb249ImNyZWF0ZWQiIHN0RXZ0Omluc3RhbmNlSUQ9InhtcC5paWQ6MmI3YjI4MjUtOTJiNy1hMDRkLWJmNGYtYjQyZjA1NDhhZWQ1IiBzdEV2dDp3aGVuPSIyMDE5LTA4LTEwVDAzOjA2OjU2KzAxOjAwIiBzdEV2dDpzb2Z0d2FyZUFnZW50PSJBZG9iZSBQaG90b3Nob3AgMjEuMSAoV2luZG93cykiLz4gPHJkZjpsaSBzdEV2dDphY3Rpb249ImNvbnZlcnRlZCIgc3RFdnQ6cGFyYW1ldGVycz0iZnJvbSBhcHBsaWNhdGlvbi92bmQuYWRvYmUucGhvdG9zaG9wIHRvIGltYWdlL3BuZyIvPiA8cmRmOmxpIHN0RXZ0OmFjdGlvbj0ic2F2ZWQiIHN0RXZ0Omluc3RhbmNlSUQ9InhtcC5paWQ6NzRjMTBmY2UtMjYzYi0wNDQ3LTkxZjgtMWM0Y2I2ZGEwMzkyIiBzdEV2dDp3aGVuPSIyMDIxLTAxLTMwVDIzOjI5OjIzWiIgc3RFdnQ6c29mdHdhcmVBZ2VudD0iQWRvYmUgUGhvdG9zaG9wIDIxLjEgKFdpbmRvd3MpIiBzdEV2dDpjaGFuZ2VkPSIvIi8+IDwvcmRmOlNlcT4gPC94bXBNTTpIaXN0b3J5PiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PlWHbZ8AAAF0SURBVDiNpVOxisJAEE1hZ2GnpSlESeMfqCls/AFBBEHQQtAgVmKhZQI2AQli5wfYStogfkBEgggWIlynIcQuhU93wsXiLpynCw92dua9Wd7OchzHfT3gvgnG5fAhSOldsvuSgCAIaLfb6HQ6AarVKiqVylNAURQcDgecz2fC8XjEfr+HJElYLBYIWb5As9kMK8Bms0E8Hv9xK9ZkuVz6AtvtloplWUYymUQ6nYZt23SWSCSI0Gg00Ov1MB6PMRgMKCeKoi+g63rQ0XEcWJZFe03TiNztdoO8qqrY7Xa43W6+iblczj2dTjBNE8PhkLy4XC5UXCgUSOB6vVI8Go0oNgwDq9XKF3iouSw5n8/p+jzPUwe2YrEYEYrFIvL5PO0jkQjlSqWSL8Cc/M089grMi0wmExiXSqWwXq/hed5zDmq1mjuZTDCdTjGbzQj9fh/ZbDb0ZZgPLw1Sq9Ui979Rr9dRLpcRjUb/N4l/jfLHn+mj73wH3fjoqgmw5tQAAAAASUVORK5CYII="
+	VarSetCapacity(B64, 1192 << !!A_IsUnicode)
+	B64 := "AAABAAEAEBAAAAEAGABoAwAAFgAAACgAAAAQAAAAIAAAAAEAGAAAAAAAAAAAACwBAAAsAQAAAAAAAAAAAAAHDRoDBw0DBw0DBw0DBw0DBw0DBw0DBw0DBw0DBw0DBw0DBw0DBw0DBw0DBw0HDRoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADBw0AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADBw0DBw0AAAAAAAAAAAAAAAAAAAAAAABpaWlkZGRkZGRkZGRhYWFWVlYLCwsAAAADBw1cYGaTk5OXl5eZmZmZmZl4eHguLi7///////////////////////+QkJAAAAADBw31+f/////////////////////g4OAmJiYnJycAAAAAAAAkJCTExMT6+voAAAADBw3P09n///+goKAfHx8gICDX19f///8PDw8AAABEREQ+Pj4AAAAEBAT///9JSUkDBw09QEfi4uLQ0NB+fn6IiIjt7e3///8/Pz8AAADz8/P///9/f38AAADAwMDCwsIDBw0DBw23t7f////////w8PDV1dX///+VlZUAAABwcHD///////+QkJDX19f+/v4DBw0DBw3T09P///+Hh4cfHx8mJibu7u7///8XFxcAAABkZGRycnKLi4t6enr///9AQ0oDBw1lZWX////////////////////////R0dEWFhYAAAAAAAAAAAAAAADs7OyvsrkDBw0AAACIiIjc3Nzs7Ozs7Ozg4ODZ2dlubm6srKz////////////////////1+f8DBw0AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAApKSlsbGxtbW1tbW1tbW1bW1tYW2EDBw0AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADBw0AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHDRoDBw0DBw0DBw0DBw0DBw0DBw0DBw0DBw0DBw0DBw0DBw0DBw0DBw0DBw0HDRoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
 	If !DllCall("Crypt32.dll\CryptStringToBinary", "Ptr", &B64, "UInt", 0, "UInt", 0x01, "Ptr", 0, "UIntP", DecLen, "Ptr", 0, "Ptr", 0)
 		Return False
 	VarSetCapacity(Dec, DecLen, 0)
@@ -773,14 +833,14 @@ Create_8GLogo_png(NewHandle := False) {
 ; ##################################################################################
 ; # This #Include file was generated by Image2Include.ahk, you must not change it! #
 ; ##################################################################################
-Create_EU_png(NewHandle := False) {
-	Static hBitmap := Create_EU_png()
+Create_EU_ico(NewHandle := False) {
+	Static hBitmap := Create_EU_ico()
 	If (NewHandle)
 		hBitmap := 0
 	If (hBitmap)
 		Return hBitmap
-	VarSetCapacity(B64, 3056 << !!A_IsUnicode)
-	B64 := "iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAAACXBIWXMAAA3XAAAN1wFCKJt4AAAGoGlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNi4wLWMwMDIgNzkuMTY0MzUyLCAyMDIwLzAxLzMwLTE1OjUwOjM4ICAgICAgICAiPiA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPiA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtbG5zOmRjPSJodHRwOi8vcHVybC5vcmcvZGMvZWxlbWVudHMvMS4xLyIgeG1sbnM6cGhvdG9zaG9wPSJodHRwOi8vbnMuYWRvYmUuY29tL3Bob3Rvc2hvcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RFdnQ9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZUV2ZW50IyIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgMjEuMSAoV2luZG93cykiIHhtcDpDcmVhdGVEYXRlPSIyMDIxLTAxLTMwVDIyOjIyOjQ3WiIgeG1wOk1vZGlmeURhdGU9IjIwMjEtMDEtMzBUMjM6MTk6MTBaIiB4bXA6TWV0YWRhdGFEYXRlPSIyMDIxLTAxLTMwVDIzOjE5OjEwWiIgZGM6Zm9ybWF0PSJpbWFnZS9wbmciIHBob3Rvc2hvcDpDb2xvck1vZGU9IjMiIHBob3Rvc2hvcDpJQ0NQcm9maWxlPSJzUkdCIElFQzYxOTY2LTIuMSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDphMTA0ZDZmMy1mY2FjLTkyNGUtYTIyZi0xNWEyNWM1MmMxOGQiIHhtcE1NOkRvY3VtZW50SUQ9ImFkb2JlOmRvY2lkOnBob3Rvc2hvcDo3MGNkNzVjMi1kZDJlLWQ0NGYtYmU2Mi01NmZkNGVkOGJhMzgiIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDpmOTNiNThkYi01NTg5LTdjNDktYWEwNy0xZTAwOTRlMTljM2EiPiA8eG1wTU06SGlzdG9yeT4gPHJkZjpTZXE+IDxyZGY6bGkgc3RFdnQ6YWN0aW9uPSJjcmVhdGVkIiBzdEV2dDppbnN0YW5jZUlEPSJ4bXAuaWlkOmY5M2I1OGRiLTU1ODktN2M0OS1hYTA3LTFlMDA5NGUxOWMzYSIgc3RFdnQ6d2hlbj0iMjAyMS0wMS0zMFQyMjoyMjo0N1oiIHN0RXZ0OnNvZnR3YXJlQWdlbnQ9IkFkb2JlIFBob3Rvc2hvcCAyMS4xIChXaW5kb3dzKSIvPiA8cmRmOmxpIHN0RXZ0OmFjdGlvbj0ic2F2ZWQiIHN0RXZ0Omluc3RhbmNlSUQ9InhtcC5paWQ6NGEyODU5OTMtY2Y1ZS02YjRlLWI4MDUtM2VkOTk3NjIzMzFhIiBzdEV2dDp3aGVuPSIyMDIxLTAxLTMwVDIzOjE5OjEwWiIgc3RFdnQ6c29mdHdhcmVBZ2VudD0iQWRvYmUgUGhvdG9zaG9wIDIxLjEgKFdpbmRvd3MpIiBzdEV2dDpjaGFuZ2VkPSIvIi8+IDxyZGY6bGkgc3RFdnQ6YWN0aW9uPSJzYXZlZCIgc3RFdnQ6aW5zdGFuY2VJRD0ieG1wLmlpZDphMTA0ZDZmMy1mY2FjLTkyNGUtYTIyZi0xNWEyNWM1MmMxOGQiIHN0RXZ0OndoZW49IjIwMjEtMDEtMzBUMjM6MTk6MTBaIiBzdEV2dDpzb2Z0d2FyZUFnZW50PSJBZG9iZSBQaG90b3Nob3AgMjEuMSAoV2luZG93cykiIHN0RXZ0OmNoYW5nZWQ9Ii8iLz4gPC9yZGY6U2VxPiA8L3htcE1NOkhpc3Rvcnk+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+QHRhlAAAAflJREFUKBVjcHSfjYacPGbbOM+1cpzr7DkLU5YBznL2mGXrMkfXdLG96xx3n5lABNSpb7HQwHKhi9csLBqApvoFTetor9cyWbxsZsXtY6lS6isaqtpqK9pMbOejaACaDVStqL08Imryw/MJHj4zfAKmx8dPVNBdtmdV4fblRaIqq+D2gDRYO88NCJ7W0Vbv6DYb6CSg04EeMLWd7+Y909BqgbrRkrqKtuqydlOwPSANJjbzExImPLqQ4Ok3w9x+HrIXHdxmqxos2bWyEGiVmuESkAZnD5Couv5SbeMlQLOBHkULFlevWcY2C2TVV1g7zQW6isHGeY6T++x5M8vDIiZbOszDDEc7lzlApXOmVwJdAbSfAaLvypG05KR+Y+sFmBqAYQ0MkosH0wtyu4FeZwC6AahBVX8pKAbcZmM6CehOC4d58lrLgdqAbLCnbefHJ0x8dCkeGFnm9vORo9zOdY6K/tJ9awuASMVgKSxYnYBRNr2/vcHRHRTTQEcDIxtoHtBmYFBqGi+pKO4oL+4wgQcrJFHIay+Pip5873wCMNaA8eDgPhto9oF1BXtXF4qBI84VHnEQBLQHqHRKd52O2aLlsyruHgcljcpSkNnGNvOxpCWIizWMFwPDLjpmUmZ6L5ALNNjQaqGrN7bEB0cunrOAeoysF7hgS94AqeAyY1xkndIAAAAASUVORK5CYII="
+	VarSetCapacity(B64, 424 << !!A_IsUnicode)
+	B64 := "AAABAAEAEBAQAAEABAAoAQAAFgAAACgAAAAQAAAAIAAAAAEABAAAAAAAAAAAAFoAAABaAAAAEAAAAAAAAACbR0EAmkpEAKA8MwCdQjsApDIoAKgoHACIdXkAcau8AJdRTQBhzeAAf4iNAJNaWQCRYF8AeJmiAI5kZgBmw9MAAAAAEyEAAAAAAAQ74CIQAAADik2VZiAAATW5gwR3UhADigQwMSRmIALJEgAABHdAAUQAAAABNTEx/iAAAAM/YjDbMAAAAz3DAEQQAAABJTECyYMAAAR3QAOKBBMhJGYgATW5GMV3UhAAA4pN9WYgAAABNAEQIhAAAAAAAzEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
 	If !DllCall("Crypt32.dll\CryptStringToBinary", "Ptr", &B64, "UInt", 0, "UInt", 0x01, "Ptr", 0, "UIntP", DecLen, "Ptr", 0, "Ptr", 0)
 		Return False
 	VarSetCapacity(Dec, DecLen, 0)
@@ -808,14 +868,14 @@ Create_EU_png(NewHandle := False) {
 ; ##################################################################################
 ; # This #Include file was generated by Image2Include.ahk, you must not change it! #
 ; ##################################################################################
-Create_US_png(NewHandle := False) {
-	Static hBitmap := Create_US_png()
+Create_US_ico(NewHandle := False) {
+	Static hBitmap := Create_US_ico()
 	If (NewHandle)
 		hBitmap := 0
 	If (hBitmap)
 		Return hBitmap
-	VarSetCapacity(B64, 2968 << !!A_IsUnicode)
-	B64 := "iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAA3XAAAN1wFCKJt4AAAGoGlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNi4wLWMwMDIgNzkuMTY0MzUyLCAyMDIwLzAxLzMwLTE1OjUwOjM4ICAgICAgICAiPiA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPiA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtbG5zOmRjPSJodHRwOi8vcHVybC5vcmcvZGMvZWxlbWVudHMvMS4xLyIgeG1sbnM6cGhvdG9zaG9wPSJodHRwOi8vbnMuYWRvYmUuY29tL3Bob3Rvc2hvcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RFdnQ9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZUV2ZW50IyIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgMjEuMSAoV2luZG93cykiIHhtcDpDcmVhdGVEYXRlPSIyMDIxLTAxLTMwVDIyOjIyOjQ3WiIgeG1wOk1vZGlmeURhdGU9IjIwMjEtMDEtMzBUMjM6MTg6MDVaIiB4bXA6TWV0YWRhdGFEYXRlPSIyMDIxLTAxLTMwVDIzOjE4OjA1WiIgZGM6Zm9ybWF0PSJpbWFnZS9wbmciIHBob3Rvc2hvcDpDb2xvck1vZGU9IjMiIHBob3Rvc2hvcDpJQ0NQcm9maWxlPSJzUkdCIElFQzYxOTY2LTIuMSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDo1MTcwZTNiYi1iZmI0LWIzNDAtYTBhYS0wZDQ1MjE3NjIzMGMiIHhtcE1NOkRvY3VtZW50SUQ9ImFkb2JlOmRvY2lkOnBob3Rvc2hvcDoxNzUzYjUwMS0zODY3LTc5NDgtYWU3ZS05ZTIxNDViMmYyMzIiIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDo4OGQyYjk4ZC0yYTY2LWFhNDItYmMxMS01MzZhODM3YWY0OGEiPiA8eG1wTU06SGlzdG9yeT4gPHJkZjpTZXE+IDxyZGY6bGkgc3RFdnQ6YWN0aW9uPSJjcmVhdGVkIiBzdEV2dDppbnN0YW5jZUlEPSJ4bXAuaWlkOjg4ZDJiOThkLTJhNjYtYWE0Mi1iYzExLTUzNmE4MzdhZjQ4YSIgc3RFdnQ6d2hlbj0iMjAyMS0wMS0zMFQyMjoyMjo0N1oiIHN0RXZ0OnNvZnR3YXJlQWdlbnQ9IkFkb2JlIFBob3Rvc2hvcCAyMS4xIChXaW5kb3dzKSIvPiA8cmRmOmxpIHN0RXZ0OmFjdGlvbj0ic2F2ZWQiIHN0RXZ0Omluc3RhbmNlSUQ9InhtcC5paWQ6MjFiNDQ0ZjUtNTc3ZS02MjQ5LTg0ZjgtOTJkODUyYjkwNDc3IiBzdEV2dDp3aGVuPSIyMDIxLTAxLTMwVDIzOjE4OjA1WiIgc3RFdnQ6c29mdHdhcmVBZ2VudD0iQWRvYmUgUGhvdG9zaG9wIDIxLjEgKFdpbmRvd3MpIiBzdEV2dDpjaGFuZ2VkPSIvIi8+IDxyZGY6bGkgc3RFdnQ6YWN0aW9uPSJzYXZlZCIgc3RFdnQ6aW5zdGFuY2VJRD0ieG1wLmlpZDo1MTcwZTNiYi1iZmI0LWIzNDAtYTBhYS0wZDQ1MjE3NjIzMGMiIHN0RXZ0OndoZW49IjIwMjEtMDEtMzBUMjM6MTg6MDVaIiBzdEV2dDpzb2Z0d2FyZUFnZW50PSJBZG9iZSBQaG90b3Nob3AgMjEuMSAoV2luZG93cykiIHN0RXZ0OmNoYW5nZWQ9Ii8iLz4gPC9yZGY6U2VxPiA8L3htcE1NOkhpc3Rvcnk+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+vBQxMAAAAbhJREFUOBGlwStvFFEYgOH3XGbPnJ1toSHdFkK6DkiakoBAcDF4LB7LP0ATJKYBWkMCPwFNkJQEC5ZbERQI0N2dmZ3bOR/BjcG0z6OuXH8sKydTtFYcTivOrC/xZX/KZOME3w5ykqUhmTc8OXjBxPwCPH32/LnVxXg89DEIi6pDgNFyik8tp1YzMp/w+euMHzvbTDbXKUKgz6bOBAQEGCSaomxxzhC6gHMWEkvUmuHuUxgLaTD06bxoEEAB5aLDOUuRNwycZVF1xCgMBoZYNVDVUNdQ11DXUNdYn1q6LhJDZDAw5EWDTy153uB9QqgaqtmC7sFduLBGHSN9VgS0VogoJESs0QhgrQYE5T0qa/C370Dyk6HK6LPGalJnCEHTtAGJQoxgjCKxGq8CSdtQPN+FSxuUZUmfffnqA1ubY5RWfPz0h4tba7ze2+fa1Q3evf/O6bMrBBSy8wwmFtcq+tT97TfzomxHIKSppShalpcds1lNNkyYNuBU5F71luHiN0o7+pSEwzkw4r+Ef1rJaDCA0Kfk8o05MOKIVFGWc2DEEVn38BHHYdV0ynGoXKQEPEek5OYt4Rj+AomWu9vh9n3vAAAAAElFTkSuQmCC"
+	VarSetCapacity(B64, 424 << !!A_IsUnicode)
+	B64 := "AAABAAEAEBAQAAEABAAoAQAAFgAAACgAAAAQAAAAIAAAAAEABAAAAAAAAAAAAFoAAABaAAAAEAAAAAAAAAD7+/YArGllALN1cAB9dv0AiYL8AKRVTQA9Mv8ATEH/AO/8/wDDi3sAkTUvAObTzACBZ9EATzXcAISD/wBCQP8Ad3d3d3d3d3cAAAAAAAAAADMzMzMzMzMzRERERERERESAAAAAAAAAAGZmZmZmZmZmiIiIiIgAAACZmZmZmUMzM6VaWlpVzkREEiIREiWwAAASIRERJdZmZhIhERElsAAAEiERESXDMzMSIhESJc5ERBIhERElsAAApVpaWlXfd3cAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
 	If !DllCall("Crypt32.dll\CryptStringToBinary", "Ptr", &B64, "UInt", 0, "UInt", 0x01, "Ptr", 0, "UIntP", DecLen, "Ptr", 0, "Ptr", 0)
 		Return False
 	VarSetCapacity(Dec, DecLen, 0)
@@ -840,20 +900,6 @@ Create_US_png(NewHandle := False) {
 	Return hBitmap
 	}
 
-BackupWindowGuiEscape: ;Backup window escape stuff
-	BackupWindowGuiClose:
-	Gui BackupWindow:Cancel
-	Gui BackupWindow:Destroy
-	WinActivate, 8th Gear FiveM Launcher
-	Return
-
-LogsWindowGuiEscape: ;Backup window escape stuff
-	LogsWindowGuiClose:
-	Gui LogsWindow:Cancel
-	Gui LogsWindow:Destroy
-	WinActivate, 8th Gear FiveM Launcher
-	Return
-
 MessageWindowGuiEscape: ;Backup window escape stuff
 	MessageWindowGuiClose:
 	Gui MessageWindow:Cancel
@@ -866,7 +912,13 @@ FAQWindowGuiEscape: ;FAQ window escape stuff
 	Gui FAQWindow:Cancel
 	Gui FAQWindow:Destroy
 	WinActivate, 8th Gear FiveM Launcher
-	return
+	Return
+
+FolderExplorerWindowGuiEscape: ;LogViewer window escape stuff
+	FolderExplorerWindowGuiClose:
+	Gui FolderExplorerWindow:Cancel
+	Gui FolderExplorerWindow:Destroy
+	Return
 
 LogViewerWindowGuiEscape: ;LogViewer window escape stuff
 	LogViewerWindowGuiClose:
@@ -892,6 +944,6 @@ MainGuiEscape: ;Main window escape Stuff
 	MainGuiClose:
 	MainButtonCancel:
 	MenuOptionExit:
-	if FileExist("8thGearLauncher")
+	If FileExist("8thGearLauncher")
 		FileRemoveDir, 8thGearLauncher, 1
 	ExitApp
