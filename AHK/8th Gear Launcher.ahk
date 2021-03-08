@@ -146,8 +146,13 @@ ReOpenLauncher:
 MainGuiDropFiles:
 	LogViewerWindowGuiDropFiles:
 
+	Loop, Parse, A_GuiEvent, `n
+	{
+		FirstFile := A_LoopField
+		break
+	}
 	Global FilePath
-	FilePath := A_GuiEvent
+	FilePath := FirstFile
 	OpenLogViewer("Dropped File", FilePath)
 	Return
 
