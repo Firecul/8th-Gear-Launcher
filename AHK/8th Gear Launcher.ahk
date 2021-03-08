@@ -475,7 +475,11 @@ SaveLog:
 SaveLogCopy:
 	Global FilePath
 	FileSelectFile, NewLog, S18, %FilePath%, Where to save the Log?, Log Files (*.log)
-	FileCopy, %FilePath%, %NewLog% ;TODO improve, prob using dllcall.
+		If (NewLog = ""){
+			MsgBox 0x30,, The user didn't select a location.
+	}else{
+			FileCopy, %FilePath%, %NewLog% ;TODO improve, prob using dllcall.
+		}
 	Return
 
 OpenCacheFolder: ;Opens normal cache folder
