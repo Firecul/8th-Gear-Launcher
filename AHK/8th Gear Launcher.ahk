@@ -313,6 +313,8 @@ UpdateFiles: ;Updates the log list for the tools tab and populates related varia
 		Menu, CacheMenu, Disable, Open Back-up Folder
 		Menu, CacheMenu, Disable, &Restore Cache from Back-ups
 	}
+	StringTrimRight, TrimmedExePath, FiveMExeFullPath, 10
+	ShortcutPath := % TrimmedExePath . "\8GLauncher.lnk"
 	Return
 
 GetFileProperties:
@@ -339,7 +341,10 @@ Connect: ;Connects to the selected server in the list
 	IniRead, ServerIP, 8thGearLauncher/ServerList.ini, %ServerNameList%, IP
 	IniRead, ServerPort, 8thGearLauncher/ServerList.ini, %ServerNameList%, Port
 	GoSub, BackupLogs
-	Run, cmd.exe /C %FiveMExeFullPath% +connect %ServerIP%:%ServerPort%,,hide
+
+	ShotcutArguement := % " +connect " . ServerIP . ":" . ServerPort
+	FileCreateShortcut, %FiveMExeFullPath%, %ShortcutPath%, %TrimmedExePath%, %ShotcutArguement%, Launches FiveM to a specifed server, , ,
+	Run, cmd.exe /C explorer.exe %TrimmedExePath%\8GLauncher.lnk,,hide
 	Return
 
 Localhost: ;Launches FiveM and connects to Localhost
@@ -946,4 +951,7 @@ MainGuiEscape: ;Main window escape Stuff
 	MenuOptionExit:
 	If FileExist("8thGearLauncher")
 		FileRemoveDir, 8thGearLauncher, 1
+	If FileExist(ShortcutPath)
+		FileDelete, % ShortcutPath
+
 	ExitApp
