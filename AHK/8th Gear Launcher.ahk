@@ -11,7 +11,7 @@ SetWorkingDir, %A_ScriptDir%
 ;@Ahk2Exe-AddResource icons\8G_grey_logo.ico, 207  ; Replaces 'H on red'
 ;@Ahk2Exe-AddResource icons\8G_grey_logo.ico, 208  ; Replaces 'S on red'
 ;@Ahk2Exe-SetName 8th Gear Launcher
-;@Ahk2Exe-SetVersion 1.4
+;@Ahk2Exe-SetVersion 1.4.1
 ;@Ahk2Exe-SetCopyright Firecul666@gmail.com
 ;@Ahk2Exe-SetDescription https://github.com/Firecul/8th-Gear-Launcher
 ;@Ahk2Exe-SetLanguage 0x0809
@@ -24,7 +24,7 @@ FileCreateDir, 8thGearLauncher ;Creation stuff
 	Fileinstall, ServerList.ini, 8thGearLauncher/ServerList.ini, 0
 	Menu, Tray, Icon, % "HICON:*" . Create_8G_logo_ico()
 
-LauncherVersion = v1.4
+LauncherVersion = v1.4.1
 
 vFAQ =
 	(
@@ -247,7 +247,7 @@ PingAll:
 	StringSplit, ServerArray, ServerNames, `n,
 	Loop, %ServerArray0%
 	{
-		If (ServerArray%A_Index% = "8th Gear Racing EU 2"){
+		If (ServerArray%A_Index% = "8th Gear Racing EU 2.0"){
 			Ping(ServerArray%A_Index%, Create_EU_ico(), 2) ;Pings EU 2
 			Continue
 		}
