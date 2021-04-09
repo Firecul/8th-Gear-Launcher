@@ -11,7 +11,7 @@ SetWorkingDir, %A_ScriptDir%
 ;@Ahk2Exe-AddResource icons\8G_grey_logo.ico, 207  ; Replaces 'H on red'
 ;@Ahk2Exe-AddResource icons\8G_grey_logo.ico, 208  ; Replaces 'S on red'
 ;@Ahk2Exe-SetName 8th Gear Launcher
-;@Ahk2Exe-SetVersion 1.4.2
+;@Ahk2Exe-SetVersion 1.5.0
 ;@Ahk2Exe-SetCopyright Firecul666@gmail.com
 ;@Ahk2Exe-SetDescription https://github.com/Firecul/8th-Gear-Launcher
 ;@Ahk2Exe-SetLanguage 0x0809
@@ -24,7 +24,7 @@ FileCreateDir, 8thGearLauncher ;Creation stuff
 	Fileinstall, ServerList.ini, 8thGearLauncher/ServerList.ini, 0
 	Menu, Tray, Icon, % "HICON:*" . Create_8G_logo_ico()
 
-LauncherVersion = v1.4.2
+LauncherVersion = v1.5.0
 
 vFAQ =
 	(
@@ -162,7 +162,7 @@ BetterDownloadServerList:
 	DownloadObject.Send()
 
 	DownloadObject.WaitForResponse(1)
-	DownloadedList := DownloadObject.ResponseText
+	DownloadedList := DownloadObject.ResponseText ;Error here Fix it TODO
 		If (ErrorLevel = 0)
 		{ ;Download successful
 			If DownloadedList Contains 8th Gear Racing ;Prob Normal
@@ -204,6 +204,11 @@ DontDownloadServerList:
 
 UpdateServerList: ;Updates the list of servers from the ini file
 	Global ServerNames
+	If FileExist("AdditionalServers.ini"){
+		IniRead, AdditionalServerNames, AdditionalServers.ini
+		ServerNames := % ServerNames . "`n" . AdditionalServerNames
+	}
+
 	Gui Main: +Delimiter`n
 	GuiControl,Main: , ServerNameList,`n
 	SlimServerNames := StrReplace(ServerNames, "8th Gear Racing ")
