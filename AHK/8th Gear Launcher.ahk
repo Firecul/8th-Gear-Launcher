@@ -1,4 +1,4 @@
-#SingleInstance, Force
+﻿#SingleInstance, Force
 #NoEnv
 ;#Warn
 SetBatchLines -1
@@ -236,6 +236,9 @@ LookForFiveM: ;Opens dialogue box to allow selecting FiveM.exe location
 			Menu, FileMenu, Enable, &Locate FiveM.exe
 	}
 	else{
+
+		StringTrimRight, FiveMPath, FiveMExeFullPath, 9
+		FiveMPath := % FiveMPath . "FiveM.app\"
 		Menu, FileMenu, Disable, &Locate FiveM.exe
 	}
 	GoSub, UpdateFiles
