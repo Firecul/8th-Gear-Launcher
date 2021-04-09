@@ -569,6 +569,11 @@ ParseNewLog: ;New-Style log parsing
 				If logline not contains %LogDoesNotContain%
 				{
 					stringtrimleft, TrimmedLine, logline, 52
+
+					TrimmedLine := StrReplace(TrimmedLine, "^2[RaceScript] [", "[RaceScript] [")
+					TrimmedLine := StrReplace(TrimmedLine, "^5[RaceScript] [", "[RaceScript] [")
+					TrimmedLine := StrReplace(TrimmedLine, "]^7  ", "]  ")
+
 					TrimmedLinea = %TrimmedLinea%Line #%A_Index%:%A_Tab%%TrimmedLine%`n
 				}
 		}
