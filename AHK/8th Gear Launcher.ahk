@@ -1,4 +1,4 @@
-﻿#SingleInstance, Force
+#SingleInstance, Force
 #NoEnv
 ;#Warn
 SetBatchLines -1
@@ -305,7 +305,7 @@ UpdateFiles: ;Updates the log list for the tools tab and populates related varia
 	FiveMBackupLogsPath := FiveMPath . "Backed-up logs\"
 	If !FileExist(FiveMPath . "Backed-up logs\"){
 		Menu, LogMenu, Disable, Open Back-up Folder
-		Menu, LogMenu, Disable, &Manage Backed-up Logs
+		Menu, LogMenu, Disable, Open Backed Up Logs
 	}
 	FiveMCachePath := FiveMPath . "cache\"
 	FiveMBackupCachePath := FiveMPath . "CacheBackup\"
