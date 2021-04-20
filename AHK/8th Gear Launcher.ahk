@@ -1,4 +1,4 @@
-﻿#SingleInstance, Force
+#SingleInstance, Force
 #NoEnv
 ;#Warn
 SetBatchLines -1
@@ -345,10 +345,17 @@ DeleteLog:
 
 Connect: ;Connects to the selected server in the list
 	GuiControlGet, ServerNameList
-	If ServerNameList contains EU 2,Central 1
+	If ServerNameList contains EU,Central
+	{
 		ServerNameList := % "8th Gear Racing " . ServerNameList
-	IniRead, ServerIP, 8thGearLauncher/ServerList.ini, %ServerNameList%, IP
-	IniRead, ServerPort, 8thGearLauncher/ServerList.ini, %ServerNameList%, Port
+		IniRead, ServerIP, 8thGearLauncher/ServerList.ini, %ServerNameList%, IP
+		IniRead, ServerPort, 8thGearLauncher/ServerList.ini, %ServerNameList%, Port
+	}
+	else{
+		IniRead, ServerIP, AdditionalServers.ini, %ServerNameList%, IP
+		IniRead, ServerPort, AdditionalServers.ini, %ServerNameList%, Port
+	}
+
 	GoSub, BackupLogs
 
 	ShotcutArguement := % " +connect " . ServerIP . ":" . ServerPort
