@@ -365,7 +365,9 @@ Connect: ;Connects to the selected server in the list
 
 Localhost: ;Launches FiveM and connects to Localhost
 	GoSub, BackupLogs
-	Run, cmd.exe /C %FiveMExeFullPath% +connect 127.0.0.1,,hide
+	ShotcutArguement := % " +connect 127.0.0.1"
+	FileCreateShortcut, %FiveMExeFullPath%, %ShortcutPath%, %TrimmedExePath%, %ShotcutArguement%, Launches FiveM to a specifed server, , ,
+	Run, cmd.exe /C explorer.exe %TrimmedExePath%\8GLauncher.lnk,,hide
 	Return
 
 OpenLogManager:
