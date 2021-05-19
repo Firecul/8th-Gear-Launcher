@@ -12,7 +12,7 @@ SetWorkingDir, %A_ScriptDir%
 	;@Ahk2Exe-AddResource icons\8G_grey_logo.ico, 207  ; Replaces 'H on red'
 	;@Ahk2Exe-AddResource icons\8G_grey_logo.ico, 208  ; Replaces 'S on red'
 	;@Ahk2Exe-SetName 8th Gear Launcher
-	;@Ahk2Exe-SetVersion 1.5.0
+	;@Ahk2Exe-SetVersion 1.5.1
 	;@Ahk2Exe-SetCopyright Firecul666@gmail.com
 	;@Ahk2Exe-SetDescription https://github.com/Firecul/8th-Gear-Launcher
 	;@Ahk2Exe-SetLanguage 0x0809
@@ -25,7 +25,7 @@ FileCreateDir, 8thGearLauncher ;Creation stuff
 	Fileinstall, ServerList.ini, 8thGearLauncher/ServerList.ini, 0
 	Menu, Tray, Icon, % "HICON:*" . Create_8G_logo_ico()
 
-LauncherVersion = v1.5.0
+LauncherVersion = v1.5.1
 
 vFAQ =
 	(
@@ -314,7 +314,7 @@ UpdateFiles: ;Updates the log list for the tools tab and populates related varia
 	FiveMBackupLogsPath := FiveMPath . "Backed-up logs\"
 	If !FileExist(FiveMPath . "Backed-up logs\"){
 		Menu, LogMenu, Disable, Open Back-up Folder
-		Menu, LogMenu, Disable, Open Backed Up Logs
+		Menu, LogMenu, Disable, View Backed Up Logs
 	}
 	FiveMCachePath := FiveMPath . "cache\"
 	FiveMBackupCachePath := FiveMPath . "CacheBackup\"
