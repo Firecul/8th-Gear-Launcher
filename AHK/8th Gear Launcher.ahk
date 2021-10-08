@@ -620,7 +620,7 @@ RestoreCache: ;Restores cache from backups
 ParseLog: ;Determines the type of log(old-style vs new-style)
 	Global LogContents
 	Global FilePath
-	StringSplit, LogLines, LogContents, `r, `n
+	LogLines := StrSplit(LogContents, "`n", "`r")
 	logline :=
 	TrimmedLinea :=
 
@@ -635,9 +635,9 @@ ParseLog: ;Determines the type of log(old-style vs new-style)
 
 ParseNewLog: ;New-Style log parsing
 	Global LogContents
-	Loop, %LogLines0%
+	Loop, % LogLines.Count()
 		{
-			logline := LogLines%a_index%
+			logline := LogLines[a_index]
 			If logline contains %NormalWhitelist%
 				If logline not contains %NormalBlacklist%
 				{
@@ -655,9 +655,9 @@ ParseNewLog: ;New-Style log parsing
 
 ParseOldLog: ;Old-Style log parsing
 	Global LogContents
-	Loop, %LogLines0%
+	Loop, % LogLines.Count()
 		{
-			logline := LogLines%a_index%
+			logline := LogLines[a_index]
 			If logline contains %NormalWhitelist%
 				If logline not contains %NormalBlacklist%
 				{
