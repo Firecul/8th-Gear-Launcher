@@ -1,4 +1,4 @@
-﻿#SingleInstance, Force
+#SingleInstance, Force
 #NoEnv
 ;#Warn
 SetBatchLines -1
@@ -256,12 +256,12 @@ PingAll:
 	StringSplit, ServerArray, ServerNames, `n,
 	Loop, %ServerArray0%
 	{
-		If (ServerArray%A_Index% = "8th Gear Racing EU 2.0"){
+		If (ServerArray%A_Index% = "8th Gear Racing EU 2"){
 			Ping(ServerArray%A_Index%, Create_EU_ico(), 2) ;Pings EU 2
 			Continue
 		}
-		If (ServerArray%A_Index% = "8th Gear Racing Central 1"){
-			Ping(ServerArray%A_Index%, Create_US_ico(), 3) ;Pings Central 1
+		If (ServerArray%A_Index% = "8th Gear Racing US East 1"){
+			Ping(ServerArray%A_Index%, Create_US_ico(), 3) ;Pings US East 1
 			Continue
 		}
 	}
