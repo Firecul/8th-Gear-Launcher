@@ -358,16 +358,12 @@ Connect: ;Connects to the selected server in the list
 
 	GoSub, BackupLogs
 
-	ShotcutArguement := % " +connect " . ServerIP . ":" . ServerPort
-	FileCreateShortcut, %FiveMExeFullPath%, %ShortcutPath%, %TrimmedExePath%, %ShotcutArguement%, Launches FiveM to a specifed server, , ,
-	Run, cmd.exe /C explorer.exe %TrimmedExePath%\8GLauncher.lnk,,hide
+	Run, % "cmd.exe /C explorer.exe fivem://connect/" . ServerIP . ":" . ServerPort,,hide
 	Return
 
 Localhost: ;Launches FiveM and connects to Localhost
 	GoSub, BackupLogs
-	ShotcutArguement := % " +connect 127.0.0.1"
-	FileCreateShortcut, %FiveMExeFullPath%, %ShortcutPath%, %TrimmedExePath%, %ShotcutArguement%, Launches FiveM to a specifed server, , ,
-	Run, cmd.exe /C explorer.exe %TrimmedExePath%\8GLauncher.lnk,,hide
+	Run, cmd.exe /C explorer.exe fivem://connect/127.0.0.1,,hide
 	Return
 
 OpenLogManager:
