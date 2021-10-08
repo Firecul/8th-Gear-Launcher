@@ -637,6 +637,7 @@ ParseNewLog: ;New-Style log parsing
 	Global LogContents
 	Loop, % LogLines.Count()
 		{
+			StringCaseSense Off
 			logline := LogLines[a_index]
 			If logline contains %NormalWhitelist%
 				If logline not contains %NormalBlacklist%
