@@ -102,6 +102,50 @@ Global NormalBlacklist := "
 	1 handling entries
 	)"
 
+Global ServerWhitelist := "
+	(Join,
+	allowed to connect
+	A player with the name
+	Changing spectate for player 
+	changing weather: 
+	Checking Permissions for Player 
+	Clearing PermCache
+	Connecting UserID is
+	Deregistering vehicle
+	does dblist contain dropped player
+	dbidlist 
+	dropped (Reason: Exiting).
+	Got new PB time from
+	Got Perms for player 
+	Got vote response
+	In Ban Check
+	[INFO]
+	is now hotlapping
+	[LOG] checkpoints:
+	no handling found for 
+	old handle: $
+	Out of range
+	Oversized assets
+	Player Joined:
+	RaceMeta rowid is
+	Removing entity
+	Removing vehicles for
+	Saving Car Customization for player
+	Saving laptime: Player: 
+	Sending Car List To
+	Sending Hoptlap Lap Time
+	Sending Hotlap Lap Time
+	Sending Hoptlap Track Data
+	Sending Track List To
+	sending vote options
+	sent perms
+	set to grid pos 
+	to player 
+	Updated Web PlayerCount
+	Updated Web Weather
+	vote winner:
+	)"
+
 GoSub, GenerateMainUI
 
 GoSub, BetterDownloadServerList ;DO NOT ENABLE BOTH AT THE SAME TIME!!!!!
@@ -617,7 +661,7 @@ RestoreCache: ;Restores cache from backups
 	MsgBox 0x40,, Cache Restored, 2
 	Return
 
-ParseLog: ;Determines the type of log(old-style vs new-style)
+ParseLog: ;Determines the type of log(old-style vs new-style vs server)
 	Global LogContents
 	Global FilePath
 	LogLines := StrSplit(LogContents, "`n", "`r")
@@ -625,12 +669,27 @@ ParseLog: ;Determines the type of log(old-style vs new-style)
 	TrimmedLinea :=
 
 
-	Needle := "CitizenFX_log_"
-	If InStr(FilePath, Needle)
-		GoSub, ParseNewLog ;New-Style log
-	Else
-		GoSub, ParseOldLog ;Old-Style log
 
+
+	NewNeedle := "CitizenFX_log_"
+	OldNeedle := "CitizenFX.log"
+	ServerNeedle := "fxserver_"
+
+	If InStr(FilePath, NewNeedle){
+		GoSub, ParseNewLog ;New-Style log
+		Return
+	}
+	If InStr(FilePath, OldNeedle){
+		GoSub, ParseOldLog ;Old-Style log
+		Return
+	}
+	If InStr(FilePath, ServerNeedle){
+		GoSub, ParseServerLog ;Server log TODO
+		MsgBox, % "Server style"
+		Return
+	}
+	Else
+		MsgBox, % "Unknown style"
 	Return
 
 ParseNewLog: ;New-Style log parsing
@@ -669,6 +728,24 @@ ParseOldLog: ;Old-Style log parsing
 	Guicontrol, LogViewerWindow: text, LogContents, %TrimmedLinea%
 
 	MsgBox, 0x40, Log Format, Old-Style log suspected, 2
+	Return
+
+ParseServerLog:
+	ServerContains := NormalWhitelist . ServerWhitelist
+	Global LogContents
+	Loop, % LogLines.Count()
+	{
+			logline := LogLines[a_index]
+			If logline contains %ServerWhitelist%
+				If logline not contains %NormalBlacklist%
+				{
+					RegExMatch(logline, "O)\[\d+;\d+;\d+m\[[\s*\S*]{20}\]\s(.*$)", newlogline)
+					newloglinea = % newloglinea "Line #" A_Index ":" A_Tab newlogline.1 "`n"
+				}
+		}
+
+	Guicontrol, LogViewerWindow: text, LogContents, %newloglinea%
+
 	Return
 
 SlowOpen: ;Opens the log ignoring any found null characters that normally cause issues
