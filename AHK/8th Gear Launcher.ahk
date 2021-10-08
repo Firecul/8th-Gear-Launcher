@@ -1,4 +1,4 @@
-#SingleInstance, Force
+﻿#SingleInstance, Force
 #NoEnv
 ;#Warn
 SetBatchLines -1
@@ -704,6 +704,7 @@ ParseNewLog: ;New-Style log parsing
 					stringtrimleft, TrimmedLine, logline, 52
 
 					TrimmedLine := StrReplace(TrimmedLine, "^2[RaceScript] [", "[RaceScript] [")
+					TrimmedLine := StrReplace(TrimmedLine, "^3[RaceScript] [", "[RaceScript] [")
 					TrimmedLine := StrReplace(TrimmedLine, "^5[RaceScript] [", "[RaceScript] [")
 					TrimmedLine := StrReplace(TrimmedLine, "]^7  ", "]  ")
 
