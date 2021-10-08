@@ -462,6 +462,7 @@ OpenLogViewer(FileName, FilePath) ;Opens the selected log with the Log Viewer
 		Gui, LogViewerWindow: Add, edit, w1000 r30 ReadOnly t10 vLogContents, (Loading)
 		Gui, LogViewerWindow: font,
 		Gui, LogViewerWindow: font, s10
+		Gui, LogViewerWindow: Add, StatusBar,, % FilePath
 		Gui, LogViewerWindow: show, AutoSize Center, %FileName%
 		fileread, LogContents, %FilePath%
 		Guicontrol, LogViewerWindow: text, LogContents, %LogContents%
@@ -479,7 +480,7 @@ LogViewerWindowGuiSize:
   If A_EventInfo = 1  ; The window has been minimized.  No action needed.
     Return
   ; Otherwise, the window has been resized or maximized. Resize the controls to match.
-  GuiControl Move, LogContents, % "H" . (A_GuiHeight-20) . " W" . (A_GuiWidth-20)
+  GuiControl Move, LogContents, % "H" . (A_GuiHeight-40) . " W" . (A_GuiWidth-20)
 	Return
 
 MakeMessageWindow(Text,Dir)
