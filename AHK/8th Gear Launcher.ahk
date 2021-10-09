@@ -1,4 +1,4 @@
-﻿#SingleInstance, Force
+#SingleInstance, Force
 #NoEnv
 ;#Warn
 SetBatchLines -1
@@ -664,7 +664,7 @@ ParseLog: ;Determines the type of log(old-style vs new-style vs server)
 	Global FilePath
 	LogLines := StrSplit(LogContents, "`n", "`r")
 	logline := ""
-	TrimmedLinea :=
+	TrimmedLineArray := []
 
 
 
@@ -706,10 +706,10 @@ ParseNewLog: ;New-Style log parsing
 					TrimmedLine := StrReplace(TrimmedLine, "^5[RaceScript] [", "[RaceScript] [")
 					TrimmedLine := StrReplace(TrimmedLine, "]^7  ", "]  ")
 
-					TrimmedLinea = %TrimmedLinea%Line #%A_Index%:%A_Tab%%TrimmedLine%`n
+					TrimmedLineArray := % TrimmedLineArray . "Line #" . A_Index . ":" . A_Tab . TrimmedLine . "`n"
 				}
 		}
-	Guicontrol, LogViewerWindow: text, LogContents, %TrimmedLinea%
+	Guicontrol, LogViewerWindow: text, LogContents, % TrimmedLineArray
 	Return
 
 ParseOldLog: ;Old-Style log parsing
@@ -721,10 +721,11 @@ ParseOldLog: ;Old-Style log parsing
 				If logline not contains %NormalBlacklist%
 				{
 					stringtrimleft, TrimmedLine, logline, 13
-					TrimmedLinea = %TrimmedLinea%Line #%A_Index%:%A_Tab%%TrimmedLine%`n
+
+					TrimmedLineArray = % TrimmedLineArray . "Line #" . A_Index . ":" . A_Tab . TrimmedLine . "`n"
 				}
 		}
-	Guicontrol, LogViewerWindow: text, LogContents, %TrimmedLinea%
+	Guicontrol, LogViewerWindow: text, LogContents, % TrimmedLineArray
 
 	MsgBox, 0x40, % "Log Format, Old-Style log suspected", 2
 	Return
@@ -739,11 +740,11 @@ ParseServerLog:
 				If logline not contains %NormalBlacklist%
 				{
 					RegExMatch(logline, "O)\[\d+;\d+;\d+m\[[\s*\S*]{20}\]\s(.*$)", newlogline)
-					newloglinea = % newloglinea "Line #" A_Index ":" A_Tab newlogline.1 "`n"
+					TrimmedLineArray = % TrimmedLineArray . "Line #" . A_Index . ":" . A_Tab . newlogline.1 . "`n"
 				}
 		}
 
-	Guicontrol, LogViewerWindow: text, LogContents, %newloglinea%
+	Guicontrol, LogViewerWindow: text, LogContents, % TrimmedLineArray
 
 	Return
 
