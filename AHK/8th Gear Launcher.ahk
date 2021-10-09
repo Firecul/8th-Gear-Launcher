@@ -12,7 +12,7 @@ SetWorkingDir, %A_ScriptDir%
 	;@Ahk2Exe-AddResource icons\8G_grey_logo.ico, 207  ; Replaces 'H on red'
 	;@Ahk2Exe-AddResource icons\8G_grey_logo.ico, 208  ; Replaces 'S on red'
 	;@Ahk2Exe-SetName 8th Gear Launcher
-	;@Ahk2Exe-SetVersion 1.5.1
+	;@Ahk2Exe-SetVersion 1.6.0
 	;@Ahk2Exe-SetCopyright Firecul666@gmail.com
 	;@Ahk2Exe-SetDescription https://github.com/Firecul/8th-Gear-Launcher
 	;@Ahk2Exe-SetLanguage 0x0809
@@ -25,20 +25,18 @@ FileCreateDir, 8thGearLauncher ;Creation stuff
 	Fileinstall, ServerList.ini, 8thGearLauncher/ServerList.ini, 0
 	Menu, Tray, Icon, % "HICON:*" . Create_8G_logo_ico()
 
-LauncherVersion = v1.5.1
+#LTrim
 
-vFAQ =
+LauncherVersion := "v1.6.0"
+
+vFAQ := "
 	(
 	READ THE WHOLE THING.
-	)
+	)"
 
-MyProgress = ""
+MyProgress := ""
 
-Global ServerNames
-
-
-
-#LTrim
+Global ServerNames := ""
 
 Global NormalWhitelist := "
 	(Join,
@@ -334,7 +332,7 @@ UpdateServerList: ;Updates the list of servers from the ini file
 FiveMExist: ;Stuff to run at start up
 	RegRead, FiveMPath, HKEY_CURRENT_USER\Software\CitizenFX\FiveM, Last Run Location
 	If (FiveMPath = ""){
-			MsgBox 	0x30,, FiveM.exe cannot be found.`nPlease locate it.
+			MsgBox 	0x30,, % "FiveM.exe cannot be found.`nPlease locate it."
 			GoSub, LookForFiveM
 			Menu, FileMenu, Enable, &Locate FiveM.exe
 		}
@@ -349,7 +347,7 @@ LookForFiveM: ;Opens dialogue box to allow selecting FiveM.exe location
 	Gui +OwnDialogs
 	FileSelectFile, FiveMExeFullPath, 3, , Locate FiveM.exe, FiveM (FiveM.exe)
 	If (FiveMExeFullPath = ""){
-			MsgBox 0x30,, The user didn't select anything.
+			MsgBox 0x30,, % "The user didn't select anything."
 			LV_Delete()
 			Menu, FileMenu, Enable, &Locate FiveM.exe
 	}
@@ -445,7 +443,7 @@ GetFileProperties:
 
 DeleteLog:
 	Global FilePath
-	MsgBox, 0x40124, Delete Log?, Are you sure you want to delete this file? `n%FilePath%
+	MsgBox, 0x40124, % "Delete Log?, Are you sure you want to delete this file? `n" . FilePath
 	IfMsgBox, Yes
 		{
 			FileDelete, %FilePath%
@@ -634,17 +632,17 @@ BackupCache: ;Backs up cache priv folder
 	Gui +OwnDialogs
 	IfNotExist, %FiveMBackupCachePath%
 	{
-		MsgBox 0x40,, The target folder does not exist.`n`nCreating it., 2
+		MsgBox 0x40,, % "The target folder does not exist.`n`nCreating it.", 2
 		FileCreateDir, %FiveMBackupCachePath%
 	}
 	IfExist, %FiveMBackupCachePath%
 	{
-		MsgBox 0x40,, The target folder exists.`n`nCopying files.
+		MsgBox 0x40,, % "The target folder exists.`n`nCopying files."
 		FileCopyDir, %FiveMCachePath%db\, %FiveMBackupCachePath%db\, 1
 		FileCopy,  %FiveMCachePath%priv\*.*, %FiveMBackupCachePath%priv\*.*
 		FileCopyDir, %FiveMCachePath%priv\db\, %FiveMBackupCachePath%priv\db\, 1
 		FileCopyDir, %FiveMCachePath%priv\unconfirmed\, %FiveMBackupCachePath%priv\unconfirmed\ , 1
-		MsgBox 0x40,, Cache Backed Up, 2
+		MsgBox 0x40,, % "Cache Backed Up", 2
 	}
 	Return
 
@@ -658,14 +656,14 @@ RestoreCache: ;Restores cache from backups
 	FileCopy, %FiveMBackupCachePath%priv\*.*, %FiveMCachePath%priv\*.*
 	FileCopyDir, %FiveMBackupCachePath%priv\db\, %FiveMCachePath%priv\db\, 1
 	FileCopyDir, %FiveMBackupCachePath%priv\unconfirmed\, %FiveMCachePath%priv\unconfirmed\ , 1
-	MsgBox 0x40,, Cache Restored, 2
+	MsgBox 0x40,, % "Cache Restored", 2
 	Return
 
 ParseLog: ;Determines the type of log(old-style vs new-style vs server)
 	Global LogContents
 	Global FilePath
 	LogLines := StrSplit(LogContents, "`n", "`r")
-	logline :=
+	logline := ""
 	TrimmedLinea :=
 
 
@@ -728,7 +726,7 @@ ParseOldLog: ;Old-Style log parsing
 		}
 	Guicontrol, LogViewerWindow: text, LogContents, %TrimmedLinea%
 
-	MsgBox, 0x40, Log Format, Old-Style log suspected, 2
+	MsgBox, 0x40, % "Log Format, Old-Style log suspected", 2
 	Return
 
 ParseServerLog:
@@ -807,7 +805,7 @@ MenuOptionBackupLogs: ;Backs up logs to the backup folder for safe keeping
 	IfNotExist, %FiveMBackupLogsPath%
 		FileCreateDir, %FiveMBackupLogsPath%
 	FileCopy, %FiveMLogsPath%*.log, %FiveMBackupLogsPath%*.*, 1
-	MsgBox, 0x40,, Logs Backed Up, 2
+	MsgBox, 0x40,, % "Logs Backed Up", 2
 	Return
 
 openviewer:
@@ -821,7 +819,7 @@ opendefault: ;Opens the selected log with the users default editor for .log file
 	Gui +OwnDialogs
 	Run %FilePath%,, UseErrorLevel
 	If ErrorLevel
-		MsgBox, 0x30,, Could not open %FilePath%
+		MsgBox, 0x30,, % "Could not open " . FilePath
 	Return
 
 opennotepad: ;Opens the selected log with Notepad
@@ -829,7 +827,7 @@ opennotepad: ;Opens the selected log with Notepad
 	Gui +OwnDialogs
 	Run C:\Windows\Notepad.exe %FilePath%,, UseErrorLevel
 	If ErrorLevel
-		MsgBox, 0x30,, Could not open %FilePath%
+		MsgBox, 0x30,, % "Could not open " . FilePath
 	Return
 
 MenuOption8GDiscord: ;Opens 8G Main discord channel
@@ -850,7 +848,7 @@ MenuOptionArbitraryLog:
 	Gui +OwnDialogs
 	FileSelectFile, FilePath, 3, , Open a FiveM Log, Log (*.log*)
 	If (FilePath = ""){
-			MsgBox 0x40,, The user didn't select anything., 2
+			MsgBox 0x40,, % "The user didn't select anything.", 2
 	}
 	else{
 		OpenLogViewer(FilePath, FilePath)
@@ -869,21 +867,21 @@ MenuOptionFAQ: ;Opens FAQ Window
 MenuOptionOpenGTASettingsDefault:
 	Run %A_MyDocuments%\Rockstar Games\GTA V\settings.xml,, UseErrorLevel
 	If ErrorLevel{
-		MsgBox 0x30,, Could not open %A_MyDocuments%\Rockstar Games\GTA V\settings.xml
+		MsgBox 0x30,, % "Could not open " . A_MyDocuments . "\Rockstar Games\GTA V\settings.xml"
 	}
 	Return
 
 MenuOptionOpenGTASettingsFolder:
 	Run %A_MyDocuments%\Rockstar Games\GTA V,, UseErrorLevel
 	If ErrorLevel{
-		MsgBox 0x30,, %A_MyDocuments%\Rockstar Games\GTA V
+		MsgBox 0x30,, % A_MyDocuments . "\Rockstar Games\GTA V"
 	}
 	Return
 
 MenuOptionOpenGTASettingsNotepad:
 	Run C:\Windows\Notepad.exe %A_MyDocuments%\Rockstar Games\GTA V\settings.xml,, UseErrorLevel
 	If ErrorLevel{
-		MsgBox 0x30,, Could not open %A_MyDocuments%\Rockstar Games\GTA V\settings.xml
+		MsgBox 0x30,, % "Could not open " . A_MyDocuments . "\Rockstar Games\GTA V\settings.xml"
 	}
 	Return
 
