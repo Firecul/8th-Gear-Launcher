@@ -323,10 +323,10 @@ UpdateServerList: ;Updates the list of servers from the ini file
 	Gui Main: +Delimiter`n
 	GuiControl,Main: , ServerNameList,`n
 	SlimServerNames := StrReplace(ServerNames, "8th Gear Racing ")
-	GuiControl,Main: , ServerNameList, %SlimServerNames%
+	GuiControl,Main: , ServerNameList, % SlimServerNames
 	GuiControlGet, ServerNameList
 	GuiControl, Main: ChooseString, ComboBox1, EU 2
-	Gui, Main: Show,, 8th Gear FiveM Launcher
+	Gui, Main: Show,, % "8th Gear FiveM Launcher"
 	Return
 
 FiveMExist: ;Stuff to run at start up
@@ -363,15 +363,16 @@ LookForFiveM: ;Opens dialogue box to allow selecting FiveM.exe location
 PingAll:
 	Gui, Main: Show,, 8th Gear FiveM Launcher
 	Global ServerNames
-	StringSplit, ServerArray, ServerNames, `n,
-	Loop, %ServerArray0%
+
+	ServerArray := StrSplit(ServerNames, "`n")
+	Loop, % ServerArray.Count()
 	{
-		If (ServerArray%A_Index% = "8th Gear Racing EU 2"){
-			Ping(ServerArray%A_Index%, Create_EU_ico(), 2) ;Pings EU 2
+		If (ServerArray[A_Index] = "8th Gear Racing EU 2"){
+			Ping(ServerArray[A_Index], Create_EU_ico(), 2) ;Pings EU 2
 			Continue
 		}
-		If (ServerArray%A_Index% = "8th Gear Racing US East 1"){
-			Ping(ServerArray%A_Index%, Create_US_ico(), 3) ;Pings US East 1
+		If (ServerArray[A_Index] = "8th Gear Racing US East 1"){
+			Ping(ServerArray[A_Index], Create_US_ico(), 3) ;Pings US East 1
 			Continue
 		}
 	}
@@ -861,7 +862,7 @@ MenuOptionFAQ: ;Opens FAQ Window
 	Sleep 50
 	Gui FAQWindow:+ToolWindow +AlwaysOnTop
 	Gui, FAQWindow: font, s10 norm
-	Gui, FAQWindow: Add, edit, w620 h700 Multi ReadOnly, %vFAQ%
+	Gui, FAQWindow: Add, edit, w620 h700 Multi ReadOnly, % vFAQ
 	Gui, FAQWindow: show, AutoSize Center, FAQWindow
 	Return
 
