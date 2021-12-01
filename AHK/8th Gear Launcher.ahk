@@ -98,6 +98,9 @@ Global NormalBlacklist := "
 	warmenu
 	WarningScreen INIT_CORE
 	1 handling entries
+	@racescript/html/static/js/main.ad1b125f.chunk.js:1
+	@racescript/html/static/js/main.de1bdae4.chunk.js:1
+	@racescript/html/static/js/main.9cc849d8.chunk.js:1
 	)"
 
 Global ServerWhitelist := "
