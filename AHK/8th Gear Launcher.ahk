@@ -1,5 +1,6 @@
 #SingleInstance, Force
 #NoEnv
+#LTrim
 ;#Warn
 SetBatchLines -1
 StringCaseSense, On
@@ -25,7 +26,6 @@ FileCreateDir, 8thGearLauncher ;Creation stuff
 	Fileinstall, ServerList.ini, 8thGearLauncher/ServerList.ini, 0
 	Menu, Tray, Icon, % "HICON:*" . Create_8G_logo_ico()
 
-#LTrim
 
 LauncherVersion := "v1.6.0"
 
@@ -367,8 +367,8 @@ PingAll:
 	ServerArray := StrSplit(ServerNames, "`n")
 	Loop, % ServerArray.Count()
 	{
-		If (ServerArray[A_Index] = "8th Gear Racing EU 2"){
-			Ping(ServerArray[A_Index], Create_EU_ico(), 2) ;Pings EU 2
+		If (ServerArray[A_Index] = "8th Gear Racing EU 1"){
+			Ping(ServerArray[A_Index], Create_EU_ico(), 2) ;Pings EU 1
 			Continue
 		}
 		If (ServerArray[A_Index] = "8th Gear Racing US East 1"){
