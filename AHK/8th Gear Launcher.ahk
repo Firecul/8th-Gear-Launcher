@@ -1,4 +1,4 @@
-#SingleInstance, Force
+﻿#SingleInstance, Force
 #NoEnv
 #LTrim
 ;#Warn
@@ -670,7 +670,7 @@ ParseLog: ;Determines the type of log(old-style vs new-style vs server)
 	logline := ""
 	TrimmedLineArray := []
 
-
+	OutputDebug, % "ParseLog Started"
 
 
 	NewNeedle := "CitizenFX_log_"
@@ -696,10 +696,13 @@ ParseLog: ;Determines the type of log(old-style vs new-style vs server)
 
 ParseNewLog: ;New-Style log parsing
 	Global LogContents
+	OutputDebug, % "ParseNewLog Started"
+	ParseTimer.Start()
 	Loop, % LogLines.Count()
 		{
 			StringCaseSense Off
 			logline := LogLines[a_index]
+
 			If logline contains %NormalWhitelist%
 				If logline not contains %NormalBlacklist%
 				{
@@ -713,6 +716,9 @@ ParseNewLog: ;New-Style log parsing
 					TrimmedLineArray := % TrimmedLineArray . "Line #" . A_Index . ":" . A_Tab . TrimmedLine . "`n"
 				}
 		}
+
+		ParseTimer.Stop()
+		ParseTimer.Calculate()
 	Guicontrol, LogViewerWindow: text, LogContents, % TrimmedLineArray
 	Return
 
