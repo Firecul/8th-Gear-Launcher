@@ -752,6 +752,28 @@ ParseServerLog:
 
 	Return
 
+class ParseTimer {
+
+	Start(){
+		Global
+		DllCall("QueryPerformanceFrequency", "Int64*", freq)
+		DllCall("QueryPerformanceCounter", "Int64*", CounterBefore)
+		;OutputDebug, % "Freq:" . freq . "`nCounterBefore:" . CounterBefore
+		return
+	}
+	Stop(){
+		Global
+		DllCall("QueryPerformanceCounter", "Int64*", CounterAfter)
+		;OutputDebug, % "CounterAfter:" . CounterAfter
+		return
+	}
+	Calculate(){
+		Global
+		OutputDebug, % "Elapsed QPC time is " . (CounterAfter - CounterBefore) / freq * 1000 " ms or " . (CounterAfter - CounterBefore) / freq / 60 . "minutes"
+		return
+	}
+}
+
 SlowOpen: ;Opens the log ignoring any found null characters that normally cause issues
 	Global LogContents
 	Global FilePath
