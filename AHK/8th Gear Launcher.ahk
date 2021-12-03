@@ -328,7 +328,7 @@ UpdateServerList: ;Updates the list of servers from the ini file
 	SlimServerNames := StrReplace(ServerNames, "8th Gear Racing ")
 	GuiControl,Main: , ServerNameList, % SlimServerNames
 	GuiControlGet, ServerNameList
-	GuiControl, Main: ChooseString, ComboBox1, EU 2
+	GuiControl, Main: ChooseString, ComboBox1, EU 1
 	Gui, Main: Show,, % "8th Gear FiveM Launcher"
 	Return
 
